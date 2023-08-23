@@ -1,4 +1,4 @@
-package com.community;
+package com.webtual.community;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
@@ -13,7 +13,7 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
-    return "community";
+    return "Community";
   }
   @Override
   protected void onCreate(Bundle savedInstanceState) {

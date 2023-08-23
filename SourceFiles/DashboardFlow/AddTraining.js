@@ -27,15 +27,17 @@ import moment from 'moment';
 import ImageView from "react-native-image-viewing";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import ImagePicker from 'react-native-image-crop-picker';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
 // create a component
-const AddTraining = (props) => {
+const AddTraining = ({navigation}) => {
 
 
 	const [isLoading, setIsLoading] = useState(false)
-	const [UserData, setUserData] = useState(JSON.parse(props.route.params.user_data))
-	const [TrainingData, setTrainingData] = useState(JSON.parse(props.route.params.training_data))
+	// const [UserData, setUserData] = useState(JSON.parse(props.route.params.user_data))
+	// const [TrainingData, setTrainingData] = useState(JSON.parse(props.route.params.training_data) || null)
+	const [TrainingData, setTrainingData] = useState( null)
 
 	const [IsVisibleImg, setIsVisibleImg] = useState(false)
 
@@ -52,168 +54,168 @@ const AddTraining = (props) => {
 
 
 	// Set Navigation Bar
-	useLayoutEffect(() => {
-		props.navigation.setOptions({
-			headerTitle: TrainingData == null ? i18n.t('add_training') : i18n.t('update_training'),
-			headerTitleStyle: {
-				fontFamily: ConstantKey.MONTS_SEMIBOLD
-			},
-			headerStyle: {
-				backgroundColor: Colors.white,
-			},
-			headerTintColor: Colors.primaryRed,
-			headerBackTitleVisible: false,
-		});
-	}, [props, TrainingData]);
+	// useLayoutEffect(() => {
+	// 	props.navigation.setOptions({
+	// 		headerTitle: TrainingData == null ? i18n.t('add_training') : i18n.t('update_training'),
+	// 		headerTitleStyle: {
+	// 			fontFamily: ConstantKey.MONTS_SEMIBOLD
+	// 		},
+	// 		headerStyle: {
+	// 			backgroundColor: Colors.white,
+	// 		},
+	// 		headerTintColor: Colors.primary,
+	// 		headerBackTitleVisible: false,
+	// 	});
+	// }, [props, TrainingData]);
 
 
 
-	useEffect(() => {
+	// useEffect(() => {
 
-		console.log('====================================');
-		console.log("Training Data :" + JSON.stringify(UserData));
-		console.log('====================================');
+	// 	console.log('====================================');
+	// 	console.log("Training Data :" + JSON.stringify(UserData));
+	// 	console.log('====================================');
 
 
-		if (TrainingData != null) {
+	// 	if (TrainingData != null) {
 
-			setTxtTitle(TrainingData.title)
-			setTxtDescription(TrainingData.description)
-			setStartDate(new Date(TrainingData.start_date))
-			setEndDate(new Date(TrainingData.end_date))
+	// 		setTxtTitle(TrainingData.title)
+	// 		setTxtDescription(TrainingData.description)
+	// 		setStartDate(new Date(TrainingData.start_date))
+	// 		setEndDate(new Date(TrainingData.end_date))
 
-			if (TrainingData.training_image != null) {
-				var data = {}
-				data['data'] = null
-				data['path'] = String(TrainingData.training_image)
-				setImgTraining(data)
-			}
+	// 		if (TrainingData.training_image != null) {
+	// 			var data = {}
+	// 			data['data'] = null
+	// 			data['path'] = String(TrainingData.training_image)
+	// 			setImgTraining(data)
+	// 		}
 
-		}
+	// 	}
 
-		return () => {
+	// 	return () => {
 
-		}
-	}, [])
+	// 	}
+	// }, [])
 
 
 	// Add Training
-	const Api_AddTraining = (isLoad) => {
+	// const Api_AddTraining = (isLoad) => {
 
-		setIsLoading(isLoad)
+	// 	setIsLoading(isLoad)
 
-		let body = new FormData();
+	// 	let body = new FormData();
 
-		body.append('member_id', UserData.id)
-		body.append('title', txtTitle)
-		body.append('description', txtDescription)
-		body.append('start_date', moment(StartDate).format("DD-MM-YYYY"))
-		body.append('end_date', moment(EndDate).format("DD-MM-YYYY"))
+	// 	body.append('member_id', UserData.id)
+	// 	body.append('title', txtTitle)
+	// 	body.append('description', txtDescription)
+	// 	body.append('start_date', moment(StartDate).format("DD-MM-YYYY"))
+	// 	body.append('end_date', moment(EndDate).format("DD-MM-YYYY"))
 		
-		if(TrainingData != null){
-			body.append('training_id', TrainingData.id)
-		}
-		if (ImgTraining != null && ImgTraining.path != TrainingData.training_image) {
-			body.append('training_image',
-				{
-					uri: ImgTraining.path,
-					name: Platform.OS == 'android' ? "image.jpeg" : ImgTraining.filename,
-					type: ImgTraining.mime
-				});
-		}
+	// 	if(TrainingData != null){
+	// 		body.append('training_id', TrainingData.id)
+	// 	}
+	// 	if (ImgTraining != null && ImgTraining.path != TrainingData.training_image) {
+	// 		body.append('training_image',
+	// 			{
+	// 				uri: ImgTraining.path,
+	// 				name: Platform.OS == 'android' ? "image.jpeg" : ImgTraining.filename,
+	// 				type: ImgTraining.mime
+	// 			});
+	// 	}
 
 
-		Webservice.post(APIURL.AddEditTraining, body)
-			.then(response => {
+	// 	Webservice.post(APIURL.AddEditTraining, body)
+	// 		.then(response => {
 
-				setIsLoading(false)
-				if (response == null) {
-					setIsLoading(false)
-				}
-				console.log(JSON.stringify("Api_AddTraining Response : " + JSON.stringify(response)));
-				// setIsLoading(false)
+	// 			setIsLoading(false)
+	// 			if (response == null) {
+	// 				setIsLoading(false)
+	// 			}
+	// 			console.log(JSON.stringify("Api_AddTraining Response : " + JSON.stringify(response)));
+	// 			// setIsLoading(false)
 
-				if (response.data.Status == '1') {
+	// 			if (response.data.Status == '1') {
 
-					Alert.alert("Sucess", "Training Added Sucessfully", [
-						{
-							text: 'Ok',
-							onPress: () => {
-								// props.route.params.onGoBack();
-								props.navigation.goBack()
-							}
-						}
-					], { cancelable: false })
-				} else {
-					alert(response.data.Msg)
-				}
+	// 				Alert.alert("Sucess", "Training Added Sucessfully", [
+	// 					{
+	// 						text: 'Ok',
+	// 						onPress: () => {
+	// 							// props.route.params.onGoBack();
+	// 							props.navigation.goBack()
+	// 						}
+	// 					}
+	// 				], { cancelable: false })
+	// 			} else {
+	// 				alert(response.data.Msg)
+	// 			}
 
-			})
-			.catch((error) => {
+	// 		})
+	// 		.catch((error) => {
 
-				setIsLoading(false)
-				console.log(error)
-			})
-	}
+	// 			setIsLoading(false)
+	// 			console.log(error)
+	// 		})
+	// }
 
 
 	// Edit Training
-	const Api_EditTraining = (isLoad) => {
+	// const Api_EditTraining = (isLoad) => {
 
-		setIsLoading(isLoad)
+	// 	setIsLoading(isLoad)
 
-		let body = new FormData();
+	// 	let body = new FormData();
 
-		body.append('member_id', UserData.id)
-		body.append('title', txtTitle)
-		body.append('description', txtDescription)
-		body.append('start_date', moment(StartDate).format("DD-MM-YYYY"))
-		body.append('end_date', moment(EndDate).format("DD-MM-YYYY"))
+	// 	body.append('member_id', UserData.id)
+	// 	body.append('title', txtTitle)
+	// 	body.append('description', txtDescription)
+	// 	body.append('start_date', moment(StartDate).format("DD-MM-YYYY"))
+	// 	body.append('end_date', moment(EndDate).format("DD-MM-YYYY"))
 		
-		if(TrainingData != null){
-			body.append('training_id', TrainingData.id)
-		}
-		if (ImgTraining != null && ImgTraining.path != TrainingData.training_image) {
-			body.append('training_image',
-				{
-					uri: ImgTraining.path,
-					name: Platform.OS == 'android' ? "image.jpeg" : ImgTraining.filename,
-					type: ImgTraining.mime
-				});
-		}
+	// 	if(TrainingData != null){
+	// 		body.append('training_id', TrainingData.id)
+	// 	}
+	// 	if (ImgTraining != null && ImgTraining.path != TrainingData.training_image) {
+	// 		body.append('training_image',
+	// 			{
+	// 				uri: ImgTraining.path,
+	// 				name: Platform.OS == 'android' ? "image.jpeg" : ImgTraining.filename,
+	// 				type: ImgTraining.mime
+	// 			});
+	// 	}
 
-		Webservice.post(APIURL.AddEditTraining, body)
-			.then(response => {
+	// 	Webservice.post(APIURL.AddEditTraining, body)
+	// 		.then(response => {
 
-				setIsLoading(false)
-				if (response == null) {
-					setIsLoading(false)
-				}
-				console.log(JSON.stringify("Api_EditTraining Response : " + JSON.stringify(response)));
-				// setIsLoading(false)
+	// 			setIsLoading(false)
+	// 			if (response == null) {
+	// 				setIsLoading(false)
+	// 			}
+	// 			console.log(JSON.stringify("Api_EditTraining Response : " + JSON.stringify(response)));
+	// 			// setIsLoading(false)
 
-				if (response.data.Status == '1') {
+	// 			if (response.data.Status == '1') {
 
-					Alert.alert("Sucess", "Training Updated Sucessfully", [
-						{
-							text: 'Ok',
-							onPress: () => {
-								// props.route.params.onGoBack();
-								props.navigation.goBack()
-							}
-						}
-					], { cancelable: false })
-				} else {
-					alert(response.data.Msg)
-				}
+	// 				Alert.alert("Sucess", "Training Updated Sucessfully", [
+	// 					{
+	// 						text: 'Ok',
+	// 						onPress: () => {
+	// 							// props.route.params.onGoBack();
+	// 							props.navigation.goBack()
+	// 						}
+	// 					}
+	// 				], { cancelable: false })
+	// 			} else {
+	// 				alert(response.data.Msg)
+	// 			}
 
-			})
-			.catch((error) => {
+	// 		})
+	// 		.catch((error) => {
 
-				setIsLoading(false)
-				console.log(error)
-			})
-	}
+	// 			setIsLoading(false)
+	// 			console.log(error)
+	// 		})
+	// }
 
 
 
@@ -240,20 +242,20 @@ const AddTraining = (props) => {
 	};
 
 
-	const handleConfirm = (date, type) => {
-		console.warn("A date has been picked: ", date);
+	// const handleConfirm = (date, type) => {
+	// 	console.warn("A date has been picked: ", date);
 
-		setOpenStartDatePicker(false);
-		setOpenEndDatePicker(false)
+	// 	setOpenStartDatePicker(false);
+	// 	setOpenEndDatePicker(false)
 	
-		if(type == 'Start Date'){
-			setStartDate(date)
-		}else{
-			setEndDate(date)
-		}
+	// 	if(type == 'Start Date'){
+	// 		setStartDate(date)
+	// 	}else{
+	// 		setEndDate(date)
+	// 	}
 		
 	
-	};
+	// };
 
 
 	function daysInMonth (month, year) {
@@ -339,30 +341,30 @@ const AddTraining = (props) => {
 	}
 
 
-	const btnAddEditTap = () => {
-		requestAnimationFrame(() => {
+	// const btnAddEditTap = () => {
+	// 	requestAnimationFrame(() => {
 
-			if(txtTitle == ''){
-				Toast.showWithGravity(i18n.t('enter_title'), Toast.LONG, Toast.BOTTOM);
-			}else if(txtDescription == ''){
-				Toast.showWithGravity(i18n.t('enter_event_desc'), Toast.LONG, Toast.BOTTOM);
-			}else if(StartDate == null){
-				Toast.showWithGravity(i18n.t('enter_event_date'), Toast.LONG, Toast.BOTTOM);
-			}else if(EndDate == null){
-				Toast.showWithGravity(i18n.t('enter_event_date'), Toast.LONG, Toast.BOTTOM);
-			}else if(ImgTraining == null){
-				Toast.showWithGravity(i18n.t('select_event_image'), Toast.LONG, Toast.BOTTOM);
-			}else{
+	// 		if(txtTitle == ''){
+	// 			Toast.showWithGravity(i18n.t('enter_title'), Toast.LONG, Toast.BOTTOM);
+	// 		}else if(txtDescription == ''){
+	// 			Toast.showWithGravity(i18n.t('enter_event_desc'), Toast.LONG, Toast.BOTTOM);
+	// 		}else if(StartDate == null){
+	// 			Toast.showWithGravity(i18n.t('enter_event_date'), Toast.LONG, Toast.BOTTOM);
+	// 		}else if(EndDate == null){
+	// 			Toast.showWithGravity(i18n.t('enter_event_date'), Toast.LONG, Toast.BOTTOM);
+	// 		}else if(ImgTraining == null){
+	// 			Toast.showWithGravity(i18n.t('select_event_image'), Toast.LONG, Toast.BOTTOM);
+	// 		}else{
 
-				if(TrainingData != null){
-					Api_EditTraining(true)
-				}
-				else{
-					Api_AddTraining(true)
-				}
-			}
-		})
-	}
+	// 			if(TrainingData != null){
+	// 				Api_EditTraining(true)
+	// 			}
+	// 			else{
+	// 				Api_AddTraining(true)
+	// 			}
+	// 		}
+	// 	})
+	// }
 
 
 	return (
@@ -372,21 +374,53 @@ const AddTraining = (props) => {
 
 
 				<ScrollView style={{ flex: 1 }}>
+				<View style={{ flexDirection: "row", alignItems: "center", marginHorizontal: 10 }}>
+						<TouchableOpacity onPress={() => { navigation.goBack() }}
+							style={{ marginRight: 10, marginBottom: 5, padding: 10 }}>
+							<Icon name={"chevron-left"} size={18} color={Colors.black} />
 
+						</TouchableOpacity>
+
+						<Text style={{
+							fontSize: FontSize.FS_22,
+							color: Colors.black,
+							fontFamily: ConstantKey.MONTS_SEMIBOLD,
+						}}>
+							{i18n.t('add_training')}
+						</Text>
+
+					</View>
 					<View style={{
-						marginHorizontal: 20, marginVertical: 20, borderRadius: 10, borderWidth: 1, borderColor: Colors.primaryRed,
+						marginHorizontal: 20, marginVertical: 20, borderRadius: 10, borderWidth: 1, borderColor: Colors.primary,
 						height: 200,
 					}}>
 
-						<TouchableOpacity onPress={() => TrainingData != null ? setIsVisibleImg(true) : {}}>
+						{/* <TouchableOpacity onPress={() => TrainingData != null ? setIsVisibleImg(true) : {}}>
 							<Image style={{ height: '100%', width: '100%', resizeMode: TrainingData == null ? 'contain' : 'cover', borderRadius: 10, }}
 								source={TrainingData == null ? Images.MagnusLogo : { uri: ImgTraining.path }} />
-						</TouchableOpacity>
+						</TouchableOpacity> */}
 
-
+						{TrainingData == null ?
+							<TouchableOpacity onPress={() =>{
+								btnSelectImage()
+							}}
+							style={{flex:1,alignSelf:"center",justifyContent:"center",alignItems:"center"}}>
+								<MaterialCommunityIcons name={"cloud-upload-outline"} size={40} color={Colors.primary} />
+								<Text style={{
+                                fontSize: FontSize.FS_16,
+                                color: Colors.primary,
+                                fontFamily: ConstantKey.MONTS_SEMIBOLD,
+								textAlign:"center"
+                            }}>Upload Training photo</Text>
+							</TouchableOpacity> :
+							<TouchableOpacity onPress={() => TrainingData != null ? setIsVisibleImg(true) : {}}>
+								<Image style={{ height: '100%', width: '100%', resizeMode: TrainingData == null ? 'contain' : 'cover', borderRadius: 10, }}
+									source={TrainingData == null ? Images.MagnusLogo : { uri: EventImg.path }} />
+							</TouchableOpacity>
+						}
 						<View style={{ position: 'absolute', width: '100%' }}>
 							<TouchableOpacity style={{
-								alignSelf: 'flex-end', backgroundColor: Colors.primaryRed, padding: 10,
+								alignSelf: 'flex-end', backgroundColor: Colors.primary, padding: 10,
 								borderBottomLeftRadius: 10, borderTopRightRadius: 10
 							}}
 								onPress={() => btnSelectImage()}>
@@ -398,7 +432,7 @@ const AddTraining = (props) => {
 
 					<View style={{ marginHorizontal: 20, }}>
 
-						<Text style={{ fontSize: FontSize.FS_14, color: Colors.primaryRed, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
+						<Text style={{ fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
 							Title
 						</Text>
 
@@ -415,7 +449,7 @@ const AddTraining = (props) => {
 
 						</View>
 
-						<Text style={{ fontSize: FontSize.FS_14, color: Colors.primaryRed, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
+						<Text style={{ fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
 							Description
 						</Text>
 						<View style={[styles.mobileView]}>
@@ -432,7 +466,7 @@ const AddTraining = (props) => {
 
 						</View>
 
-						<Text style={{ fontSize: FontSize.FS_14, color: Colors.primaryRed, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
+						<Text style={{ fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
 							Start date
 						</Text>
 						<TouchableOpacity style={[styles.mobileView]} onPress={() => showDatePicker('Start Date')}>
@@ -446,7 +480,7 @@ const AddTraining = (props) => {
 						</TouchableOpacity>
 
 
-						<Text style={{ fontSize: FontSize.FS_14, color: Colors.primaryRed, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
+						<Text style={{ fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
 							End date
 						</Text>
 						<TouchableOpacity style={[styles.mobileView]} onPress={() => showDatePicker('End Date')}>
@@ -530,9 +564,9 @@ const styles = StyleSheet.create({
 		color: Colors.black,  paddingVertical: 0
 	},
 	btnSubmit: {
-		backgroundColor: Colors.primaryRed,
+		backgroundColor: Colors.primary,
 		marginTop: 30, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
-		shadowColor: Colors.primaryRed, marginBottom : 20,
+		shadowColor: Colors.primary, marginBottom : 20,
 		shadowOffset: { width: 0, height: 2 },
 		shadowOpacity: 0.4, shadowRadius: 2, elevation: 2
 	},

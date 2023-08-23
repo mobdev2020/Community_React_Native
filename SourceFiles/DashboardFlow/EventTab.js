@@ -42,7 +42,7 @@ const EventTab = (props) => {
 		props.navigation.setOptions({
 			headerTitle: i18n.t('events'),
 			headerTitleStyle: {
-				fontFamily: ConstantKey.MONTS_SEMIBOLD
+				fontFamily: ConstantKey.MONTS_SEMIBOLD,
 			},
 			headerStyle: {
 				backgroundColor: Colors.white,

@@ -4,13 +4,15 @@ import axios from "axios";
 /** Constant Files */
 import { APIURL } from './APIURL';
 import Toast from 'react-native-simple-toast';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ConstantKey } from "./ConstantKey";
 
 
 const ApiManager = axios.create({
 	baseURL: APIURL.BASE_URL,
 	headers: {
 		'Accept': 'application/json',
-		// 'Content-Type': 'multipart/form-data',
+		'Content-Type': 'multipart/form-data',
 		// "Authorization": '',
 	},
 	timeout: 60000
@@ -20,17 +22,14 @@ const ApiManager = axios.create({
 ApiManager.interceptors.request.use(async config => {
 
 	/**  Set Barear Token in Haeder */
-	// var token = await AsyncStorage.getItem(ConstantKey.USER_DATA)
-
-	// console.log('====================================');
-	// console.log("User Token axios: " + token);
-	// console.log('====================================');
-
-	// token = JSON.parse(token)
-
-	// if (token) {
-	// 	config.headers.Authorization = token.token
-	// }
+	var token = await AsyncStorage.getItem(ConstantKey.USER_DATA)
+	token = JSON.parse(token)
+	console.log('====================================');
+	console.log("User Token axios: " + token.token);
+	console.log('====================================');
+	if (token) {
+		config.headers.Authorization = "Bearer "+token.token
+	}
 
 	return config
 });

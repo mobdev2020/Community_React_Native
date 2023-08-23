@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, Alert, Platform, Linking } from 'react-native';
+import { View, Text, StyleSheet, Image, Alert, Platform, Linking, LogBox } from 'react-native';
 
 // Constants
 import { Images } from '../Constants/Images';
@@ -20,7 +20,7 @@ import { APIURL } from '../Constants/APIURL';
 const Splash = ({navigation}) => {
 
 	useEffect(() => {
-
+		LogBox.ignoreLogs(['Warning: ...']);
 		getUserData()
 		// Api_VersionCheck(false)
 	},[])
@@ -90,6 +90,7 @@ const Splash = ({navigation}) => {
 			else {
 
 				navigation.replace('Login')
+				// navigation.replace('BusinessProfile')
 			}
 		} catch (e) {
 			navigation.replace('Login')
@@ -102,8 +103,8 @@ const Splash = ({navigation}) => {
 		<View style={styles.container}>
 			
 			<Image 
-				style={{width : 250, height : 180, resizeMode :'contain'}}
-				source={Images.Splash}
+				style={{ width:"100%",height:"100%"}}
+				source={Images.SplashScreen}
 			/>
 		</View>
 	);
@@ -113,9 +114,9 @@ const Splash = ({navigation}) => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-		backgroundColor : Colors.white
+		// justifyContent: 'center',
+		// alignItems: 'center',
+		// backgroundColor : Colors.white
 	},
 });
 

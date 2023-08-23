@@ -1,7 +1,9 @@
 //import liraries
 import React, { Component, useLayoutEffect, useEffect, useState, useRef } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Dimensions, TouchableOpacity, FlatList, Platform, Modal, TextInput, 
-		Linking, Alert, PermissionsAndroid, Image, Keyboard, Switch, Share } from 'react-native';
+import {
+	View, Text, StyleSheet, SafeAreaView, Dimensions, TouchableOpacity, FlatList, Platform, Modal, TextInput,
+	Linking, Alert, PermissionsAndroid, Image, Keyboard, Switch, Share, ScrollView, LogBox,
+} from 'react-native';
 
 // Constants
 import i18n from '../Localize/i18n'
@@ -16,11 +18,11 @@ import { version as versionNo } from '../../package.json'
 import ViewProfile from './ViewProfile';
 
 //Third Party
-import MapView, { Marker, PROVIDER_GOOGLE, Callout,Circle } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE, Callout, Circle, } from 'react-native-maps';
 import Toast from 'react-native-simple-toast';
 // import Icon from 'react-native-vector-icons/FontAwesome5';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import { SliderBox } from "react-native-image-slider-box";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { colors, SearchBar } from 'react-native-elements';
 import Geocoder from 'react-native-geocoding';
@@ -33,7 +35,13 @@ import { StackActions } from '@react-navigation/native';
 import PolicyModal from './PolicyModal';
 import EventDisplay from './EventDisplay';
 
-
+import LinearGradient from 'react-native-linear-gradient';
+import FastImage from 'react-native-fast-image';
+import { navigate } from '../Constants/NavigationService';
+import { ExpandingDot } from 'react-native-animated-pagination-dots';
+import Banner from '../commonComponents/BoxSlider/Banner';
+import TextSlide from '../commonComponents/TextSlider/Slide';
+import TextSlider from '../commonComponents/TextSlider/Banner';
 // create a component
 const Home = (props) => {
 
@@ -43,7 +51,7 @@ const Home = (props) => {
 	const refMarkerPin = useRef([])
 
 
-	const [isLoading, setIsLoading] = useState(true)
+	const [isLoading, setIsLoading] = useState(false)
 	const [ContactList, setContactList] = useState([])
 
 	const [SelectedProfile, setSelectedProfile] = useState(null)
@@ -60,183 +68,83 @@ const Home = (props) => {
 	const [FinalOTP, setFinalOTP] = useState('')
 	const [txtOTP, setTxtOtp] = useState('')
 	const [isOTPView, setIsOTPView] = useState(0)
-
+	const [CategoryData, setCategoryData] = useState(null)
 	const [locationSwitch, setLocationSwitch] = useState(true);
 
 	const [openPolicy, setOpenPolicy] = useState(false);
 	const [openLoginModal, setOpenLoginModal] = useState(false);
 	const [UserData, setUserData] = useState(null);
+	const [AdsData, setAdsData] = useState([]);
+	const [NoticeData, setNoticeData] = useState([]);
 
 	const [ArrEvents, setArrEvents] = useState([]);
-	const [isDisplayEvent , setIsDisplayEvent] = useState(false)
+	const [isDisplayEvent, setIsDisplayEvent] = useState(false)
 
+	const HomeBanner = [
+		{
+			image: "https://img.freepik.com/free-photo/sports-tools_53876-138077.jpg",
+		},
+		{
+			image: "https://img.freepik.com/free-photo/sports-tools_53876-138077.jpg",
 
-	// Set Navigation Bar
-	useLayoutEffect(() => {
-		props.navigation.setOptions({
-			headerTitle: i18n.t('appName'),
-			headerTitleStyle: {
-				fontFamily: ConstantKey.MONTS_SEMIBOLD,
-				fontSize : FontSize.FS_18
-			},
-			headerStyle: {
-				backgroundColor: Colors.white,
-			},
-			headerLeft: () => (
-				
-					<View style={{ flexDirection: 'row' }}>
-						<TouchableOpacity style={{
-							height: 30, width: 30, marginRight: 10, marginLeft: 10,
-							borderColor: Colors.primaryRed, borderWidth: 1, borderRadius: 15, alignItems: 'center', justifyContent: 'center'
-						}}
-							onPress={() => btnShareTap()}>
-							<Icon name="share-variant" size={15} color={Colors.primaryRed} />
-						</TouchableOpacity>
-						<TouchableOpacity style={{
-							height: 30, width: 30, marginRight: 10, 
-							borderColor: Colors.primaryRed, borderWidth: 1, borderRadius: 15, alignItems: 'center', justifyContent: 'center'
-						}}
-							onPress={() => btnReportTap()}>
-							<Icon name="lightbulb" size={15} color={Colors.primaryRed} solid/>
-						</TouchableOpacity>
-					</View>
-			),
-			headerRight: () => (
-				ContactList.length != 0 ?
-					<View style={{flexDirection : 'row'}}>
-						{/* <TouchableOpacity style={{marginRight : 10}} onPress={() => setModalVisible(true)}>
-						<Icon name="plus" size={20} color={Colors.primaryRed} />
-					</TouchableOpacity> */}
+		},
+		{
+			image: "https://img.freepik.com/free-photo/sports-tools_53876-138077.jpg",
 
-						<TouchableOpacity style={{
-							height: 30, width: 30, marginRight: 10,
-							borderColor: Colors.primaryRed, borderWidth: 1, borderRadius: 15, alignItems: 'center', justifyContent: 'center'
-						}}
-							onPress={() => refRBUsers.current.open()}>
-							<Icon name="magnify" size={15} color={Colors.primaryRed} />
-						</TouchableOpacity>
+		},
+	]
+	const AddBanner = [
+		{
+			title: "Notice",
+			desc: "Today- 01/08/2023 - Tuesday School is having holiday as declared by government due to very heavy rainfall."
+		},
+		{
+			title: "Notice",
+			desc: "Today- 01/08/2023 - Tuesday School is having holiday as declared by government due to very heavy rainfall."
 
-						<TouchableOpacity style={{
-							height: 30, width: 30, marginRight : 10,
-							borderColor: Colors.primaryRed, borderWidth: 1, borderRadius: 15, alignItems: 'center', justifyContent: 'center'
-						}}
-							onPress={() => {
+		},
+		{
+			title: "Notice",
+			desc: "Today- 01/08/2023 - Tuesday School is having holiday as declared by government due to very heavy rainfall."
 
-								if (UserData != null) {
-									btnProfileTap()
-									
-									// props.navigation.navigate('MembersProfile',{member_data :  String(69)})
-								}
-							}}>  
-
-							{UserData != null ?
-								<Icon name="account" size={15} color={Colors.primaryRed} />
-								: null}
-						</TouchableOpacity>
-					</View>
-					: <></>
-			),
-			// headerLeftContainerStyle: { marginLeft: 10, },
-			headerTintColor: Colors.primaryRed,
-			headerBackTitleVisible: false,
-		});
-	}, [props, ContactList, locationSwitch, UserData]);
-
+		},
+	]
 
 	useEffect(() => {
-
-		getPolicyData()
-		setIsLoading(true)
-		// requestLocationPermission()
-		// Api_VersionCheck()
-		Api_GetEvents(true)
+		Api_Get_Profile(true)
+		Api_Get_Ads(true)
+		Api_Get_Banner(true)
+		Api_Get_Category(true)
+		// getUserData()
 		return () => {
 
 		}
 	}, [])
 
 
-	const requestLocationPermission = async (user_data) => {
-		if (Platform.OS === 'ios') {
-
-			getOneTimeLocation(user_data);
-
-		} else {
-			try {
-				const granted = await PermissionsAndroid.request(
-					PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-					{
-						title: 'Location Access Required',
-						message: 'This App needs to Access your location',
-					},
-				);
-				if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-
-					//To Check, If Permission is granted
-					getOneTimeLocation(user_data);
-
-				} else {
-
-					console.log("User Na Data : "+JSON.stringify(UserData))
-
-					Api_GetContacts(true, user_data)
-					console.log('====================================');
-					console.log('Permission Denied');
-					console.log('====================================');
-				}
-			} catch (err) {
-
-				Api_GetContacts(true)
-				console.warn(err);
-			}
-		}
-	};
 
 	const btnReportTap = () => {
-		requestAnimationFrame(() => {
-			props.navigation.navigate('Report', { userData : JSON.stringify(UserData)})
-			
-		})
+			props.navigation.navigate('Report', { userData: JSON.stringify(UserData) })
 	}
 
-	const getOneTimeLocation = (user_data) => {
-		console.log('====================================');
-		console.log('Getting Location ...');
-		console.log('====================================');
-		// Geolocation.requestAuthorization();
-		Geolocation.getCurrentPosition(
-			//Will give you the current location
-			(position) => {
-
-				console.log('====================================');
-				console.log("Current Location is : " + JSON.stringify(position));
-				console.log('====================================');
-
-				console.log('getOneTimeLocation User na Data : '+JSON.stringify(user_data));
-
-				setCurrentLatitude(position.coords.latitude)
-				setCurrentLongitude(position.coords.longitude)
-
-				Api_GetContacts(true, user_data)
-
-			},
-			(error) => {
-
-				console.log('getOneTimeLocation User na Data : '+JSON.stringify(UserData));
-				Api_GetContacts(true, user_data) 
-				console.log('====================================');
-				console.log(error.message);
-				console.log('====================================');
-			},
-			{
-				enableHighAccuracy: false,
-				timeout: 200000,
-				maximumAge: 5000
-			},
-		);
-	};
 
 
+	const getUserData = async (user_data) => {
+		try {
+			const value = await AsyncStorage.getItem(ConstantKey.USER_DATA)
+			console.log("val :",value)
+			if (value !== null) {
+				// value previously stored
+
+				
+			}
+			else {
+
+			}
+		} catch (e) {
+			console.log("Error for FCM: " + e)
+		}
+	}
 	const getFCMToken = async (user_data) => {
 		try {
 			const value = await AsyncStorage.getItem(ConstantKey.FCM_TOKEN)
@@ -253,80 +161,86 @@ const Home = (props) => {
 		}
 	}
 
-	const getPolicyData = async () => {
 
 
-		try {
-			const value = await AsyncStorage.getItem(ConstantKey.USER_DATA)
-			if (value !== null) {
-				// value previously stored
-
-				var data = JSON.parse(value)
-				console.log("User Data: " + value)
-
-
-				Api_Get_Profile(true, data.id)
-
-
-				setUserData(data)
-				setLocationSwitch(data.isVisible == '1' ? true : false)
-
-				requestLocationPermission(data)
-
-				// getFCMToken(data)
-			}
-			else {
-
-			}
-		} catch (e) {
-			console.log("Error : " + e)
-		}
+	const Api_Get_Profile = (isLoad) => {
+		setIsLoading(isLoad)
+		Webservice.get(APIURL.GetProfile)
+			.then(response => {
+				setIsLoading(false)
+				console.log(JSON.stringify("Api_Get_Profile Response : " + JSON.stringify(response)));
+				if (response.data.status == true) {
+					var data = response.data.data
+					storeData(JSON.stringify(data))
+					setUserData(response.data.data)
+				} else {
+					alert(response.data.message)
+				}
+			})
+			.catch((error) => {
+				setIsLoading(false)
+				console.log(error)
+			})
 	}
 
-
-	const Api_Get_Profile = (isLoad, id) => {
-
+	const Api_Get_Ads = (isLoad) => {
 		setIsLoading(isLoad)
-
-
-		Webservice.post(APIURL.getProfile,{
-			member_id : id,
+		Webservice.get(APIURL.GetAds + "?page=1")
+			.then(response => {
+				setIsLoading(false)
+				console.log(JSON.stringify("Api_Get_Ads Response : " + JSON.stringify(response)));
+				if (response.data.status == true) {
+					var data = response.data.data.data
+					var newArray = data.map(item =>{
+						return{
+							...item,
+							image : item.image_url
+						}
+					})
+					console.log("newArray",newArray)
+					setAdsData(newArray)
+				} else {
+					alert(response.data.message)
+				}
+			})
+			.catch((error) => {
+				setIsLoading(false)
+				console.log(error)
+			})
+	}
+	const Api_Get_Banner = (isLoad) => {
+		setIsLoading(isLoad)
+		Webservice.get(APIURL.GetNotice + "?page=1")
+			.then(response => {
+				setIsLoading(false)
+				// console.log(JSON.stringify("Api_Get_Banner Response : " + JSON.stringify(response)));
+				if (response.data.status == true) {
+					var data = response.data.data.data
+					setNoticeData(data)
+				} else {
+					alert(response.data.message)
+				}
+			})
+			.catch((error) => {
+				setIsLoading(false)
+				console.log(error)
+			})
+	}
+	const Api_Get_Category = (isLoad) => {
+		setIsLoading(isLoad)
+		Webservice.get(APIURL.GetCategory, {
+			mobile_number: 9016089923
 		})
 			.then(response => {
+				console.log("Get Category Response : ", response.data)
 
-				setIsLoading(false)
-				if (response == null) {
+				if (response.data.status == true) {
+					setCategoryData(response.data.data)
+					setIsLoading(false)
+				} else {
+					Toast.showWithGravity(response.data.message, Toast.LONG, Toast.BOTTOM);
 					setIsLoading(false)
 				}
-				console.log(JSON.stringify("Api_Get_Profile Response : "+JSON.stringify(response)));
-				// setIsLoading(false)
-
-				if (response.data.Status == '1') {
-					
-					var data = response.data.Data
-
-					storeData(JSON.stringify(data))
-					setUserData(response.data.Data)
-
-					if(data.birthdate == null){
-					
-						Alert.alert("","We didn't find your date of birth, Please add your birth date",[
-							{
-								text : 'Update',
-								onPress : () => {
-									props.navigation.navigate('UpdateProfile',{userData : JSON.stringify(data)})
-								}
-							}
-	
-						],{ cancelable : false })
-	
-	
-					}
-
-				} else {
-					alert(response.data.Msg)
-				}
-
 			})
 			.catch((error) => {
 
@@ -334,14 +248,11 @@ const Home = (props) => {
 				console.log(error)
 			})
 	}
-
-
 	const storeData = async (value) => {
 		try {
 			await AsyncStorage.setItem(ConstantKey.USER_DATA, value)
-
 		} catch (e) {
-			// saving error
+			console.log("Error :",e)
 		}
 	}
 
@@ -360,10 +271,10 @@ const Home = (props) => {
 
 		setIsLoading(isLoad)
 
-		console.log("API_LOGOUT User na Data :"+JSON.stringify(UserData))
+		console.log("API_LOGOUT User na Data :" + JSON.stringify(UserData))
 
-		Webservice.post(APIURL.logout,{
-			member_id : UserData.id,
+		Webservice.post(APIURL.logout, {
+			member_id: UserData.id,
 		})
 			.then(response => {
 
@@ -371,7 +282,7 @@ const Home = (props) => {
 				if (response == null) {
 					setIsLoading(false)
 				}
-				console.log(JSON.stringify("API_LOGOUT Response : "+JSON.stringify(response)));
+				console.log(JSON.stringify("API_LOGOUT Response : " + JSON.stringify(response)));
 				// setIsLoading(false)
 
 				if (response.data.Status == '1') {
@@ -393,25 +304,25 @@ const Home = (props) => {
 
 		// setIsLoading(isLoad)
 
-		console.log("Api_UpdateDeviceId User na Data :"+JSON.stringify(user_data))
+		console.log("Api_UpdateDeviceId User na Data :" + JSON.stringify(user_data))
 
-		Webservice.post(APIURL.deviceIdUpdate,{
-			member_id : user_data.id,
+		Webservice.post(APIURL.deviceIdUpdate, {
+			member_id: user_data.id,
 			// device_id : fcm_token,
-			device_type : Platform.OS == 'android' ? 0 : 1
+			device_type: Platform.OS == 'android' ? 0 : 1
 		})
 			.then(response => {
 
 				if (response == null) {
 					setIsLoading(false)
 				}
-				console.log(JSON.stringify("deviceIdUpdate Response : "+JSON.stringify(response)));
+				console.log(JSON.stringify("deviceIdUpdate Response : " + JSON.stringify(response)));
 				// setIsLoading(false)
 
 				if (response.data.Status == '1') {
 
 				} else {
-					
+
 				}
 
 			})
@@ -427,10 +338,10 @@ const Home = (props) => {
 
 		setIsLoading(isLoad)
 
-		console.log("Api_GetContacts User na Data :"+JSON.stringify(user_data))
+		console.log("Api_GetContacts User na Data :" + JSON.stringify(user_data))
 
-		Webservice.post(APIURL.getContacts,{
-			member_id : user_data.id
+		Webservice.post(APIURL.getContacts, {
+			member_id: user_data.id
 		})
 			.then(response => {
 
@@ -542,7 +453,7 @@ const Home = (props) => {
 					setIsDisplayEvent(true)
 				} else {
 					setIsDisplayEvent(false)
-					
+
 				}
 			})
 			.catch((error) => {
@@ -553,160 +464,9 @@ const Home = (props) => {
 			})
 	}
 
-	const Api_VerifyMember = (isLoad, location) => {
-
-		setIsLoading(isLoad)
-
-		Webservice.post(APIURL.verifycontact, {
-
-			id: SelectedMember.id,
-		})
-			.then(response => {
-
-				if (response == null) {
-					setIsLoading(false)
-				}
-				console.log(JSON.stringify(response));
-				setIsLoading(false)
-
-				if (response.data.Status == '1') {
-
-					setFinalOTP(response.data.Data)
-					setIsOTPView(1)
-
-				} else {
-					Toast.showWithGravity(response.data.Msg, Toast.LONG, Toast.BOTTOM);
-				}
-
-			})
-			.catch((error) => {
-
-				setIsLoading(false)
-				console.log(error)
-			})
-	}
-
-
-	const Api_UpdateAddress = (isLoad, location) => {
-
-		setIsLoading(isLoad)
-
-		Webservice.post(APIURL.updateaddress, {
-
-			id: SelectedMember.id,
-			profile_address: txtAddress,
-			latitude: location.lat,
-			longitude: location.lng
-
-		})
-			.then(response => {
-
-				if (response == null) {
-					setIsLoading(false)
-				}
-				console.log(JSON.stringify(response));
-				setIsLoading(false)
-
-				if (response.data.Status == '1') {
-
-					setTxtAddress('')
-					setModalVisible(false)
-
-					setIsOTPView(0)
-					setSelectedMember(null)
-					setTxtAddress('')
-					setTxtOtp('')
-
-					Toast.showWithGravity("Address Updated Sucessfully", Toast.LONG, Toast.BOTTOM);
-
-					Api_GetContacts(true, UserData)
-
-				} else {
-					Toast.showWithGravity(response.data.Msg, Toast.LONG, Toast.BOTTOM);
-				}
-
-			})
-			.catch((error) => {
-
-				setIsLoading(false)
-				console.log(error)
-			})
-	}
-
-
-	const Api_ToggleLocation = (isLoad, status) => {
-
-		setIsLoading(isLoad)
-
-		Webservice.post(APIURL.updateVisiblity, {
-
-			id: UserData.id,
-			status: status
-
-		})
-			.then(response => {
-
-				if (response == null) {
-					setIsLoading(false)
-				}
-				console.log(JSON.stringify(response));
-				setIsLoading(false)
-
-				if (response.data.Status == '1') {
-
-					setLocationSwitch(status == 1 ? true : false)
-
-
-					Toast.showWithGravity(status == 1 ? "Location Enable Sucessfully" : "Location Disable Sucessfully", Toast.LONG, Toast.BOTTOM);
-
-					Api_GetContacts(true, UserData)
-					
-				} else {
-					Toast.showWithGravity(response.data.Msg, Toast.LONG, Toast.BOTTOM);
-				}
-
-			})
-			.catch((error) => {
-
-				setIsLoading(false)
-				console.log(error)
-			})
-	}
-
-
-	// Action Methods
-	const SelectUserTap = (item) => {
-		requestAnimationFrame(() => {
-
-			const index2 = ContactList.map(item => item.id).indexOf(item.id);
-			console.log('Index: ', index2); // Found the object index
-
-			setSelectedUser(item)
-
-			if (refMarker) {
-
-				refMarker.current.animateToRegion(
-					{
-						latitude: Number(item.latitude),
-						longitude: Number(item.longitude),
-						latitudeDelta: 0.0922,
-						longitudeDelta: 0.0421,
-					},
-					500
-				);
-
-				refMarkerPin.current[index2].showCallout()
-
-				refRBUsers.current.close()
-
-			}
-
-		})
-	}
 
 
 	const btnSubmitTap = (type) => {
-		requestAnimationFrame(() => {
 
 			if (type == 1) {
 				if (SelectedMember == null) {
@@ -743,7 +503,6 @@ const Home = (props) => {
 				}
 			}
 
-		})
 	}
 
 	const clearAll = async (props) => {
@@ -761,30 +520,23 @@ const Home = (props) => {
 	}
 
 	const btnProfileTap = () => {
-		requestAnimationFrame(() => {
-
-			props.navigation.navigate('Profile', { userData : JSON.stringify(UserData)})
-		})
+			props.navigation.navigate('Profile', { userData: JSON.stringify(UserData) })
 	}
 
 	const btnShareTap = () => {
-		requestAnimationFrame(() => {
 			Share.share(
 				{
-					message: 'Hello, Check this out\n\nHere im sharing an application link for Magnus Network, Please install it & find any magnus members just on single click.\n\nFor Android users : '+ConstantKey.PLAY_STORE+"\n\nFor iPhone users : "+ConstantKey.APP_STORE,
+					message: 'Hello, Check this out\n\nHere im sharing an application link for Magnus Network, Please install it & find any magnus members just on single click.\n\nFor Android users : ' + ConstantKey.PLAY_STORE + "\n\nFor iPhone users : " + ConstantKey.APP_STORE,
 				}
-				).then(({action, activityType}) => {
-				if(action === Share.sharedAction)
-				  	console.log('Share was successful');
+			).then(({ action, activityType }) => {
+				if (action === Share.sharedAction)
+					console.log('Share was successful');
 				else
-				  	console.log('Share was dismissed');
-				});
-		})
+					console.log('Share was dismissed');
+			});
 	}
-	
-	const btnLogoutTap = () => {
-		requestAnimationFrame(() => {
 
+	const btnLogoutTap = () => {
 			Alert.alert(
 				i18n.t('appName'),
 				i18n.t('logoutDesc'),
@@ -803,13 +555,12 @@ const Home = (props) => {
 				],
 				{ cancelable: true }
 			);
-		})
 	}
 
 	const SwtichChange = (value) => {
 
 
-		if(UserData == null){
+		if (UserData == null) {
 
 			Toast.showWithGravity(i18n.t("pleaseLogin"), Toast.LONG, Toast.BOTTOM)
 		} else {
@@ -837,126 +588,138 @@ const Home = (props) => {
 
 	}
 
-	const openGps = (item) => {
-
-		setSelectedProfile(item)
-		refRBProfile.current.OpenPopUp()
-		return
-
-		var scheme = Platform.OS === 'ios' ? 'http://maps.apple.com/?daddr=' : 'http://maps.google.com/maps?daddr='
-		var url = scheme + Number(item.latitude) + ',' + Number(item.longitude) +
-			console.log("URl : " + url)
-		openExternalApp(url)
-	}
-
-
-	const openExternalApp = (url) => {
-		Linking.canOpenURL(url).then(supported => {
-			if (supported) {
-				Linking.openURL(url);
-			} else {
-				Alert.alert(
-					'ERROR',
-					'Unable to open: ' + url,
-					[
-						{ text: 'OK' },
-					]
-				);
-			}
-		});
-	}
-
-
-	const GoToCurrentLocation = () => {
-
-		if (refMarker) {
-			refMarker.current.animateToRegion(
-				{
-					latitude: Number(CurrentLatitude),
-					longitude: Number(CurrentLongitude),
-					latitudeDelta: 0.0922,
-					longitudeDelta: 0.0421,
-				},
-				500
-			);
-		}
-
-	}
-
 	const btnHelpTap = () => {
-		requestAnimationFrame(() => {
 			props.navigation.navigate('Help')
-		})
-	}
-
-
-	// Search City Name
-	const updateSearch = (search) => {
-		let text = search.toLowerCase()
-		let Contacts = ContactList
-
-
-		let filteredName = Contacts.filter((item) => {
-
-			let name = item.name != null ? item.name.toLowerCase().match(text) : ''
-			let business_profile = item.business_profile != null ? item.business_profile.toLowerCase().match(text) : ''
-			let business_tag = item.business_tag != null ? item.business_tag.toLowerCase().match(text) : ''
-
-			return name || business_profile || business_tag
-		})
-		if (!text || text === '') {
-
-			setFilterContactList(ContactList)
-
-		} else if (!Array.isArray(filteredName) && !filteredName.length) {
-			// set no data flag to true so as to render flatlist conditionally
-
-			setFilterContactList([])
-
-		} else if (Array.isArray(filteredName)) {
-
-			setFilterContactList(filteredName)
-		}
-
-		setFilteredName(search)
-
-	};
-
-
-	const btnEventsTap = () => {
-		requestAnimationFrame(() => {
-
-			props.navigation.navigate('EventsList', { userData : JSON.stringify(UserData)})
-		})
-	}
-
-
-	const btnViewGainSheet = (URL) => {
-		requestAnimationFrame(() => {
-
-			Linking.openURL(URL)
-			// props.navigation.navigate('ViewGainSheet',{url : URL})
-		})
-	}
-
-
-	// Render Sprator
-	const Saprator = () => {
-		return (
-			<View style={{ height: 10, }}></View>
-		)
 	}
 
 	return (
-		<SafeAreaView style={{ flex: 1 }}>
-			<View style={styles.container}>
+		<SafeAreaView style={styles.container}>
+			<ScrollView style={{}}>
+				<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginHorizontal: 20, marginVertical: 12 }}>
+					<View>
+						<Text style={{
+							fontSize: FontSize.FS_18,
+							color: Colors.black,
+							fontFamily: ConstantKey.MONTS_SEMIBOLD,
+						}}>
+							{"Webtual School"}
+						</Text>
+						<Text style={{
+							fontSize: FontSize.FS_18,
+							color: Colors.grey01,
+							fontFamily: ConstantKey.MONTS_SEMIBOLD,
+							lineHeight: 20
+						}}>
+							{"Hii, " +UserData?.user?.first_name+ "!" }
+						</Text>
+					</View>
+					<TouchableOpacity onPress={() => { navigate("Profile") }}>
+						<FastImage style={{ resizeMode: 'contain', width: 50, height: 50,borderRadius:50 }}
+							source={{uri:UserData?.user?.avatar_url}}
+						/>
+					</TouchableOpacity>
 
+				</View>
+				<View style={{ flexDirection: "row", flex: 1, marginHorizontal: 20, alignItems: "center" }}>
+					<TouchableOpacity onPress={() => {
+						navigate("SearchScreen")
+					}}
+						style={[styles.mobileView, { flex: 0.75 }]}>
+						<Icon name={"magnify"} size={20} color={Colors.primary} style={{ marginLeft: 10 }} />
 
-			</View>
+						<View>
+							<Text style={{
+								fontSize: FontSize.FS_14,
+								color: Colors.grey,
+								fontFamily: ConstantKey.MONTS_REGULAR,
+								marginLeft: 5
+							}}>{i18n.t('searchHere')}</Text>
+						</View>
+					</TouchableOpacity>
+					<View style={{ flexDirection: "row", alignItems: "center", flex: 0.25, justifyContent: "space-evenly", marginTop: 4 }}>
+						<FastImage style={{ width: 24, height: 24, }}
+							source={Images.Share}
+							resizeMode='contain'
+						/>
+						<FastImage style={{ resizeMode: 'contain', width: 24, height: 24 }}
+							source={Images.Suggestion}
+						/>
+					</View>
 
+				</View>
+				<View style={{ marginTop: 20, }}>
+					<Banner data={AdsData} />
+				</View>
+				<View style={{ marginHorizontal: 20, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+					<Text style={{
+						fontSize: FontSize.FS_18,
+						color: Colors.black,
+						fontFamily: ConstantKey.MONTS_SEMIBOLD,
+					}}>
+						{"Categories"}
+					</Text>
+					<TouchableOpacity onPress={() => { 
+						navigate("ViewAllCategories")
+					 }}
+						style={{ borderWidth: 0.5, paddingHorizontal: 10, paddingVertical: 3, borderRadius: 50 }}>
+						<Text style={{
+							fontSize: FontSize.FS_10,
+							color: Colors.black,
+							fontFamily: ConstantKey.MONTS_SEMIBOLD,
+						}}>
+							{"View All"}
+						</Text>
+					</TouchableOpacity>
+				</View>
+				<View style={{ marginHorizontal: 20, }}>
+					<FlatList
+						horizontal
+						showsHorizontalScrollIndicator={false}
+						style={{ marginTop: 10 }}
+						data={CategoryData}
+						ItemSeparatorComponent={<View style={{ width: 20, }}></View>}
+						renderItem={({ item, index }) => (
+							<View style={{ alignItems: "center" }}>
+								<TouchableOpacity style={{
+									backgroundColor: Colors.lightGrey01,
+									width: 62,
+									height: 62,
+									borderRadius: 50,
+									padding: 15,
+									alignItems: "center",
+									justifyContent: "center"
+								}}>
 
+									<FastImage style={{ resizeMode: 'contain', width: 32, height: 32 }}
+										source={{uri :item.image_url}}
+									/>
+
+								</TouchableOpacity>
+								<Text style={{
+									fontSize: FontSize.FS_14,
+									color: Colors.black,
+									fontFamily: ConstantKey.MONTS_MEDIUM,
+								}}>
+									{item?.name}
+								</Text>
+							</View>
+
+						)}
+					/>
+				</View>
+				<View style={{ paddingHorizontal: 20, marginVertical: 16 }}>
+					<Text style={{
+						fontSize: FontSize.FS_18,
+						color: Colors.black,
+						fontFamily: ConstantKey.MONTS_SEMIBOLD,
+					}}>
+						{"School Board"}
+					</Text>
+					<TextSlider data={NoticeData} />
+				</View>
+			</ScrollView>
 			{isLoading ? <LoadingView /> : null}
-		</SafeAreaView>
+		</SafeAreaView >
 	);
 };
 
@@ -989,6 +752,39 @@ const styles = StyleSheet.create({
 		fontFamily: ConstantKey.MONTS_REGULAR,
 		color: Colors.darkGrey,
 		flex: 1
-	}
+	},
+
+	grediant: {
+		margin: 20,
+		// padding: 5,
+		height: 44,
+		// // flex:1,
+		// width: 300,
+		// justifyContent: 'center',
+		alignSelf: 'center'
+	},
+	buttonContainer: {
+		flex: 1.0,
+		alignSelf: 'center',
+		justifyContent: 'center',
+		backgroundColor: '#ffffff',
+		width: '99%',
+		margin: 1,
+		paddingHorizontal: 50
+	},
+	buttonText: {
+		textAlign: 'center',
+		color: '#4C64FF',
+		alignSelf: 'center',
+	},
+	mobileView: {
+		marginTop: 10, flexDirection: 'row', borderRadius: 10, backgroundColor: Colors.lightGrey01, borderWidth: 1, borderColor: Colors.primary,
+		height: 44, alignItems: 'center', backgroundColor: Colors.lightGrey01,
+	},
+
+	textInputMobile: {
+		marginLeft: 10, marginRight: 10, height: 50, flex: 1, fontSize: FontSize.FS_16, fontFamily: ConstantKey.MONTS_REGULAR,
+		color: Colors.black,
+	},
 });
 export default Home;

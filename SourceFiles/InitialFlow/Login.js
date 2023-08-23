@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, Alert } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, Alert, Platform } from 'react-native';
 
 
 // Constants
@@ -19,7 +19,7 @@ import { version as versionNo } from '../../package.json'
 import Toast from 'react-native-simple-toast';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// import messaging from '@react-native-firebase/messaging';
+import messaging from '@react-native-firebase/messaging';
 import ForgotPasswordModal from '../DashboardFlow/ForgotPasswordModal';
 
 
@@ -28,7 +28,7 @@ const Login = (props) => {
 
 	const [isLoading, setIsLoading] = useState(false)
 	const [fcmToken, setFcmToken] = useState('')
-	const [txtMobile, setTxtMobile] = useState('')
+	const [txtMobile, setTxtMobile] = useState(props?.route?.params?.data?.mobile_number ||'')
 	const [txtPassword, setTxtPassword] = useState('')
 
 	const [txtForgotMobile, setTxtForgotMobile] = useState('')
@@ -36,40 +36,40 @@ const Login = (props) => {
 
 	useEffect(() => {
 
-		// getFCMToken()
-	},[])
+		getFCMToken()
+	}, [])
 
 
-	// const getFCMToken = async () => {
-	// 	try {
-	// 		const value = await AsyncStorage.getItem(ConstantKey.FCM_TOKEN)
-	// 		if (value !== null) {
-	// 			// value previously stored
+	const getFCMToken = async () => {
+		try {
+			const value = await AsyncStorage.getItem(ConstantKey.FCM_TOKEN)
+			if (value !== null) {
+				// value previously stored
 
-	// 			setFcmToken(JSON.parse(value))
-	// 		}
-	// 		else {
-	// 			generateFCMToken()
-	// 		}
-	// 	} catch (e) {
-	// 		console.log("Error for FCM: " + e)
-	// 	}
-	// }
+				setFcmToken(JSON.parse(value))
+			}
+			else {
+				generateFCMToken()
+			}
+		} catch (e) {
+			console.log("Error for FCM: " + e)
+		}
+	}
 
 
-	// const generateFCMToken = async () => {
-	// 	const fcmToken = await messaging().getToken();
-	// 	if (fcmToken) {
+	const generateFCMToken = async () => {
+		const fcmToken = await messaging().getToken();
+		if (fcmToken) {
 
-	// 		storeToken(JSON.stringify(fcmToken))
-	// 		console.log("Your Firebase Token is:", fcmToken);
+			storeToken(JSON.stringify(fcmToken))
+			console.log("Your Firebase Token is:", fcmToken);
 
-	// 		//   Api_Send_Device_Token(fcmToken)
+			//   Api_Send_Device_Token(fcmToken)
 
-	// 	} else {
-	// 		console.log("Failed", "No token received");
-	// 	}
-	// }
+		} else {
+			console.log("Failed", "No token received");
+		}
+	}
 
 	//Helper Methods
 	const storeToken = async (value) => {
@@ -82,64 +82,36 @@ const Login = (props) => {
 	}
 
 
-	const Api_Login = (isLoad, data) => {
+	const Api_Login = (isLoad) => {
 
 		setIsLoading(isLoad)
 
 		Webservice.post(APIURL.login, {
 
-			username: data.mobile,
-			password: data.password
+			mobile_number: txtMobile,
+			device_type:Platform.OS == "android" ?1 :2,
+			device_token: fcmToken
 
 		})
 			.then(response => {
-
-				if (response == null) {
-					setIsLoading(false)
-				}
-				console.log(JSON.stringify(response));
+				console.log("Login response : ",JSON.stringify(response));
 				setIsLoading(false)
 
-				if (response.data.Status == '1') {
+				if (response.data.status == true) {
 
-					storeUserData(JSON.stringify(response.data.Data[0]))
+					if(response.data.data.is_register == true && response.data.data.is_active == 1 ) {
+						var dict = {};
+						dict.mobile_number = txtMobile
+						dict.isFrom = "LOGIN"
+						props.navigation.navigate("Otp",{data : dict})
+					}
+					// storeUserData(JSON.stringify(response.data.Data[0]))
 
 				} else {
-					Toast.showWithGravity(response.data.Msg, Toast.LONG, Toast.BOTTOM);
-				}
-
-			})
-			.catch((error) => {
-
-				setIsLoading(false)
-				console.log(error)
-			})
-	}
-
-
-	const Api_Reset_Password = (isLoad, data) => {
-
-		setIsLoading(isLoad)
-
-		Webservice.post(APIURL.resetPassword, {
-
-			username: data.mobile,
-
-		})
-			.then(response => {
-
-				if (response == null) {
-					setIsLoading(false)
-				}
-				console.log("Api_Reset_Password response : "+JSON.stringify(response));
-				setIsLoading(false)
-
-				if (response.data.Status == '1') {
-
-					Alert.alert("","Your temporary password is magnus, please try to login with this password. for better security please change your password from app.")
-
-				} else {
-					Toast.showWithGravity(response.data.Msg, Toast.LONG, Toast.BOTTOM);
+					Toast.showWithGravity(response.data.message, Toast.LONG, Toast.BOTTOM);
+					var dict = {};
+					dict.mobile_number = txtMobile
+					props.navigation.navigate("Register",{data : dict})
 				}
 
 			})
@@ -154,7 +126,8 @@ const Login = (props) => {
 	const storeUserData = async (value) => {
 		try {
 			await AsyncStorage.setItem(ConstantKey.USER_DATA, value)
-			props.navigation.replace('Home')
+			// props.navigation.replace('Home')
+			props.navigation.replace('Otp')
 		} catch (e) {
 			// saving error
 		}
@@ -164,143 +137,99 @@ const Login = (props) => {
 	// Action Methods
 	const btnLoginTap = () => {
 		requestAnimationFrame(() => {
-
 			Keyboard.dismiss()
-
-			if(txtMobile == ''){
+			if (txtMobile == '') {
 				Toast.showWithGravity(i18n.t('enterMobileNumber'), Toast.LONG, Toast.BOTTOM);
 			}
-			else if(txtMobile.length < 10){
+			else if (txtMobile.length < 10) {
 				Toast.showWithGravity(i18n.t('validMobile'), Toast.LONG, Toast.BOTTOM);
 			}
-			else if(txtPassword == ''){
-				Toast.showWithGravity(i18n.t('enterPassword'), Toast.LONG, Toast.BOTTOM);
-			}else{
-
-				var dict = {}
-				dict['mobile'] = txtMobile
-				dict['password'] = txtPassword
-
-				Api_Login(true, dict)
-				// 
+			 else {
+				Api_Login(true)
 			}
-			
 		})
 	}
-
 
 	const btnCreateNewTap = () => {
 		requestAnimationFrame(() => {
-
-			props.navigation.replace('Register')
-
-		})
-	}
-
-
-	const btnForgotPasswordTap = () => {
-		requestAnimationFrame(() => {
-			setIsForgotOpen(true)
+			props.navigation.navigate('Register')
 
 		})
 	}
 
 	return (
-			<View style={styles.container}>
-				<View style={{ flex: 1, backgroundColor: Colors.white }}>
+		<View style={styles.container}>
+			<View style={{ flex: 1, backgroundColor: Colors.white }}>
+				<View style={{ justifyContent: 'center',marginHorizontal:20,marginVertical:40 }}>
+					<Text style={{
+						fontSize: FontSize.FS_26,
+						color: Colors.black,
+						fontFamily: ConstantKey.MONTS_SEMIBOLD
+					}}>
+						{i18n.t('login')}
+					</Text>
 
-					<ImageBackground 
-						style={{flex : 1, opacity : 0.4}} 
-						source={Images.Background}/>
+					<Text style={{
+						fontSize: FontSize.FS_18,
+						color: Colors.black,
+						fontFamily: ConstantKey.MONTS_MEDIUM,
+						marginTop:40,
+						lineHeight:20
+					}}>
+						{i18n.t('phoneNumber')}
+					</Text>
 
-					<View style={{ width: '100%', height: '100%', justifyContent: 'center',position : 'absolute' }}>
-						
+					<View style={styles.mobileView}>
+						<Icon name={"mobile-alt"} size={20} color={Colors.primary} style={{ marginLeft: 10 }} />
+						<TextInput style={styles.textInputMobile}
+							maxLength={10}
+							value={txtMobile}
+							placeholder={i18n.t('enterPhoneNumber')}
+							keyboardType={'number-pad'}
+							returnKeyType={'next'}
+							onChangeText={(txtMobile) => setTxtMobile(txtMobile.replace(/[^0-9]/g, ''))}
+						/>
 
-						<Image style={{ width: '60%', height: 150, alignSelf: 'center', resizeMode : 'contain'}}
-							source={Images.MagnusLogo} />
+					</View>
+					<TouchableOpacity style={styles.btnLogin}
+						onPress={() => btnLoginTap()}>
+						<Text style={styles.loginText}>
+						{i18n.t('login')}
+						</Text>
+					</TouchableOpacity>
 
+					<View style={{ marginTop: 20, marginLeft: 20, marginRight: 20, }}>
 
-						<View style={styles.mobileView}>
-
-							<Icon name={"mobile-alt"} size={20} color={Colors.darkGrey} style={{ marginLeft: 10 }}/>
-
-							<TextInput style={styles.textInputMobile}
-								maxLength={10}
-								value={txtMobile}
-								placeholder={'Mobile number'}
-								keyboardType={'number-pad'}
-								returnKeyType={'next'}
-								onChangeText={(txtMobile) => setTxtMobile(txtMobile.replace(/[^0-9]/g, ''))}
-							/>
-
-						</View>
-
-						<View style={styles.mobileView}>
-
-							<Icon name={"key"} size={20} color={Colors.darkGrey} style={{ marginLeft: 10 }} />
-
-							<TextInput style={styles.textInputMobile}
-								value={txtPassword}
-								placeholder={'Password'}
-								secureTextEntry={true}
-								returnKeyType={'done'}
-								onChangeText={(txtPassword) => setTxtPassword(txtPassword)}
-							/>
-
-
-						</View>
-
-						<TouchableOpacity style={{alignSelf : 'flex-end', paddingVertical : 5, marginHorizontal : 20}}
-							onPress={() => btnForgotPasswordTap()}>
-							<Text style={{fontFamily : ConstantKey.MONTS_SEMIBOLD, fontSize : FontSize.FS_16, color : Colors.black}}>
-								Forgot Password?
-							</Text>
-						</TouchableOpacity>
-
-
-						<TouchableOpacity style={styles.btnLogin}
-							onPress={() => btnLoginTap()}>
-							<Text style={styles.loginText}>
-								Login
-							</Text>
-						</TouchableOpacity>
-
-						<View style={{ marginTop: 20, marginLeft: 20, marginRight: 20,  }}>
-
-							{isLoading == false ?
-								<TouchableOpacity style={{alignSelf : 'center' }}>
-									<Text style={{
-										textAlign: 'center', fontSize: FontSize.FS_14, color: Colors.black,
-										fontFamily: ConstantKey.MONTS_SEMIBOLD
-									}}
-										onPress={() => btnCreateNewTap()}>
-										Don't Have an account? Create Account
-									</Text>
-								</TouchableOpacity>
+						{isLoading == false ?
+							<TouchableOpacity style={{ alignSelf: 'center' }}>
+								<Text style={{
+									textAlign: 'center', fontSize: FontSize.FS_14, color: Colors.grey,
+									fontFamily: ConstantKey.MONTS_REGULAR
+								}}
+									onPress={() => btnCreateNewTap()}>
+									{i18n.t('dontHaveAccount')}<Text style={{ color: Colors.purple,fontFamily: ConstantKey.MONTS_SEMIBOLD }}>{i18n.t('register')}</Text>
+								</Text>
+							</TouchableOpacity>
 							: null}
 
-						</View>
-
-
-						{/* </ScrollView> */}
 					</View>
-
 				</View>
-
-				<ForgotPasswordModal 
-					isOpen={isForgotOpen}
-					onClose={() => setIsForgotOpen(false)}
-					onSubmit={(data) => {
-						console.log("submit daat : "+data)
-						setIsForgotOpen(false)
-						Api_Reset_Password(true, data)
-					}}
-				/>
-
-				{isLoading ?
-					<LoadingView />
-				: null}
 			</View>
+
+			<ForgotPasswordModal
+				isOpen={isForgotOpen}
+				onClose={() => setIsForgotOpen(false)}
+				onSubmit={(data) => {
+					console.log("submit daat : " + data)
+					setIsForgotOpen(false)
+					Api_Reset_Password(true, data)
+				}}
+			/>
+
+			{isLoading ?
+				<LoadingView />
+				: null}
+		</View>
 	);
 };
 
@@ -311,8 +240,8 @@ const styles = StyleSheet.create({
 		backgroundColor: Colors.white,
 	},
 	mobileView: {
-		marginTop: 20, flexDirection: 'row', borderWidth: 1, borderColor: Colors.darkGrey, borderRadius: 10, backgroundColor: Colors.white,
-		height: 50, marginLeft: 20, marginRight: 20, alignItems: 'center'
+		marginTop: 10, flexDirection: 'row', borderRadius: 10, backgroundColor: Colors.white,
+		height: 50,  alignItems: 'center',backgroundColor:Colors.lightGrey01
 	},
 	countryCodeText: {
 		marginLeft: 10, fontSize: FontSize.FS_16, fontFamily: ConstantKey.MONTS_REGULAR,
@@ -323,11 +252,11 @@ const styles = StyleSheet.create({
 		color: Colors.black,
 	},
 	btnLogin: {
-		marginLeft: 20, marginRight: 20, backgroundColor: Colors.primaryRed,
-		marginTop: 20, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
-		shadowColor: Colors.primaryRed,
-		shadowOffset: { width: 0, height: 2 },
-		shadowOpacity: 0.4, shadowRadius: 2, elevation: 2
+		 backgroundColor: Colors.primary,
+		marginTop: 48, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
+		// shadowColor: Colors.primaryRed,
+		// shadowOffset: { width: 0, height: 2 },
+		// shadowOpacity: 0.4, shadowRadius: 2, elevation: 2
 	},
 	loginText: {
 		fontSize: FontSize.FS_18, color: Colors.white,

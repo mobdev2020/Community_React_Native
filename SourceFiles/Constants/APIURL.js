@@ -3,14 +3,25 @@ export const APIURL = {
     // BASE_URL: "https://ppe.thewebtual.com/magnus/api/",
     // IMAGE_URL: 'https://ppe.thewebtual.com/magnus/public/storage/logos/',
 
-	BASE_URL : "https://magnus.thewebtual.com/adminpanel/api/",
+	// BASE_URL : "https://magnus.thewebtual.com/adminpanel/api/",
+	BASE_URL : "https://dev.thewebtual.com/school-community/api/v1",
 	IMAGE_URL : 'https://magnus.thewebtual.com/adminpanel/public/storage/logos/',
 
-	login : 'login',
-	registerUser : 'registerUser',
+
+
+	register : 'auth/register',
+	login : 'auth/login',
+	GetCategory:"get-categories",
+	GetAds:"get-advertises",
+	GetNotice:"get-notices",
+	otpSend : "auth/send-otp",
+
+
+	
 	logout : "logout",
 	deactivate : "deactivate",
-	resetPassword : "reset-password",
+	
+	GetProfile : "get-profile",
 	
 	deviceIdUpdate : 'deviceIdUpdate',
 	getContacts : 'getContactsV1', //'getContacts',

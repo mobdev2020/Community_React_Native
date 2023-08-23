@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "community.app"
-               BlueprintName = "community"
-               ReferencedContainer = "container:community.xcodeproj">
+               BuildableName = "Community.app"
+               BlueprintName = "Community"
+               ReferencedContainer = "container:Community.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "communityTests.xctest"
-               BlueprintName = "communityTests"
-               ReferencedContainer = "container:community.xcodeproj">
+               BuildableName = "CommunityTests.xctest"
+               BlueprintName = "CommunityTests"
+               ReferencedContainer = "container:Community.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "community.app"
-            BlueprintName = "community"
-            ReferencedContainer = "container:community.xcodeproj">
+            BuildableName = "Community.app"
+            BlueprintName = "Community"
+            ReferencedContainer = "container:Community.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "community.app"
-            BlueprintName = "community"
-            ReferencedContainer = "container:community.xcodeproj">
+            BuildableName = "Community.app"
+            BlueprintName = "Community"
+            ReferencedContainer = "container:Community.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

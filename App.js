@@ -133,14 +133,14 @@ import {
 	StyleSheet,
 	Text,
 	useColorScheme,
-	View, Platform, Alert, Linking, TouchableOpacity
+	View, Platform, Alert, Linking, TouchableOpacity, LogBox
 } from 'react-native';
 
 import {ConstantKey} from './SourceFiles/Constants/ConstantKey'
 import Navigation from './SourceFiles/Constants/Navigation';
 import * as  NavigationService from './SourceFiles/Constants/NavigationService';
 
-// import messaging from '@react-native-firebase/messaging';
+import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImageView from "react-native-image-viewing";
 import i18n from './SourceFiles/Localize/i18n';
@@ -156,170 +156,170 @@ const App = () => {
 	const [SelectedImg, setSelectedImg] = useState(null)
 
 
-	// useEffect(() => {
+	useEffect(() => {
+		LogBox.ignoreAllLogs(); 
+		if (Platform.OS == 'ios') {
+			requestUserPermission();
+		} else {
+			getFcmToken()
+		}
 
-	// 	if (Platform.OS == 'ios') {
-	// 		requestUserPermission();
-	// 	} else {
-	// 		getFcmToken()
-	// 	}
 
+		messaging().getInitialNotification().then(async (remoteMessage) => {
+			if (remoteMessage) {
+				console.log(
+					'getInitialNotification:' +
+					'Notification caused app to open from quit state',
+				);
+				console.log(remoteMessage);
 
-	// 	messaging().getInitialNotification().then(async (remoteMessage) => {
-	// 		if (remoteMessage) {
-	// 			console.log(
-	// 				'getInitialNotification:' +
-	// 				'Notification caused app to open from quit state',
-	// 			);
-	// 			console.log(remoteMessage);
+				var notification = remoteMessage.data
 
-	// 			var notification = remoteMessage.data
+				console.log("Noti : " + JSON.stringify(notification));
 
-	// 			console.log("Noti : " + JSON.stringify(notification));
-
-	// 			setTimeout(() => {
+				setTimeout(() => {
 					
-	// 				if(notification.click_action == 'member' || notification.click_action == 'birthday'){
+					if(notification.click_action == 'member' || notification.click_action == 'birthday'){
 
-	// 					NavigationService.navigate('MembersProfile',{ member_data :  String(notification.member_id)})
-	// 				}
-	// 				else if (notification.click_action == 'meeting') {
-	// 					setSelectedImg(notification)
-	// 					setIsVisibleImg(true)					
+						NavigationService.navigate('MembersProfile',{ member_data :  String(notification.member_id)})
+					}
+					else if (notification.click_action == 'meeting') {
+						setSelectedImg(notification)
+						setIsVisibleImg(true)					
 
-	// 					NavigationService.navigate('Meetings')
-	// 				}
-	// 				else{
-	// 					// NavigationService.navigate('MembersProfile',{ member_data :  String(69)})
-	// 				}
-	// 			}, 1000);
+						NavigationService.navigate('Meetings')
+					}
+					else{
+						// NavigationService.navigate('MembersProfile',{ member_data :  String(69)})
+					}
+				}, 1000);
 				
 	
-	// 		}
-	// 	})
+			}
+		})
 
 
-	// 	messaging().onNotificationOpenedApp(async (remoteMessage) => {
-	// 		if (remoteMessage) {
-	// 			console.log(
-	// 				'onNotification Opened App: ' +
-	// 				remoteMessage,
-	// 			);
+		messaging().onNotificationOpenedApp(async (remoteMessage) => {
+			if (remoteMessage) {
+				console.log(
+					'onNotification Opened App: ' +
+					remoteMessage,
+				);
 
-	// 			// console.log(remoteMessage);
+				// console.log(remoteMessage);
 
-	// 			var notification = remoteMessage.data
+				var notification = remoteMessage.data
 
-	// 			console.log("Noti : " + JSON.stringify(notification));
+				console.log("Noti : " + JSON.stringify(notification));
 
-	// 			if(notification.click_action == 'member' || notification.click_action == 'birthday'){
+				if(notification.click_action == 'member' || notification.click_action == 'birthday'){
 
-	// 				NavigationService.navigate('MembersProfile',{ member_data :  String(notification.member_id)})
-	// 			}
-	// 			else if(notification.click_action == 'meeting'){
+					NavigationService.navigate('MembersProfile',{ member_data :  String(notification.member_id)})
+				}
+				else if(notification.click_action == 'meeting'){
 
-	// 				setSelectedImg(notification)
-	// 				setIsVisibleImg(true)					
+					setSelectedImg(notification)
+					setIsVisibleImg(true)					
 
-	// 				NavigationService.navigate('Meetings')
-	// 			}
-	// 			else{
-	// 				// NavigationService.navigate('MembersProfile',{ member_data :  String(69)})
-	// 			}
+					NavigationService.navigate('Meetings')
+				}
+				else{
+					// NavigationService.navigate('MembersProfile',{ member_data :  String(69)})
+				}
 	
-	// 		}
-	// 	})
+			}
+		})
 
 
-	// 	const unsubscribe = messaging().onMessage(async remoteMessage => {
-	// 		console.log("A new FCM message arrived!" + JSON.stringify(remoteMessage));
+		const unsubscribe = messaging().onMessage(async remoteMessage => {
+			console.log("A new FCM message arrived!" + JSON.stringify(remoteMessage));
 
-	// 		let notification = remoteMessage.data
+			let notification = remoteMessage.data
 
-	// 		console.log("NotiF Data" + JSON.stringify(notification));
+			console.log("NotiF Data" + JSON.stringify(notification));
 
-	// 		// For Display Notification Banner when app is in Forground State
-
-
-	// 		if (notification.click_action == 'member' || notification.click_action == 'birthday') {
-
-	// 			Alert.alert(remoteMessage.notification.title, remoteMessage.notification.body, [
-	// 				{
-	// 					text: "View profile",
-	// 					onPress: () => NavigationService.navigate('MembersProfile', { member_data: String(notification.member_id) }),
-	// 					style: "cancel"
-	// 				},
-	// 				{ text: "Close", onPress: () => console.log("OK Pressed") }
-	// 			])
+			// For Display Notification Banner when app is in Forground State
 
 
-	// 		}else if(notification.click_action == 'meeting'){
-	// 			Alert.alert(remoteMessage.notification.title, remoteMessage.notification.body, [
-	// 				{
-	// 					text: "View",
-	// 					onPress: () => {
+			if (notification.click_action == 'member' || notification.click_action == 'birthday') {
 
-	// 						setSelectedImg(notification)
-	// 						setIsVisibleImg(true)
-	// 						NavigationService.navigate('Meetings')
-	// 					},
-	// 					style: "cancel"
-	// 				},
-	// 				{ text: "Close", onPress: () => console.log("OK Pressed") }
-	// 			])
-	// 		}
-	// 		 else {
-
-	// 			// NavigationService.navigate('MembersProfile',{ member_data :  String(69)})
-	// 		}
+				Alert.alert(remoteMessage.notification.title, remoteMessage.notification.body, [
+					{
+						text: "View profile",
+						onPress: () => NavigationService.navigate('MembersProfile', { member_data: String(notification.member_id) }),
+						style: "cancel"
+					},
+					{ text: "Close", onPress: () => console.log("OK Pressed") }
+				])
 
 
-	// 	});
-	// 	return () => {
-	// 		unsubscribe;
+			}else if(notification.click_action == 'meeting'){
+				Alert.alert(remoteMessage.notification.title, remoteMessage.notification.body, [
+					{
+						text: "View",
+						onPress: () => {
+
+							setSelectedImg(notification)
+							setIsVisibleImg(true)
+							NavigationService.navigate('Meetings')
+						},
+						style: "cancel"
+					},
+					{ text: "Close", onPress: () => console.log("OK Pressed") }
+				])
+			}
+			 else {
+
+				// NavigationService.navigate('MembersProfile',{ member_data :  String(69)})
+			}
+
+
+		});
+		return () => {
+			unsubscribe;
 		
-	// 	}
+		}
 		
-	// }, []);
+	}, []);
 	
 
-	// const requestUserPermission = async () => {
-	// 	const authStatus = await messaging().requestPermission();
-	// 	const enabled =
-	// 		authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-	// 		authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+	const requestUserPermission = async () => {
+		const authStatus = await messaging().requestPermission();
+		const enabled =
+			authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+			authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-	// 	if (enabled) {
+		if (enabled) {
 
-	// 		console.log('Authorization status:', authStatus);
+			console.log('Authorization status:', authStatus);
 
-	// 		getFcmToken()
+			getFcmToken()
 
-	// 	} else {
-	// 		await messaging().requestPermission({
-	// 			sound: true,
-	// 			alert: true,
-	// 			badge: true,
-	// 			announcement: true,
-	// 			// ... other permission settings
-	// 		});
-	// 	}
-	// }
+		} else {
+			await messaging().requestPermission({
+				sound: true,
+				alert: true,
+				badge: true,
+				announcement: true,
+				// ... other permission settings
+			});
+		}
+	}
 
 
-	// const getFcmToken = async () => {
-	// 	const fcmToken = await messaging().getToken();
-	// 	if (fcmToken) {
+	const getFcmToken = async () => {
+		const fcmToken = await messaging().getToken();
+		if (fcmToken) {
 
-	// 		storeToken(JSON.stringify(fcmToken))
-	// 		console.log("Your Firebase Token is:", fcmToken);
+			storeToken(JSON.stringify(fcmToken))
+			console.log("Your Firebase Token is:", fcmToken);
 
-	// 		//   Api_Send_Device_Token(fcmToken)
+			//   Api_Send_Device_Token(fcmToken)
 
-	// 	} else {
-	// 		console.log("Failed", "No token received");
-	// 	}
-	// }
+		} else {
+			console.log("Failed", "No token received");
+		}
+	}
 
 	//Helper Methods
 	const storeToken = async (value) => {

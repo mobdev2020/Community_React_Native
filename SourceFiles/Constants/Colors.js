@@ -9,10 +9,21 @@ export const Colors = {
 	transparent : 'transparent',
 	mckenzie : '#876636',
 	indianTan : '#42311B',
+	lightGrey:"#B5B5B5",
+	grey:"#9A9A9A",
 	
 	solitude : '#E7E8EC',
 	endeavour : '#214189',
 	chateauGreen : '#45A540',
 	carrotOrange : '#F18716',
 	dodgerBlue : '#4682F9',
+
+
+
+	primary:"#233D62",
+	grey:"#9A9A9A",
+	grey01:"#7B7B7B",
+	purple:"#7B43F1",
+	lightGrey01:"#FAFAFA"
+
 }

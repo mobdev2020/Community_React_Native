@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "645599933113",
+    "project_id": "community-a5ce5",
+    "storage_bucket": "community-a5ce5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:645599933113:android:8c28bcd09eac3342166168",
+        "android_client_info": {
+          "package_name": "com.webtual.community"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "645599933113-ruqefrqdlcicqie695sder9op3ghp58i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKV8HI1MSeMAYQUfY0dDbVWt1vI3w_vRc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "645599933113-ruqefrqdlcicqie695sder9op3ghp58i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

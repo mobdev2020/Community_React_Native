@@ -14,6 +14,7 @@ import LoadingView from '../Constants/LoadingView'
 import { APIURL } from '../Constants/APIURL';
 import { version as versionNo } from '../../package.json'
 import PolicyModal from '../DashboardFlow/PolicyModal';
+import messaging from '@react-native-firebase/messaging';
 
 
 //Third Party
@@ -24,42 +25,79 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // create a component
 const Register = (props) => {
-
 	const [isLoading, setIsLoading] = useState(false)
-	const [txtName, setTxtName] = useState('')
+	const [txtFirstName, setTxtFirstName] = useState('')
+	const [txtLastName, setTxtLastName] = useState('')
 	const [txtEmail, setTxtEmail] = useState('')
-	const [txtMobile, setTxtMobile] = useState('')
+	const [txtMobile, setTxtMobile] = useState(props?.route?.params?.data?.mobile_number ||'')
 	const [txtPassword, setTxtPassword] = useState('')
 	const [acceptTerms, setAcceptTerms] = useState(true)
 	const [openPrivacy, setOpenPrivacy] = useState(false)
+	const [FcmToken, setFcmToken] = useState("")
+	useEffect(() => {
+
+		getFCMToken()
+	}, [])
 
 
+	const getFCMToken = async () => {
+		try {
+			const value = await AsyncStorage.getItem(ConstantKey.FCM_TOKEN)
+			if (value !== null) {
+				setFcmToken(JSON.parse(value))
+			}
+			else {
+				generateFCMToken()
+			}
+		} catch (e) {
+			console.log("Error for FCM: " + e)
+		}
+	}
+
+	const generateFCMToken = async () => {
+		const fcmToken = await messaging().getToken();
+		if (fcmToken) {
+
+			storeToken(JSON.stringify(fcmToken))
+			console.log("Your Firebase Token is:", fcmToken);
+
+			//   Api_Send_Device_Token(fcmToken)
+
+		} else {
+			console.log("Failed", "No token received");
+		}
+
+	}
 	const Api_Register = (isLoad) => {
-
 		setIsLoading(isLoad)
-
-		Webservice.post(APIURL.registerUser, {
-			name : txtName,
-			email : txtEmail,
-			mobile: txtMobile,
-			password: txtPassword
-
+		Webservice.post(APIURL.register, {
+			first_name: txtFirstName,
+			last_name: txtLastName,
+			email_address: txtEmail,
+			mobile_number: txtMobile,
+			is_register_business: 0,
+			device_type: Platform.OS == "android" ? 1 : 2,
+			device_token: FcmToken,
+			parent_id: 5,
 		})
 			.then(response => {
-
+				console.log("Register Response : ", response.data)
 				if (response == null) {
 					setIsLoading(false)
 				}
-				console.log(JSON.stringify(response));
 				setIsLoading(false)
 
-				if (response.data.Status == '1') {
-
-					// storeUserData(JSON.stringify(response.data.Data[0]))
-					Toast.showWithGravity(response.data.Msg, Toast.LONG, Toast.BOTTOM);
-					props.navigation.replace('Login')
+				if (response.data.status == true) {
+					var dict = {};
+					dict.first_name = txtFirstName
+					dict.last_name = txtLastName
+					dict.email_address = txtEmail
+					dict.mobile_number = txtMobile
+					dict.isFrom = "REGISTER"
+					props.navigation.navigate("Otp", { data: dict })
+					// storeUserData(response.data.data)
 				} else {
-					Toast.showWithGravity(response.data.Msg, Toast.LONG, Toast.BOTTOM);
+					Toast.showWithGravity(response.data.message, Toast.LONG, Toast.BOTTOM);
 				}
 
 			})
@@ -69,7 +107,45 @@ const Register = (props) => {
 				console.log(error)
 			})
 	}
+	const Api_Login_check = (isLoad) => {
 
+		setIsLoading(isLoad)
+
+		Webservice.post(APIURL.login, {
+
+			mobile_number: txtMobile,
+			device_type:Platform.OS == "android" ?1 :2,
+			device_token: FcmToken
+
+		})
+			.then(response => {
+				console.log("Login response : ",JSON.stringify(response));
+				setIsLoading(false)
+
+				if (response.data.status == true) {
+
+					Toast.showWithGravity("This mobile number has been registered. Please Login.", Toast.LONG, Toast.BOTTOM);
+					var dict = {};
+					dict.mobile_number = txtMobile
+					props.navigation.navigate("Login", { data: dict })
+
+				} else {
+					var dict = {};
+					dict.first_name = txtFirstName
+					dict.last_name = txtLastName
+					dict.email_address = txtEmail
+					dict.mobile_number = txtMobile
+					dict.isFrom = "REGISTER"
+					props.navigation.navigate("Otp", { data: dict })
+				}
+
+			})
+			.catch((error) => {
+
+				setIsLoading(false)
+				console.log(error)
+			})
+	}
 	const storeUserData = async (value) => {
 		try {
 			await AsyncStorage.setItem(ConstantKey.USER_DATA, value)
@@ -78,15 +154,23 @@ const Register = (props) => {
 			// saving error
 		}
 	}
-
+	const validateEmail = (email) => {
+		const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+		return (regex.test(email))
+	}
 	// Action Methods
 	const btnRegisterTap = () => {
+		// props.navigation.replace('Otp')
+		// return
 		requestAnimationFrame(() => {
 
 			Keyboard.dismiss()
-
-			if(txtName == ''){
-				Toast.showWithGravity(i18n.t('enterName'), Toast.LONG, Toast.BOTTOM);
+			let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+			if (txtFirstName == '') {
+				Toast.showWithGravity(i18n.t('enterFName'), Toast.LONG, Toast.BOTTOM);
+			}
+			else if (txtLastName == '') {
+				Toast.showWithGravity(i18n.t('enterLName'), Toast.LONG, Toast.BOTTOM);
 			}
 			else if (txtMobile == '') {
 				Toast.showWithGravity(i18n.t('enterMobileNumber'), Toast.LONG, Toast.BOTTOM);
@@ -94,10 +178,17 @@ const Register = (props) => {
 			else if (txtMobile.length < 10) {
 				Toast.showWithGravity(i18n.t('validMobile'), Toast.LONG, Toast.BOTTOM);
 			}
-			else if (txtPassword == '') {
-				Toast.showWithGravity(i18n.t('enterPassword'), Toast.LONG, Toast.BOTTOM);
+			else if (!validateEmail(txtEmail)) {
+				Toast.showWithGravity(i18n.t('validEmail'), Toast.LONG, Toast.BOTTOM);
 			} else {
-				Api_Register(true)
+				var dict = {};
+				dict.first_name = txtFirstName
+				dict.last_name = txtLastName
+				dict.email_address = txtEmail
+				dict.mobile_number = txtMobile
+				console.log("Register Dict : ", dict)
+				// props.navigation.navigate("AskBusinessProfile",{body : dict})
+				Api_Login_check(true)
 			}
 
 		})
@@ -122,122 +213,129 @@ const Register = (props) => {
 		<View style={styles.container}>
 			<View style={{ flex: 1, backgroundColor: Colors.white }}>
 
-				<ImageBackground
-					style={{ flex: 1, opacity: 0.4 }}
-					source={Images.Background} />
 
-				<ScrollView style={{ flexGrow: 1, height : '100%', width : '100%', position: 'absolute', }}>
+				<ScrollView style={{}}>
+					<SafeAreaView style={{ flex: 1, marginVertical: 10, marginHorizontal: 10 }}>
+						<View style={{ flexDirection: "row", alignItems: "center", }}>
+							<TouchableOpacity onPress={() => { props.navigation.goBack() }}
+								style={{ marginBottom: 5, padding: 10 }}>
+								<Icon name={"chevron-left"} size={20} color={Colors.black} />
 
+							</TouchableOpacity>
 
-					<SafeAreaView style={{flex : 1, marginTop : 100}}>
+							<Text style={{
+								fontSize: FontSize.FS_26,
+								color: Colors.black,
+								fontFamily: ConstantKey.MONTS_SEMIBOLD,
+							}}>
+								{i18n.t('Register')}
+							</Text>
 
-					
-					<Image style={{ width: '60%', height: 150, alignSelf: 'center', resizeMode: 'contain' }}
-						source={Images.MagnusLogo} />
-
-					<View style={styles.mobileView}>
-
-						<Icon name={"user"} size={20} color={Colors.darkGrey} style={{ marginLeft: 10 }} />
-
-						<TextInput style={styles.textInputMobile}
-							value={txtName}
-							placeholder={'Name'}
-							returnKeyType={'done'}
-							onChangeText={(txtname) => setTxtName(txtname)}
-						/>
-
-					</View>
-
-
-					<View style={styles.mobileView}>
-
-						<Icon name={"envelope"} size={20} color={Colors.darkGrey} style={{ marginLeft: 10 }} />
-
-						<TextInput style={styles.textInputMobile}
-							value={txtEmail}
-							autoCapitalize={'none'}
-							placeholder={'Email ID'}
-							returnKeyType={'done'}
-							onChangeText={(txtEmail) => setTxtEmail(txtEmail)}
-						/>
-
-					</View>
-
-
-					<View style={styles.mobileView}>
-
-						<Icon name={"mobile-alt"} size={20} color={Colors.darkGrey} style={{ marginLeft: 10 }} />
-
-						<TextInput style={styles.textInputMobile}
-							maxLength={10}
-							value={txtMobile}
-							placeholder={'Mobile number'}
-							keyboardType={'number-pad'}
-							returnKeyType={'next'}
-							onChangeText={(txtMobile) => setTxtMobile(txtMobile.replace(/[^0-9]/g, ''))}
-						/>
-
-					</View>
-
-					<View style={styles.mobileView}>
-
-						<Icon name={"key"} size={20} color={Colors.darkGrey} style={{ marginLeft: 10 }} />
-
-						<TextInput style={styles.textInputMobile}
-							value={txtPassword}
-							placeholder={'Password'}
-							secureTextEntry={true}
-							returnKeyType={'done'}
-							onChangeText={(txtPassword) => setTxtPassword(txtPassword)}
-						/>
-
-
-					</View>
-
-					<View style={{flexDirection : 'row',  marginLeft : 20, marginRight : 20, marginTop : 10, alignItems : 'center'}}>
-						<TouchableOpacity style={{padding : 5, justifyContent : 'center', alignItems : 'center'}}
-							onPress={() => toggleTerms()}>
-							<Icon name={acceptTerms ? "check-square" : 'square'} size={20} color={Colors.primaryRed}/>
-						</TouchableOpacity>
-						<TouchableOpacity onPress={() => setOpenPrivacy(true)}>
-					
-						<Text style={{marginLeft : 5, fontSize: FontSize.FS_12, color: Colors.black,
-									fontFamily: ConstantKey.MONTS_SEMIBOLD}}>
-							By Continuing, you accept privacy policy
-						</Text>
-						</TouchableOpacity>
-					</View>
-
-
-					<TouchableOpacity style={styles.btnLogin}
-						onPress={() => btnRegisterTap()}>
-						<Text style={styles.loginText}>
-							Register
-						</Text>
-					</TouchableOpacity>
-
-					<View style={{ margin: 20 }}>
-
-						{isLoading == false ?
-							<TouchableOpacity style={{ alignSelf: 'center' }}>
-								<Text style={{
-									textAlign: 'center', fontSize: FontSize.FS_14, color: Colors.black,
-									fontFamily: ConstantKey.MONTS_SEMIBOLD
-								}}
-									onPress={() => btnLoginTap()}>
-									Already Register? Login
+						</View>
+						<View style={{ marginHorizontal: 10 }}>
+							<Text style={{
+								fontSize: FontSize.FS_18,
+								color: Colors.black,
+								fontFamily: ConstantKey.MONTS_MEDIUM,
+								marginTop: 30,
+								lineHeight: 20
+							}}>
+								{i18n.t('firstName')}
+							</Text>
+							<View style={styles.mobileView}>
+								<Icon name={"user"} size={20} color={Colors.black} style={{ marginLeft: 10 }} />
+								<TextInput style={styles.textInputMobile}
+									value={txtFirstName}
+									placeholder={i18n.t('enterFirstName')}
+									returnKeyType={'done'}
+									onChangeText={(txtname) => setTxtFirstName(txtname)}
+								/>
+							</View>
+							<Text style={{
+								fontSize: FontSize.FS_18,
+								color: Colors.black,
+								fontFamily: ConstantKey.MONTS_MEDIUM,
+								marginTop: 20,
+								lineHeight: 20
+							}}>
+								{i18n.t('lastName')}
+							</Text>
+							<View style={styles.mobileView}>
+								<Icon name={"user"} size={20} color={Colors.black} style={{ marginLeft: 10 }} />
+								<TextInput style={styles.textInputMobile}
+									value={txtLastName}
+									placeholder={i18n.t('enterLastName')}
+									returnKeyType={'done'}
+									onChangeText={(txtname) => setTxtLastName(txtname)}
+								/>
+							</View>
+							<Text style={{
+								fontSize: FontSize.FS_18,
+								color: Colors.black,
+								fontFamily: ConstantKey.MONTS_MEDIUM,
+								marginTop: 20,
+								lineHeight: 20
+							}}>
+								{i18n.t('phoneNumber')}
+							</Text>
+							<View style={styles.mobileView}>
+								<Icon name={"mobile-alt"} size={20} color={Colors.black} style={{ marginLeft: 10 }} />
+								<TextInput style={styles.textInputMobile}
+									maxLength={10}
+									value={txtMobile}
+									placeholder={i18n.t('enterPhoneNumber')}
+									keyboardType={'number-pad'}
+									returnKeyType={'next'}
+									onChangeText={(txtMobile) => setTxtMobile(txtMobile.replace(/[^0-9]/g, ''))}
+								/>
+							</View>
+							<Text style={{
+								fontSize: FontSize.FS_18,
+								color: Colors.black,
+								fontFamily: ConstantKey.MONTS_MEDIUM,
+								marginTop: 20,
+								lineHeight: 20
+							}}>
+								{i18n.t('email')}
+							</Text>
+							<View style={styles.mobileView}>
+								<Icon name={"at"} size={18} color={Colors.black} style={{ marginLeft: 10 }} />
+								<TextInput style={styles.textInputMobile}
+									value={txtEmail}
+									autoCapitalize={'none'}
+									placeholder={i18n.t('enterEmailAddress')}
+									returnKeyType={'done'}
+									onChangeText={(txtEmail) => setTxtEmail(txtEmail)}
+								/>
+							</View>
+							<TouchableOpacity style={styles.btnLogin}
+								onPress={() => btnRegisterTap()}>
+								<Text style={styles.loginText}>
+									{i18n.t('Register')}
 								</Text>
 							</TouchableOpacity>
-							: null}
+						</View>
+						<View style={{ margin: 20 }}>
+							{isLoading == false ?
+								<TouchableOpacity style={{ alignSelf: 'center' }}>
+									<Text style={{
+										textAlign: 'center', fontSize: FontSize.FS_14, color: Colors.grey,
+										fontFamily: ConstantKey.MONTS_REGULAR
+									}}
+										onPress={() => btnLoginTap()}>
+										{i18n.t('alreadyAccount')}<Text style={{ color: Colors.purple, fontFamily: ConstantKey.MONTS_SEMIBOLD }}>{i18n.t('login')}</Text>
+									</Text>
+								</TouchableOpacity>
+								: null}
 
-					</View>
+						</View>
 
-					<PolicyModal
-					isOpen={openPrivacy}
-					onClose={() => {
-						setOpenPrivacy(false)
-					}}
-				/>
+						<PolicyModal
+							isOpen={openPrivacy}
+							onClose={() => {
+								setOpenPrivacy(false)
+							}}
+						/>
 
 					</SafeAreaView>
 					{/* </ScrollView> */}
@@ -259,8 +357,8 @@ const styles = StyleSheet.create({
 		backgroundColor: Colors.white,
 	},
 	mobileView: {
-		marginTop: 20, flexDirection: 'row', borderWidth: 1, borderColor: Colors.darkGrey, borderRadius: 10, backgroundColor: Colors.white,
-		height: 50, marginLeft: 20, marginRight: 20, alignItems: 'center'
+		marginTop: 10, flexDirection: 'row', backgroundColor: Colors.lightGrey01, borderRadius: 10,
+		height: 50, alignItems: 'center'
 	},
 	countryCodeText: {
 		marginLeft: 10, fontSize: FontSize.FS_16, fontFamily: ConstantKey.MONTS_REGULAR,
@@ -271,11 +369,8 @@ const styles = StyleSheet.create({
 		color: Colors.black,
 	},
 	btnLogin: {
-		marginLeft: 20, marginRight: 20, backgroundColor: Colors.primaryRed,
-		marginTop: 30, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
-		shadowColor: Colors.primaryRed,
-		shadowOffset: { width: 0, height: 2 },
-		shadowOpacity: 0.4, shadowRadius: 2, elevation: 2
+		backgroundColor: Colors.primary,
+		marginTop: 48, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
 	},
 	loginText: {
 		fontSize: FontSize.FS_18, color: Colors.white,
