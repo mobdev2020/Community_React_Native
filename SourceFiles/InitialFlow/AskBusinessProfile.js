@@ -108,7 +108,7 @@ const AskBusinessProfile = (props) => {
   
     const btnCreateProfile = () => {
         requestAnimationFrame(() => {
-            props.navigation.navigate('BusinessProfile',{body:props?.route?.params?.body })
+            props.navigation.navigate('BusinessProfile',{body:props?.route?.params?.body, isFrom:"REGISTER" })
         })
     }
 

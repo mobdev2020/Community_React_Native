@@ -39,29 +39,40 @@ const BusinessProfile = (props) => {
 	useEffect(() => {
 		getFCMToken()
 		Api_Get_Category(true)
-		Api_Get_Profile(true)
+		console.log("props?.route?.params", props?.route?.params)
+		if (props?.route?.params?.isFrom == "PROFILE") {
+			Api_Get_Profile(true)
+		}
 	}, [])
 
 
-	
+
 	const Api_Get_Profile = (isLoad) => {
-        setIsLoading(isLoad)
-        Webservice.get(APIURL.GetProfile)
-            .then(response => {
-                setIsLoading(false)
-                console.log(JSON.stringify("Api_Get_Profile Response : " + JSON.stringify(response)));
-                if (response.data.status == true) {
-                    var data = response.data.data
-                    setUserData(response.data.data)
-                } else {
-                    alert(response.data.message)
-                }
-            })
-            .catch((error) => {
-                setIsLoading(false)
-                console.log(error)
-            })
-    }
+		setIsLoading(isLoad)
+		Webservice.get(APIURL.GetProfile)
+			.then(response => {
+				setIsLoading(false)
+				console.log(JSON.stringify("Api_Get_Profile Response : " + JSON.stringify(response)));
+				if (response.data.status == true) {
+					var business = response?.data?.data?.user?.business
+					if (business != null) {
+						setBusinessName(business?.business_name)
+						setCategory(business?.category)
+						setSubCategory(business?.subcategory_name)
+						setBusinessPhone(business?.phone)
+						setBusinessEmail(business?.email)
+						setAddress(business?.address_line_one)
+					}
+
+				} else {
+					alert(response.data.message)
+				}
+			})
+			.catch((error) => {
+				setIsLoading(false)
+				console.log(error)
+			})
+	}
 
 	const getFCMToken = async () => {
 		try {
@@ -95,36 +106,28 @@ const BusinessProfile = (props) => {
 			await AsyncStorage.setItem(ConstantKey.USER_DATA, value)
 			props.navigation.replace('Home')
 		} catch (e) {
-			console.log("Error :",e)
+			console.log("Error :", e)
 		}
 	}
+	const Api_Update_Business = (isLoad) => {
+		setIsLoading(isLoad)
+		let body = new FormData();
+		body.append('business_name', BusinessName)
+		body.append('category', Category?.id)
+		body.append('subcategory', SubCategory)
+		body.append('business_mobile_number', BusinessPhone)
+		body.append('business_email_address', BusinessEmail)
+		body.append('business_address_line_one', Address)
 
-	const Api_Register = (isLoad, body) => {
-		setIsLoading(isLoad)
-		Webservice.post(APIURL.register, {
-			first_name: props?.route?.params?.body?.first_name,
-			last_name: props?.route?.params?.body?.last_name,
-			email_address: props?.route?.params?.body?.email_address,
-			mobile_number: props?.route?.params?.body?.mobile_number,
-			business_name: BusinessName,
-			category: Category?.id,
-			subcategory: SubCategory,
-			business_mobile_number: BusinessPhone,
-			business_email_address: BusinessEmail,
-			business_address_line_one: Address,
-			business_address_line_two: Address,
-			is_register_business: 1,
-			device_type: Platform.OS == "android" ? 1 : 2,
-			device_token: FcmToken,
-			parent_id: 5,
-		})
+		Webservice.post(APIURL.UpdateBusiness, body)
 			.then(response => {
-				console.log("Register Response : ", response.data)
 				setIsLoading(false)
+				console.log(JSON.stringify("Api_Update_Business Response : " + JSON.stringify(response)));
 				if (response.data.status == true) {
-					storeUserData(JSON.stringify(response.data.data))
+					Toast.showWithGravity(response.data.message, Toast.SHORT, Toast.CENTER);
+					props.navigation.goBack()
 				} else {
-					Toast.showWithGravity(response.data.message, Toast.LONG, Toast.BOTTOM);
+					alert(response.data.message)
 				}
 			})
 			.catch((error) => {
@@ -132,39 +135,8 @@ const BusinessProfile = (props) => {
 				console.log(error)
 			})
 	}
-	const Api_Create_Business_profile = (isLoad, body) => {
-		setIsLoading(isLoad)
-		Webservice.post(APIURL.register, {
-			// first_name: props?.route?.params?.body?.first_name,
-			// last_name: props?.route?.params?.body?.last_name,
-			// email_address: props?.route?.params?.body?.email_address,
-			// mobile_number: props?.route?.params?.body?.mobile_number,
-			business_name: BusinessName,
-			category: Category?.id,
-			subcategory: SubCategory,
-			business_mobile_number: BusinessPhone,
-			business_email_address: BusinessEmail,
-			business_address_line_one: Address,
-			business_address_line_two: Address,
-			is_register_business: 1,
-			device_type: Platform.OS == "android" ? 1 : 2,
-			device_token: FcmToken,
-			parent_id: 5,
-		})
-			.then(response => {
-				console.log("Api_Create_Business_profile Response : ", response.data)
-				setIsLoading(false)
-				if (response.data.status == true) {
-					storeUserData(JSON.stringify(response.data.data))
-				} else {
-					Toast.showWithGravity(response.data.message, Toast.LONG, Toast.BOTTOM);
-				}
-			})
-			.catch((error) => {
-				setIsLoading(false)
-				console.log(error)
-			})
-	}
+
+
 
 	const Api_Get_Category = (isLoad) => {
 		setIsLoading(isLoad)
@@ -189,6 +161,45 @@ const BusinessProfile = (props) => {
 			})
 	}
 
+	const Api_Register = (isLoad) => {
+		setIsLoading(isLoad)
+		let body = new FormData();
+		body.append('first_name', props?.route?.params?.body?.first_name)
+		body.append('last_name', props?.route?.params?.body?.last_name)
+		body.append('email_address', props?.route?.params?.body?.email_address)
+		body.append('mobile_number', props?.route?.params?.body?.mobile_number)
+		body.append('is_register_business', 1)
+		body.append('business_name', BusinessName)
+		body.append('category', Category?.id)
+		body.append('subcategory', SubCategory)
+		body.append('business_mobile_number', BusinessPhone)
+		body.append('business_email_address', BusinessEmail)
+		body.append('business_address_line_one', Address)
+		body.append('device_type', Platform.OS == "android" ? 1 : 2)
+		body.append('device_token', FcmToken)
+		body.append('parent_id', 5)
+		Webservice.post(APIURL.register, body)
+			.then(response => {
+				console.log("Register Response : ", response.data)
+				if (response == null) {
+					setIsLoading(false)
+				}
+				setIsLoading(false)
+
+				if (response.data.status == true) {
+					storeUserData(JSON.stringify(response.data.data))
+				} else {
+					Toast.showWithGravity(response.data.message, Toast.LONG, Toast.BOTTOM);
+				}
+
+			})
+			.catch((error) => {
+
+				setIsLoading(false)
+				console.log(error)
+			})
+	}
+
 	const btnBusinessProfile = (params) => {
 		btnCreateProfileTap()
 	}
@@ -196,9 +207,11 @@ const BusinessProfile = (props) => {
 		const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 		return (regex.test(email))
 	}
+
+
 	const btnCreateProfileTap = () => {
 		requestAnimationFrame(() => {
-console.log(validateEmail(BusinessEmail))
+			console.log(validateEmail(BusinessEmail))
 			Keyboard.dismiss()
 			if (BusinessName == '') {
 				Toast.showWithGravity("Please enter business name.", Toast.LONG, Toast.BOTTOM);
@@ -218,20 +231,13 @@ console.log(validateEmail(BusinessEmail))
 				Toast.showWithGravity("Please enter business address", Toast.LONG, Toast.BOTTOM);
 			}
 			else {
-				
-				var dict = {};
-				dict.business_name = BusinessName
-				dict.category = Category?.id
-				dict.subcategory = SubCategory
-				dict.business_mobile_number = BusinessPhone
-				dict.business_email_address = BusinessEmail
-				dict.business_address_line_one = Address
-				console.log("Register Dict : ", dict)
-				if(props.route.params?.isFromProfile ==  true) {
-					Api_Create_Business_profile(true,dict)
+				console.log("route?.params?.isFrom ::", props?.route?.params?.isFrom)
+				if (props?.route?.params?.isFrom == "REGISTER") {
+					Api_Register(true)
 				}
-				else{
-					Api_Register(true, dict)
+				else {
+					Api_Update_Business(true)
+
 				}
 			}
 

@@ -29,6 +29,7 @@
     "react-native-animated-pagination-dots": "^0.1.73",
     "react-native-banner-carousel": "^1.0.3",
     "react-native-blob-util": "^0.18.6",
+    "react-native-camera-kit": "^13.0.0",
     "react-native-contacts": "^7.0.6",
     "react-native-document-picker": "^9.0.1",
     "react-native-elements": "^3.4.3",

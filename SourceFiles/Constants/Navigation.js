@@ -52,6 +52,7 @@ import ViewAllCategories from '../DashboardFlow/ViewAllCategories';
 import SearchScreen from '../DashboardFlow/SearchScreen';
 import AddAds from '../DashboardFlow/AddAds';
 import AskBusinessProfile from '../InitialFlow/AskBusinessProfile';
+import QrCode from '../DashboardFlow/QrCode';
 
 
 // Initial Flow 
@@ -68,6 +69,7 @@ function InitialFlow() {
 			<Stack.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
 			<Stack.Screen name="UpdateProfile" component={UpdateProfile} options={{ headerShown: true }} />
 			<Stack.Screen name="AskBusinessProfile" component={AskBusinessProfile} options={{ headerShown: false }} />
+			<Stack.Screen name="QrCode" component={QrCode} options={{ headerShown: false }} />
 		</Stack.Navigator>
 	)
 }
@@ -173,7 +175,7 @@ function DashboardFlow() {
 			<Stack.Screen name="Help" component={Help} options={{ headerShown: true, orientation: 'all' }} />
 			<Stack.Screen name="AddMeeting" component={AddMeeting} options={{ headerShown: false }} />
 			<Stack.Screen name="Meetings" component={Meetings} options={{ headerShown: true }} />
-			<Stack.Screen name="Report" component={Report} options={{ headerShown: true }} />
+			<Stack.Screen name="Report" component={Report} options={{ headerShown: false }} />
 			<Stack.Screen name="BusinessProfile" component={BusinessProfile} options={{ headerShown: false }} />
 			<Stack.Screen name="PersonalProfile" component={PersonalProfile} options={{ headerShown: false }} />
 			<Stack.Screen name="ViewAllCategories" component={ViewAllCategories} options={{ headerShown: false }} />

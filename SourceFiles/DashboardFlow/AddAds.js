@@ -29,14 +29,14 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import { SearchBar } from 'react-native-elements';
 
 
-const AddAds = ({ navigation }) => {
+const AddAds = (props) => {
 
 
     const [isLoading, setIsLoading] = useState(false)
     // const [userData, setUserData] = useState(JSON.parse(props.route.params.userData))
-    // const [MeetingData, setMeetingData] = useState(JSON.parse(props.route.params.meetingData))
-    // const [isEdit, setIsEdit] = useState(props.route.params.isEdit)
-    const [isEdit, setIsEdit] = useState(false)
+    const [AdsData, setAdsData] = useState(props.route.params.AdsData || null)
+    const [isEdit, setIsEdit] = useState(props.route.params.isEdit)
+    // const [isEdit, setIsEdit] = useState(false)
 
     const [TxtTitle, setTxtTitle] = useState('')
     const [txtMeetingDesc, setTxtMeetingDesc] = useState('')
@@ -46,144 +46,117 @@ const AddAds = ({ navigation }) => {
     const [visibleImg, setIsVisibleImg] = useState(false);
 
 
-    // useEffect(() => {
+    useEffect(() => {
+        if (isEdit) {
+            console.log("Ads Data : " + JSON.stringify(AdsData))
 
-    // 	if (isEdit) {
-    // 		console.log("Meeting Data : " + JSON.stringify(MeetingData))
+            setTxtTitle(AdsData.advertise_name)
+            setTxtMeetingLink(AdsData.url != null ? AdsData.url : '')
 
-    // 		setTxtMeetingTitle(MeetingData.title)
-    // 		setTxtMeetingDesc(MeetingData.description)
-    // 		setTxtMeetingLink(MeetingData.location_link != null ? MeetingData.location_link : '')
-    // 		setStartDate(new Date(MeetingData.meeting_date))
-    // 		setIsPushNow(MeetingData.is_push == null ? 0 : MeetingData.is_push)
+            if (AdsData.image_url != null) {
+                var data = {}
+                data['data'] = null
+                data['path'] = String(AdsData.image_url)
+                setAdsImg(data)
+            }
 
-    // 		if (MeetingData.meeting_image != null) {
-    // 			var data = {}
-    // 			data['data'] = null
-    // 			data['path'] = String(MeetingData.meeting_image)
-    // 			setAdsImg(data)
-    // 		}
+        }
 
-    // 	}
-
-    // }, [])
+    }, [])
 
 
-    // // Add Meeting
-    // const Api_AddMeeting = (isLoad) => {
+    // Add Ads
+    const Api_AddAds = (isLoad) => {
+        setIsLoading(isLoad)
 
-    // 	setIsLoading(isLoad)
+        let body = new FormData();
 
-    // 	let body = new FormData();
+        body.append('advertise_name', TxtTitle)
+        body.append('url', txtMeetingLink)
 
-    // 	body.append('title', txtMeetingTitle)
-    // 	body.append('description', txtMeetingDesc)
-    // 	body.append('meeting_date', moment(StartDate).format("DD-MM-YYYY"))
-    // 	body.append('location_link', txtMeetingLink)
-    // 	body.append('member_id', userData.id)
-
-    // 	body.append('is_push', isPushNow)
-    // 	if (AdsImg != null) {
-    // 		body.append('meeting_image',
-    // 			{
-    // 				uri: AdsImg.path,
-    // 				name: Platform.OS == 'android' ? "image.jpeg" : AdsImg.filename,
-    // 				type: AdsImg.mime
-    // 			});
-    // 	}
+        if (AdsImg != null) {
+            body.append('image',
+                {
+                    uri: AdsImg.path,
+                    name: Platform.OS == 'android' ? "image.jpeg" : AdsImg.filename,
+                    type: AdsImg.mime
+                });
+        }
 
 
-    // 	Webservice.post(APIURL.addMeeting, body)
-    // 		.then(response => {
+        Webservice.post(APIURL.AddAds, body)
+            .then(response => {
+                setIsLoading(false)
+                console.log(JSON.stringify("Api_AddAds Response : " + JSON.stringify(response)));
 
-    // 			setIsLoading(false)
-    // 			if (response == null) {
-    // 				setIsLoading(false)
-    // 			}
-    // 			console.log(JSON.stringify("Api_AddMeeting Response : " + JSON.stringify(response)));
-    // 			// setIsLoading(false)
+                if (response.data.status == true) {
+                    Alert.alert("Sucess", "Advertises Added Sucessfully", [
+                        {
+                            text: 'Ok',
+                            onPress: () => {
+                                // props.route.params.onGoBack();
+                                props.navigation.goBack()
+                            }
+                        }
+                    ], { cancelable: false })
+                } else {
+                    alert(response.data.Msg)
+                }
+            })
+            .catch((error) => {
 
-    // 			if (response.data.Status == '1') {
-
-    // 				Alert.alert("Sucess", "Meeting Added Sucessfully", [
-    // 					{
-    // 						text: 'Ok',
-    // 						onPress: () => {
-    // 							// props.route.params.onGoBack();
-    // 							props.navigation.goBack()
-    // 						}
-    // 					}
-    // 				], { cancelable: false })
-    // 			} else {
-    // 				alert(response.data.Msg)
-    // 			}
-
-    // 		})
-    // 		.catch((error) => {
-
-    // 			setIsLoading(false)
-    // 			console.log(error)
-    // 		})
-    // }
+                setIsLoading(false)
+                console.log(error)
+            })
+    }
 
 
-    // // Edit Meeting
-    // const Api_EditMeeting = (isLoad) => {
+    // Edit Meeting
+    const Api_Edit_Ads = (isLoad) => {
+        setIsLoading(isLoad)
+        let body = new FormData();
 
-    // 	setIsLoading(isLoad)
+        body.append('advertise_id', AdsData.id)
+        body.append('advertise_name', TxtTitle)
+        body.append('url', txtMeetingLink)
 
-    // 	let body = new FormData();
-
-    // 	body.append('meeting_id', MeetingData.id)
-    // 	body.append('title', txtMeetingTitle)
-    // 	body.append('description', txtMeetingDesc)
-    // 	body.append('meeting_date', moment(StartDate).format("DD-MM-YYYY"))
-    // 	body.append('location_link', txtMeetingLink)
-    // 	body.append('member_id', userData.id)
-
-    // 	body.append('is_push', isPushNow)
-    // 	if (AdsImg != null && AdsImg.data != null) {
-    // 		body.append('meeting_image',
-    // 			{
-    // 				uri: AdsImg.path,
-    // 				name: Platform.OS == 'android' ? "image.jpeg" : AdsImg.filename,
-    // 				type: AdsImg.mime
-    // 			});
-    // 	}
+        if (AdsImg != null && AdsImg.data != null) {
+            body.append('image',
+                {
+                    uri: AdsImg.path,
+                    name: Platform.OS == 'android' ? "image.jpeg" : AdsImg.filename,
+                    type: AdsImg.mime
+                });
+        }
 
 
-    // 	Webservice.post(APIURL.editMeeting, body)
-    // 		.then(response => {
+        Webservice.post(APIURL.EditAds, body)
+            .then(response => {
+                setIsLoading(false)
+                console.log(JSON.stringify("Api_Edit_Ads Response : " + JSON.stringify(response)));
 
-    // 			setIsLoading(false)
-    // 			if (response == null) {
-    // 				setIsLoading(false)
-    // 			}
-    // 			console.log(JSON.stringify("Api_EditMeeting Response : " + JSON.stringify(response)));
-    // 			// setIsLoading(false)
+                if (response.data.status == true) {
 
-    // 			if (response.data.Status == '1') {
+                    Alert.alert("Sucess", "Advertises Updated Sucessfully", [
+                        {
+                            text: 'Ok',
+                            onPress: () => {
+                                // props.route.params.onGoBack();
+                                props.navigation.goBack()
+                            }
+                        }
+                    ], { cancelable: false })
+                } else {
+                    alert(response.data.Msg)
+                }
 
-    // 				Alert.alert("Sucess", "Meeting Updated Sucessfully", [
-    // 					{
-    // 						text: 'Ok',
-    // 						onPress: () => {
-    // 							// props.route.params.onGoBack();
-    // 							props.navigation.goBack()
-    // 						}
-    // 					}
-    // 				], { cancelable: false })
-    // 			} else {
-    // 				alert(response.data.Msg)
-    // 			}
+            })
+            .catch((error) => {
 
-    // 		})
-    // 		.catch((error) => {
-
-    // 			setIsLoading(false)
-    // 			console.log(error)
-    // 		})
-    // }
+                setIsLoading(false)
+                console.log(error)
+            })
+    }
 
 
 
@@ -261,29 +234,28 @@ const AddAds = ({ navigation }) => {
         );
     }
 
-    // const btnAddEditTap = () => {
-    // 	requestAnimationFrame(() => {
+    const btnAddEditTap = () => {
+        requestAnimationFrame(() => {
 
 
-    // 		if(txtMeetingTitle == ''){
-    // 			Toast.showWithGravity(i18n.t('enter_meeting_name'), Toast.LONG, Toast.BOTTOM);
-    // 		}else if(txtMeetingDesc == ''){
-    // 			Toast.showWithGravity(i18n.t('enter_event_desc'), Toast.LONG, Toast.BOTTOM);
-    // 		}else if(StartDate == null){
-    // 			Toast.showWithGravity(i18n.t('enter_event_date'), Toast.LONG, Toast.BOTTOM);
-    // 		}else if(AdsImg == null){
-    // 			Toast.showWithGravity(i18n.t('select_event_image'), Toast.LONG, Toast.BOTTOM);
-    // 		}else{
+            if (AdsImg == null) {
+                Toast.showWithGravity("Please upload advertises image", Toast.LONG, Toast.BOTTOM);
+            }
+            else if (TxtTitle == "") {
+                Toast.showWithGravity(('Please enter advertises title'), Toast.LONG, Toast.BOTTOM);
+            } else if (txtMeetingLink == "") {
+                Toast.showWithGravity("Please enter advertises link", Toast.LONG, Toast.BOTTOM);
+            } else {
 
-    // 			if(isEdit){
-    // 				Api_EditMeeting(true)
-    // 			}
-    // 			else{
-    // 				Api_AddMeeting(true)
-    // 			}
-    // 		}
-    // 	})
-    // }
+                if (isEdit) {
+                    Api_Edit_Ads(true)
+                }
+                else {
+                    Api_AddAds(true)
+                }
+            }
+        })
+    }
 
 
     return (
@@ -293,7 +265,7 @@ const AddAds = ({ navigation }) => {
 
                 <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps='always'>
                     <View style={{ flexDirection: "row", alignItems: "center", marginHorizontal: 10 }}>
-                        <TouchableOpacity onPress={() => { navigation.goBack() }}
+                        <TouchableOpacity onPress={() => { props.navigation.goBack() }}
                             style={{ marginRight: 10, marginBottom: 5, padding: 10 }}>
                             <Icon name={"chevron-left"} size={18} color={Colors.black} />
 
@@ -392,6 +364,9 @@ const AddAds = ({ navigation }) => {
                 </ScrollView>
 
             </View>
+            {isLoading ?
+                <LoadingView />
+                : null}
         </SafeAreaView>
     );
 };

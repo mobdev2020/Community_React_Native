@@ -64,7 +64,36 @@ const PersonalProfile = ({ navigation }) => {
                 console.log(error)
             })
     }
-
+    const Api_Update_Profile = (isLoad) => {
+        setIsLoading(isLoad)
+        let body = new FormData();
+        body.append('first_name', FirstName)
+        body.append('last_name', LastName)
+        body.append('email', Email)
+        if (ProfileImg != null && ProfileImg.data != null) {
+            body.append('avatar',
+                {
+                    uri: ProfileImg.path,
+                    name: Platform.OS == 'android' ? "image.jpeg" : ProfileImg.filename,
+                    type: ProfileImg.mime
+                });
+        }
+        Webservice.post(APIURL.UpdateProfile,body)
+            .then(response => {
+                setIsLoading(false)
+                console.log(JSON.stringify("Api_Update_Profile Response : " + JSON.stringify(response)));
+                if (response.data.status == true) {
+                    Toast.showWithGravity(response.data.message, Toast.SHORT, Toast.CENTER);
+                    navigation.goBack()
+                } else {
+                    alert(response.data.message)
+                }
+            })
+            .catch((error) => {
+                setIsLoading(false)
+                console.log(error)
+            })
+    }
     const storeData = async (value) => {
         try {
             await AsyncStorage.setItem(ConstantKey.USER_DATA, value)
@@ -74,7 +103,8 @@ const PersonalProfile = ({ navigation }) => {
     }
 
     const btnBusinessProfile = (params) => {
-        navigation.navigate('UpdateProfile', { userData: [] })
+        Api_Update_Profile(true)
+
     }
     const btnSelectImage = () => {
 
@@ -183,7 +213,7 @@ const PersonalProfile = ({ navigation }) => {
 
                             <View style={{ width: 100, height: 100, borderRadius: 100, borderWidth: 1, alignItems: "center", justifyContent: "center", marginVertical: 20 }}>
                                 <FastImage style={{ width: 96, height: 96, borderRadius: 100, }}
-                                    source={{uri :UserData?.user?.avatar_url}}
+                                    source={{ uri: ProfileImg == null ? UserData?.user?.avatar_url :ProfileImg.path }}
                                 // resizeMode='contain'
                                 />
                                 <TouchableOpacity onPress={() => btnSelectImage()} style={{ width: 30, height: 30, borderRadius: 20, backgroundColor: Colors.primary, position: "absolute", right: 0, bottom: 0, alignItems: "center", justifyContent: "center" }}>

@@ -10,7 +10,7 @@ export const ConstantKey = {
 	FCM_TOKEN : "FCM_TOKEN",
     HOME_FILTER_DATA : 'HOME_FILTER_DATA',
 
-	PLAY_STORE : 'https://play.google.com/store/apps/details?id=com.webtual.magnusnetwork',
+	PLAY_STORE : 'https://play.google.com/store/apps/details?id=com.webtual.community',
 	APP_STORE : 'https://apps.apple.com/us/app/magnus-network/id1587460944',
 
     CURRENCY : "₹",

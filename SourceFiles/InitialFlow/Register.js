@@ -30,6 +30,7 @@ const Register = (props) => {
 	const [txtLastName, setTxtLastName] = useState('')
 	const [txtEmail, setTxtEmail] = useState('')
 	const [txtMobile, setTxtMobile] = useState(props?.route?.params?.data?.mobile_number ||'')
+	const [SchoolId, setSchoolId] = useState(props?.route?.params?.school_id ||'')
 	const [txtPassword, setTxtPassword] = useState('')
 	const [acceptTerms, setAcceptTerms] = useState(true)
 	const [openPrivacy, setOpenPrivacy] = useState(false)

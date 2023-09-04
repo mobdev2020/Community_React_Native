@@ -29,7 +29,8 @@ const TextSlide = ({ item }) => {
           }}>
             {item?.title}
           </Text>
-          <Text style={{
+          <Text numberOfLines={4}
+          style={{
             fontSize: FontSize.FS_14,
             color: Colors.black,
             fontFamily: ConstantKey.MONTS_MEDIUM,
@@ -51,14 +52,15 @@ const styles = StyleSheet.create({
     width: width - 70,
     height: height / 4.4,
     backgroundColor: Colors.lightGrey01,
-    justifyContent: "center",
+    // justifyContent: "center",
     borderRadius: 10,
     borderWidth: 1,
     
   },
 
   textView: {
-   margin:15
+   marginHorizontal:8,
+   marginVertical:10,
   },
   image: {
     width: width - 70,

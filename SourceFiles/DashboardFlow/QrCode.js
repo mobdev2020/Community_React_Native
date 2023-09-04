@@ -23,20 +23,20 @@ import messaging from '@react-native-firebase/messaging';
 import ForgotPasswordModal from '../DashboardFlow/ForgotPasswordModal';
 import { useFocusEffect } from '@react-navigation/native';
 import Pdf from 'react-native-pdf';
-
+import { CameraScreen, Camera } from 'react-native-camera-kit';
+import { navigate } from '../Constants/NavigationService';
 
 // create a component
-const SchoolInfo = (props) => {
+const QrCode = (props) => {
 
     const [isLoading, setIsLoading] = useState(false)
     const [SchoolInfo, setSchoolInfo] = useState(null)
-    const [LoadPercent, setLoadPercent] = useState(0)
+    const [opneScanner, setOpneScanner] = useState(false)
 
 
 
     useFocusEffect(
         useCallback(() => {
-            Api_Get_School_Info(true)
             return () => {
 
             }
@@ -65,49 +65,47 @@ const SchoolInfo = (props) => {
 
 
     return (
-        <View style={styles.container}>
-                <Text style={{
+        <View style={{ flex: 1, flexDirection: 'column', backgroundColor: 'transparent' }}>
+                {/* <Text style={{
                     fontSize: FontSize.FS_22,
                     color: Colors.black,
                     fontFamily: ConstantKey.MONTS_SEMIBOLD,
                     marginVertical:15,
                     marginHorizontal:20,
                 }}>
-                    {i18n.t('aboutSchoolInfo')}
+                    {"Qr Code"}
+                </Text> */}
+                {/* {opneScanner ? */}
+                    <View style={{ flex: 1 }}>
+
+                        <CameraScreen
+                            scanBarcode={true}
+                            onReadCode={(val) => {
+                                console.log("val",val.nativeEvent.codeStringValue)
+                               var  schoolId = val.nativeEvent.codeStringValue
+                                setOpneScanner(false)
+                                if(schoolId !== ""){
+                                    navigate("Register",{school_id :schoolId})
+
+                                }
+                            }}
+                            showFrame={true} // (default false) optional, show frame with transparent layer (qr code or barcode will be read on this area ONLY), start animation for scanner,that stoped when find any code. Frame always at center of the screen
+                            laserColor={Colors.primary} // (default red) optional, color of laser in scanner frame
+                            frameColor={Colors.white} // (default white) optional, color of border of scanner frame
+                        />
+                        <Text style={{
+                            position:"absolute",
+                    fontSize: FontSize.FS_22,
+                    color: Colors.white,
+                    fontFamily: ConstantKey.MONTS_SEMIBOLD,
+                    marginVertical:15,
+                    marginHorizontal:20,
+                }}>
+                    {"Scan QRCode "}
                 </Text>
-                {console.log("SchoolInfo :",SchoolInfo)}
-                {SchoolInfo != null ?
-                    <Pdf
-                    trustAllCerts={false}
-                        source={{ uri: SchoolInfo, cache: true }}
-                        onLoadComplete={(numberOfPages, filePath) => {
-                            console.log(`Number of pages: ${numberOfPages}`);
-                        }}
-                        onPageChanged={(page, numberOfPages) => {
-                            console.log(`Current page: ${page}`);
-                        }}
-                        onError={(error) => {
-                            console.log(error);
-                        }}
-                        onLoadProgress={(percent) => {
-                        	setLoadPercent(percent)
-                        }}
-                        renderActivityIndicator={() => (
-                        	<>
-                        		{LoadPercent > 0 && (
-                        			<Text style={{fontSize : FontSize.FS_16, color : Colors.primary, fontFamily : ConstantKey.MONTS_REGULAR}}>
-                        				{`${(Math.round(LoadPercent * 10000) / 100).toFixed(2)} %`}
-                        			</Text>
-                        		)}
-                        	</>
-                        )}
-                        onPressLink={(uri) => {
-                            console.log(`Link pressed: ${uri}`);
-                        }}
-                        style={{ flex:1,  backgroundColor: Colors.white,
-                            width:Dimensions.get('window').width,
-                            height:Dimensions.get('window').height, }} />
-                         :null    }
+                    </View>
+                    {/* : null */}
+                {/* } */}
             {isLoading ?
                 <LoadingView />
                 : null}
@@ -123,4 +121,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default SchoolInfo;
+export default QrCode;

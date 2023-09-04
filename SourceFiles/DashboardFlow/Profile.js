@@ -1,5 +1,5 @@
 //import liraries
-import React, { Component, useState, useEffect } from 'react';
+import React, { Component, useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, ScrollView, Alert } from 'react-native';
 
 
@@ -20,6 +20,7 @@ import FastImage from 'react-native-fast-image';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ImagePicker from 'react-native-image-crop-picker';
 import { navigate } from '../Constants/NavigationService';
+import { useFocusEffect } from '@react-navigation/native';
 const Profile = ({ navigation }) => {
 
     const [isLoading, setIsLoading] = useState(false)
@@ -32,13 +33,14 @@ const Profile = ({ navigation }) => {
     const [Address, setAddress] = useState('')
     const [UserData, setUserData] = useState(null);
 
-    useEffect(() => {
-        Api_Get_Profile(true)
-        return () => {
 
-        }
-    }, [])
-
+    useFocusEffect(
+        useCallback(() => {
+            Api_Get_Profile(true)
+            return () => {
+            }
+        }, [])
+    );
 
     const Api_Get_Profile = (isLoad) => {
         setIsLoading(isLoad)
@@ -49,6 +51,7 @@ const Profile = ({ navigation }) => {
                 if (response.data.status == true) {
                     var data = response.data.data
                     setUserData(response.data.data)
+                    storeData(data)
                 } else {
                     alert(response.data.message)
                 }
@@ -66,84 +69,19 @@ const Profile = ({ navigation }) => {
             console.log("Error :", e)
         }
     }
-    const btnBusinessProfile = (params) => {
-        navigation.navigate('UpdateProfile', { userData: [] })
+
+
+    const DeletestoreData = async () => {
+        try {
+            await AsyncStorage.setItem(ConstantKey.USER_DATA, '')
+            console.log("Login")
+            navigation.replace("Login")
+        } catch (e) {
+            console.log("Error :", e)
+        }
     }
-    const btnSelectImage = () => {
 
-        Alert.alert(
-            "",
-            'Choose your Suitable Option',
-            [
-                {
-                    text: 'Camera', onPress: () => {
 
-                        setIsLoading(true)
-
-                        ImagePicker.openCamera({
-                            width: ConstantKey.SCREEN_WIDTH,
-                            height: ConstantKey.SCREEN_WIDTH,
-                            cropping: true,
-                            multiple: false,
-                            mediaType: 'photo',
-                            includeBase64: true,
-                            multipleShot: false,
-                            compressImageQuality: 0.6
-                        }).then(images => {
-
-                            console.log(images);
-
-                            setIsUpdateImage(true)
-                            setIsLoading(false)
-                            setProfileImg(images)
-
-                        }).catch((error) => {
-
-                            setIsUpdateImage(false)
-                            setIsLoading(false)
-
-                            console.log(error)
-                        });
-
-                    }
-                },
-                {
-                    text: 'Gallary',
-                    onPress: () => {
-
-                        setIsLoading(true)
-
-                        ImagePicker.openPicker({
-                            multiple: false,
-                            freeStyleCropEnabled: true,
-                            cropping: true,
-                            mediaType: 'photo',
-                            includeBase64: true,
-                            compressImageQuality: 0.6
-                        }).then(images => {
-
-                            console.log(images);
-
-                            setIsLoading(false)
-                            setIsUpdateImage(true)
-                            setProfileImg(images)
-
-                        }).catch((error) => {
-                            setIsUpdateImage(false)
-                            setIsLoading(false)
-
-                            console.log(error)
-                        });
-                    }
-                },
-                {
-                    text: 'Cancel',
-                    style: 'destructive'
-                },
-            ],
-            // { cancelable: true }
-        );
-    }
 
     return (
         <View style={styles.container}>
@@ -170,14 +108,29 @@ const Profile = ({ navigation }) => {
                             </View>
 
 
-                            <TouchableOpacity onPress={() => { navigation.goBack() }}
+                            <TouchableOpacity onPress={() => {
+                                Alert.alert("Alert", "Are you sure wan't logout?", [
+                                    {
+                                        text: 'Cancel',
+                                        style: "cancel",
+                                        onPress: () => {
+                                        }
+                                    },
+                                    {
+                                        text: 'Logout',
+                                        onPress: () => {
+                                            DeletestoreData()
+                                        }
+                                    }
+                                ], { cancelable: true })
+                            }}
                                 style={{ backgroundColor: Colors.primary, padding: 5, borderRadius: 25, marginHorizontal: 10 }}>
                                 <MaterialCommunityIcons name={"power-standby"} size={18} color={Colors.white} />
                             </TouchableOpacity>
 
 
                         </View>
-
+                        {isLoading == false &&  <>
                         <View style={{ marginHorizontal: 10, marginTop: 10, marginBottom: 5 }}>
                             <Text style={{
                                 fontSize: FontSize.FS_22,
@@ -188,6 +141,7 @@ const Profile = ({ navigation }) => {
                                 {i18n.t('PersonalProfile')}
                             </Text>
                         </View>
+                       
                         <View style={{
                             borderRadius: 5,
                             marginHorizontal: 10,
@@ -238,7 +192,7 @@ const Profile = ({ navigation }) => {
                                 </View>
                             </View>
                         </View>
-
+                     
                         <View style={{ marginHorizontal: 10, marginTop: 20, marginBottom: 5 }}>
                             <Text style={{
                                 fontSize: FontSize.FS_22,
@@ -257,8 +211,8 @@ const Profile = ({ navigation }) => {
                                 borderColor: Colors.primary
 
                             }}>
-                             { UserData?.user?.business?  <TouchableOpacity onPress={() => {
-                                    navigate("BusinessProfile")
+                                {UserData?.user?.business ? <TouchableOpacity onPress={() => {
+                                    navigate("BusinessProfile",{isFrom:"PROFILE"})
                                 }}
                                     style={{
                                         backgroundColor: Colors.primary,
@@ -272,33 +226,33 @@ const Profile = ({ navigation }) => {
                                         fontFamily: ConstantKey.MONTS_REGULAR,
                                         color: Colors.white
                                     }}>{"Edit"}</Text>
-                                </TouchableOpacity> :null }
+                                </TouchableOpacity> : null}
 
                                 <View style={{ flex: 1, marginLeft: 20, backgroundColor: Colors.white }}>
-                                 {UserData?.user?.business?.business_name &&   <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                    {UserData?.user?.business?.business_name && <View style={{ flexDirection: "row", alignItems: "center" }}>
                                         <MaterialCommunityIcons name={"domain"} size={18} color={Colors.primary} style={{ marginRight: 5 }} />
                                         <Text style={[styles.calloutTitle, { marginTop: 4 }]}>{UserData?.user?.business?.business_name}</Text>
                                     </View>}
-                                    {UserData?.user?.business?.subcategory_name&&
-                                    <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                        <MaterialCommunityIcons name={"format-list-checkbox"} size={18} color={Colors.darkGrey} style={{ marginRight: 5 }} />
-                                        <Text style={[styles.calloutDescription, { marginTop: 4 }]}>{UserData?.user?.business?.subcategory_name}</Text>
-                                    </View>}
-                                    {UserData?.user?.business?.phone&&
-                                    <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                        <MaterialCommunityIcons name={"phone"} size={18} color={Colors.darkGrey} style={{ marginRight: 5 }} />
-                                        <Text style={styles.calloutDescription}>+91 {UserData?.user?.business?.phone}</Text>
-                                    </View>}
-                                    {UserData?.user?.business?.email&&
-                                    <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                        <MaterialCommunityIcons name={"email"} size={18} color={Colors.darkGrey} style={{ marginRight: 5 }} />
-                                        <Text style={styles.calloutDescription}>{UserData?.user?.business?.email}</Text>
-                                    </View> }
+                                    {UserData?.user?.business?.subcategory_name &&
+                                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                            <MaterialCommunityIcons name={"format-list-checkbox"} size={18} color={Colors.darkGrey} style={{ marginRight: 5 }} />
+                                            <Text style={[styles.calloutDescription, { marginTop: 4 }]}>{UserData?.user?.business?.subcategory_name}</Text>
+                                        </View>}
+                                    {UserData?.user?.business?.phone &&
+                                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                            <MaterialCommunityIcons name={"phone"} size={18} color={Colors.darkGrey} style={{ marginRight: 5 }} />
+                                            <Text style={styles.calloutDescription}>+91 {UserData?.user?.business?.phone}</Text>
+                                        </View>}
+                                    {UserData?.user?.business?.email &&
+                                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                            <MaterialCommunityIcons name={"email"} size={18} color={Colors.darkGrey} style={{ marginRight: 5 }} />
+                                            <Text style={styles.calloutDescription}>{UserData?.user?.business?.email}</Text>
+                                        </View>}
                                     {UserData?.user?.business?.address_line_one &&
-                                    <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                        <MaterialCommunityIcons name={"map-marker-outline"} size={18} color={Colors.darkGrey} style={{ marginRight: 5 }} />
-                                        <Text style={styles.calloutDescription}>{UserData?.user?.business?.address_line_one}</Text>
-                                    </View> }
+                                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                            <MaterialCommunityIcons name={"map-marker-outline"} size={18} color={Colors.darkGrey} style={{ marginRight: 5 }} />
+                                            <Text style={styles.calloutDescription}>{UserData?.user?.business?.address_line_one}</Text>
+                                        </View>}
                                 </View>
                                 {/* </View> */}
                             </View>
@@ -309,47 +263,48 @@ const Profile = ({ navigation }) => {
                                 padding: 10,
                                 borderWidth: 1,
                                 borderColor: Colors.primary,
-                                alignItems:"center"
+                                alignItems: "center"
 
                             }}>
                                 <Text style={{
                                     fontSize: FontSize.FS_22,
                                     color: Colors.primary,
                                     fontFamily: ConstantKey.MONTS_MEDIUM,
-                                    textAlign:"center"
+                                    textAlign: "center"
                                 }}>
                                     {"Want To Join \n Business Community ?"}
                                 </Text>
-                                <TouchableOpacity onPress={() =>{
-                                    navigate("BusinessProfile",{isFromProfile: true})
+                                <TouchableOpacity onPress={() => {
+                                    navigate("BusinessProfile", { isFromProfile: true })
                                 }}
-                                style={{
-                                borderRadius: 50,
-                                margin: 10,
-                                paddingVertical: 6,
-                                paddingHorizontal: 30,
-                                borderWidth: 1,
-                                borderColor: Colors.primary,
-                                alignItems:"center",
-                                backgroundColor:Colors.primary
+                                    style={{
+                                        borderRadius: 50,
+                                        margin: 10,
+                                        paddingVertical: 6,
+                                        paddingHorizontal: 30,
+                                        borderWidth: 1,
+                                        borderColor: Colors.primary,
+                                        alignItems: "center",
+                                        backgroundColor: Colors.primary
 
-                            }}>
-                                <Text style={{
-                                    fontSize: FontSize.FS_16,
-                                    color: Colors.white,
-                                    fontFamily: ConstantKey.MONTS_MEDIUM,
-                                    textAlign:"center"
-                                }}>
-                                    {"Click Here"}
-                                </Text>
+                                    }}>
+                                    <Text style={{
+                                        fontSize: FontSize.FS_16,
+                                        color: Colors.white,
+                                        fontFamily: ConstantKey.MONTS_MEDIUM,
+                                        textAlign: "center"
+                                    }}>
+                                        {"Click Here"}
+                                    </Text>
                                 </TouchableOpacity>
                             </View>}
+                            </> }
                     </SafeAreaView>
                 </ScrollView>
             </View>
 
             {isLoading ?
-                <LoadingView text={"Please Wait..."} />
+                <LoadingView />
                 : null}
         </View>
     )

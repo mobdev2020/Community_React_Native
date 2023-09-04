@@ -32,14 +32,13 @@ import { navigate } from '../Constants/NavigationService';
 
 
 // create a component
-const AddEvent = ({ navigation }) => {
+const AddEvent = (props) => {
 	const refRBUsers = useRef();
 
 	const [isLoading, setIsLoading] = useState(false)
 	// const [userData, setUserData] = useState(JSON.parse(props.route.params.userData || null))
-	// const [EventData, setEventData] = useState(JSON.parse(props.route.params.eventData || null))
-	// const [isEdit, setIsEdit] = useState(props.route.params.isEdit || false)
-	const [isEdit, setIsEdit] = useState(false)
+	const [EventData, setEventData] = useState(props.route.params.EventData || null)
+	const [isEdit, setIsEdit] = useState(props.route.params.isEdit || false)
 
 	const [txtEventName, setTxtEventName] = useState('')
 	const [txtEventDesc, setTxtEventDesc] = useState('')
@@ -63,223 +62,143 @@ const AddEvent = ({ navigation }) => {
 	const [SelectedUser, setSelectedUser] = useState(null)
 	const [FilteredName, setFilteredName] = useState('')
 
-
-	// Set Navigation Bar
-	// useLayoutEffect(() => {
-	// 	props.navigation.setOptions({
-	// 		headerTitle: isEdit ? i18n.t('edit_event') : i18n.t('add_event'),
-	// 		headerTitleStyle: {
-	// 			fontFamily: ConstantKey.MONTS_SEMIBOLD
-	// 		},
-	// 		headerStyle: {
-	// 			backgroundColor: Colors.white,
-	// 		},
-	// 		headerTintColor: Colors.primary,
-	// 		headerBackTitleVisible: false,
-	// 	});
-	// }, [props, isEdit]);
-
-
-
 	useEffect(() => {
 
 		// Api_GetContacts(true, userData)
 
-		// if (isEdit) {
-		// 	console.log("Event Data : " + JSON.stringify(EventData))
+		if (isEdit) {
+			console.log("Event Data : " + JSON.stringify(EventData))
 
-		// 	setTxtEventName(EventData.event_name)
-		// 	setTxtEventDesc(EventData.event_desc)
-		// 	setTxtEventLink(EventData.event_link != null ? EventData.event_link : '')
-		// 	setStartDate(new Date(EventData.event_start_date))
-		// 	setEndDate(new Date(EventData.event_end_date))
-		// 	setEventType(EventData.is_type)
-		// 	setIsPushNow(EventData.is_push)
+			setTxtEventName(EventData.event_name)
+			setTxtEventDesc(EventData.event_desc)
+			setTxtEventLink(EventData.event_link != null ? EventData.event_link : '')
+			setStartDate(new Date(EventData.event_start_date))
+			setEndDate(new Date(EventData.event_end_date))
+			setEventType(EventData.is_type)
+			setIsPushNow(EventData.is_push)
 
-		// 	if (EventData.event_image != null) {
-		// 		var data = {}
-		// 		data['data'] = null
-		// 		data['path'] = String(EventData.event_image)
-		// 		setEventImg(data)
-		// 	}
+			if (EventData.event_image_url != null) {
+				var data = {}
+				data['data'] = null
+				data['path'] = String(EventData.event_image_url)
+				setEventImg(data)
+			}
 
-		// }
+		}
 
 		return () => { }
 	}, [])
 
 
-	// const Api_GetContacts = (isLoad, user_data) => {
-
-	// 	setIsLoading(isLoad)
-
-	// 	console.log("Api_GetContacts User na Data :"+JSON.stringify(user_data))
-
-	// 	Webservice.post(APIURL.getContacts,{
-	// 		member_id : user_data.id
-	// 	})
-	// 		.then(response => {
-
-	// 			if (response == null) {
-	// 				setIsLoading(false)
-	// 			}
-	// 			console.log(JSON.stringify(response));
-	// 			setIsLoading(false)
-
-	// 			if (response.data.Status == '1') {
-
-	// 				var data = response.data.Data
-
-	// 				var filterActive = data.filter((item) => item.isVisible == "1")
-
-	// 				setContactList(filterActive)
-	// 				setFilterContactList(filterActive)
-
-
-	// 				if(isEdit && EventData.is_type == 'birthday'){
-	// 					var filterSelected = data.filter((item) => item.id == EventData.member_id)
-
-	// 					setSelectedUser(filterSelected[0])
-
-	// 					console.log("Selected User  : "+JSON.stringify(filterSelected[0]))
-	// 				}
-
-
-	// 			} else {
-	// 				Toast.showWithGravity(response.data.Msg, Toast.LONG, Toast.BOTTOM);
-	// 			}
-
-	// 		})
-	// 		.catch((error) => {
-
-	// 			setIsLoading(false)
-	// 			console.log(error)
-	// 		})
-	// }
-
-
-
+	
 	// Add Event
-	// const Api_AddEvent = (isLoad) => {
-
-	// 	setIsLoading(isLoad)
-
-	// 	let body = new FormData();
-
-	// 	body.append('is_type', EventType)
-	// 	body.append('event_name', txtEventName)
-	// 	body.append('event_desc', txtEventDesc)
-	// 	body.append('event_link', txtEventLink)
-	// 	body.append('event_start_date', moment(StartDate).format("DD-MM-YYYY"))
-	// 	body.append('event_end_date', moment(EndDate).format("DD-MM-YYYY"))
-	// 	body.append('is_push', isPushNow)
-	// 	if(EventType == 'birthday'){
-	// 		body.append('member_id', SelectedUser.id)
-	// 	}
-	// 	if (EventImg != null) {
-	// 		body.append('event_image',
-	// 			{
-	// 				uri: EventImg.path,
-	// 				name: Platform.OS == 'android' ? "image.jpeg" : EventImg.filename,
-	// 				type: EventImg.mime
-	// 			});
-	// 	}
+	const Api_AddEvent = (isLoad) => {
+		setIsLoading(isLoad)
+		let body = new FormData();
+		body.append('event_name', txtEventName)
+		body.append('event_desc', txtEventDesc)
+		body.append('event_link', txtEventLink)
+		body.append('event_start_date', moment(StartDate).format("DD-MM-YYYY"))
+		body.append('event_end_date', moment(EndDate).format("DD-MM-YYYY"))
+		body.append('is_push', isPushNow)
+		console.log("EventImg :",EventImg)
+		if (EventImg != null) {
+			body.append('event_image',
+				{
+					uri: EventImg.path,
+					name: Platform.OS == 'android' ? "image.jpeg" : EventImg.filename,
+					type: EventImg.mime
+				});
+		}
 
 
-	// 	Webservice.post(APIURL.addEvent, body)
-	// 		.then(response => {
+		Webservice.post(APIURL.AddEvents, body)
+			.then(response => {
 
-	// 			setIsLoading(false)
-	// 			if (response == null) {
-	// 				setIsLoading(false)
-	// 			}
-	// 			console.log(JSON.stringify("Api_AddEvent Response : " + JSON.stringify(response)));
-	// 			// setIsLoading(false)
+				setIsLoading(false)
+				if (response == null) {
+					setIsLoading(false)
+				}
+				console.log(JSON.stringify("Api_AddEvent Response : " + JSON.stringify(response)));
+				// setIsLoading(false)
 
-	// 			if (response.data.Status == '1') {
+				if (response.data.status == true) {
 
-	// 				Alert.alert("Sucess", "Event Added Sucessfully", [
-	// 					{
-	// 						text: 'Ok',
-	// 						onPress: () => {
-	// 							props.route.params.onGoBack();
-	// 							props.navigation.goBack()
-	// 						}
-	// 					}
-	// 				], { cancelable: false })
-	// 			} else {
-	// 				alert(response.data.Msg)
-	// 			}
+					Alert.alert("Sucess", "Event Added Sucessfully", [
+						{
+							text: 'Ok',
+							onPress: () => {
+								props.navigation.goBack()
+							}
+						}
+					], { cancelable: false })
+				} else {
+					alert(response.data.Msg)
+				}
 
-	// 		})
-	// 		.catch((error) => {
+			})
+			.catch((error) => {
 
-	// 			setIsLoading(false)
-	// 			console.log(error)
-	// 		})
-	// }
+				setIsLoading(false)
+				console.log(error)
+			})
+	}
 
 
 	// Edit Event
-	// const Api_EditEvent = (isLoad) => {
+	const Api_EditEvent = (isLoad) => {
 
-	// 	setIsLoading(isLoad)
+		setIsLoading(isLoad)
 
-	// 	let body = new FormData();
+		let body = new FormData();
+console.log("EventData.id",EventData.id)
+		body.append('event_id', EventData.id)
+		body.append('event_name', txtEventName)
+		body.append('event_desc', txtEventDesc)
+		body.append('event_link', txtEventLink)
+		body.append('event_start_date', moment(StartDate).format("DD-MM-YYYY"))
+		body.append('event_end_date', moment(EndDate).format("DD-MM-YYYY"))
+		body.append('is_push', isPushNow)
+		
+		if (EventImg != null && EventImg.data != null) {
+			body.append('event_image',
+				{
+					uri: EventImg.path,
+					name: moment()+".png",
+					type: EventImg.mime
+				});
+		}
+		Webservice.post(APIURL.EditEvents, body)
+			.then(response => {
 
-	// 	body.append('is_type', EventType)
-	// 	body.append('event_id', EventData.id)
-	// 	body.append('event_name', txtEventName)
-	// 	body.append('event_desc', txtEventDesc)
-	// 	body.append('event_link', txtEventLink)
-	// 	body.append('event_start_date', moment(StartDate).format("DD-MM-YYYY"))
-	// 	body.append('event_end_date', moment(EndDate).format("DD-MM-YYYY"))
-	// 	body.append('is_push', isPushNow)
-	// 	if(EventType == 'birthday'){
-	// 		body.append('member_id', SelectedUser.id)
-	// 	}
-	// 	if (EventImg != null && EventImg.data != null) {
-	// 		body.append('event_image',
-	// 			{
-	// 				uri: EventImg.path,
-	// 				name: moment()+".png",
-	// 				type: EventImg.mime
-	// 			});
-	// 	}
+				setIsLoading(false)
+				if (response == null) {
+					setIsLoading(false)
+				}
+				console.log(JSON.stringify("Api_AddEvent Response : " + JSON.stringify(response)));
+				// setIsLoading(false)
 
+				if (response.data.status == true) {
 
-	// 	Webservice.post(APIURL.editEvent, body)
-	// 		.then(response => {
+					Alert.alert("Sucess", "Event Updated Sucessfully", [
+						{
+							text: 'Ok',
+							onPress: () => {
+								props.navigation.goBack()
+							}
+						}
+					], { cancelable: false })
+				} else {
+					alert(response.data.Msg)
+				}
 
-	// 			setIsLoading(false)
-	// 			if (response == null) {
-	// 				setIsLoading(false)
-	// 			}
-	// 			console.log(JSON.stringify("Api_AddEvent Response : " + JSON.stringify(response)));
-	// 			// setIsLoading(false)
+			})
+			.catch((error) => {
 
-	// 			if (response.data.Status == '1') {
-
-	// 				Alert.alert("Sucess", "Event Updated Sucessfully", [
-	// 					{
-	// 						text: 'Ok',
-	// 						onPress: () => {
-	// 							props.route.params.onGoBack();
-	// 							props.navigation.goBack()
-	// 						}
-	// 					}
-	// 				], { cancelable: false })
-	// 			} else {
-	// 				alert(response.data.Msg)
-	// 			}
-
-	// 		})
-	// 		.catch((error) => {
-
-	// 			setIsLoading(false)
-	// 			console.log(error)
-	// 		})
-	// }
+				setIsLoading(false)
+				console.log(error)
+			})
+	}
 
 
 	// Action Methods
@@ -402,8 +321,10 @@ const AddEvent = ({ navigation }) => {
 	const btnAddEditTap = () => {
 		requestAnimationFrame(() => {
 
-
-			if (txtEventName == '') {
+			if (EventImg == null) {
+				Toast.showWithGravity(i18n.t('select_event_image'), Toast.LONG, Toast.BOTTOM);
+			}
+			else if (txtEventName == '') {
 				Toast.showWithGravity(i18n.t('enter_event_name'), Toast.LONG, Toast.BOTTOM);
 			} else if (txtEventDesc == '') {
 				Toast.showWithGravity(i18n.t('enter_event_desc'), Toast.LONG, Toast.BOTTOM);
@@ -411,16 +332,14 @@ const AddEvent = ({ navigation }) => {
 				Toast.showWithGravity(i18n.t('enter_event_date'), Toast.LONG, Toast.BOTTOM);
 			} else if (EndDate == null) {
 				Toast.showWithGravity(i18n.t('enter_event_date'), Toast.LONG, Toast.BOTTOM);
-			} else if (EventImg == null) {
-				Toast.showWithGravity(i18n.t('select_event_image'), Toast.LONG, Toast.BOTTOM);
 			} else {
 
-				// if(isEdit){
-				// 	Api_EditEvent(true)
-				// }
-				// else{
-				// 	Api_AddEvent(true)
-				// }
+				if(isEdit){
+					Api_EditEvent(true)
+				}
+				else{
+					Api_AddEvent(true)
+				}
 			}
 		})
 	}
@@ -512,7 +431,7 @@ const AddEvent = ({ navigation }) => {
 
 				<ScrollView style={{ flex: 1, marginVertical: 10, }} keyboardShouldPersistTaps='always'>
 					<View style={{ flexDirection: "row", alignItems: "center", marginHorizontal: 10 }}>
-						<TouchableOpacity onPress={() => { navigation.goBack() }}
+						<TouchableOpacity onPress={() => { props.navigation.goBack() }}
 							style={{ marginRight: 10, marginBottom: 5, padding: 10 }}>
 							<Icon name={"chevron-left"} size={18} color={Colors.black} />
 
@@ -523,7 +442,7 @@ const AddEvent = ({ navigation }) => {
 							color: Colors.black,
 							fontFamily: ConstantKey.MONTS_SEMIBOLD,
 						}}>
-							{i18n.t('add_event')}
+							{isEdit ? i18n.t("edit_event") : i18n.t("add_event")}
 						</Text>
 
 					</View>
@@ -536,22 +455,23 @@ const AddEvent = ({ navigation }) => {
 						<Image style={{height : '100%', width : '100%', resizeMode : EventImg == null ? 'contain' : 'cover',  borderRadius : 10,}}
 							source={EventImg == null ? Images.MagnusLogo : {uri : EventImg.path}}/>
 					</TouchableOpacity> */}
+					{/* {console.log("EventImg",EventImg.path)} */}
 						{EventImg == null ?
-							<TouchableOpacity onPress={() =>{
+							<TouchableOpacity onPress={() => {
 								btnSelectImage()
 							}}
-							style={{flex:1,alignSelf:"center",justifyContent:"center",alignItems:"center"}}>
+								style={{ flex: 1, alignSelf: "center", justifyContent: "center", alignItems: "center" }}>
 								<MaterialCommunityIcons name={"cloud-upload-outline"} size={40} color={Colors.primary} />
 								<Text style={{
-                                fontSize: FontSize.FS_16,
-                                color: Colors.primary,
-                                fontFamily: ConstantKey.MONTS_SEMIBOLD,
-								textAlign:"center"
-                            }}>Upload Event photo</Text>
+									fontSize: FontSize.FS_16,
+									color: Colors.primary,
+									fontFamily: ConstantKey.MONTS_SEMIBOLD,
+									textAlign: "center"
+								}}>Upload Event photo</Text>
 							</TouchableOpacity> :
 							<TouchableOpacity onPress={() => EventImg != null ? setIsVisibleImg(true) : {}}>
 								<Image style={{ height: '100%', width: '100%', resizeMode: EventImg == null ? 'contain' : 'cover', borderRadius: 10, }}
-									source={EventImg == null ? Images.MagnusLogo : { uri: EventImg.path }} />
+									source={{ uri:  EventImg.path }} />
 							</TouchableOpacity>
 						}
 
@@ -698,7 +618,7 @@ const AddEvent = ({ navigation }) => {
 						</View>
 
 
-						{/* <View style={{ flexDirection: 'row', marginTop: 10, alignItems: 'center' }}>
+						<View style={{ flexDirection: 'row', marginTop: 20, alignItems: 'center',marginHorizontal:5 ,}}>
 
 							<TouchableOpacity onPress={() => setIsPushNow(isPushNow == 0 ? 1 : 0)}>
 								<Icon name={isPushNow == 1 ? 'check-square' : 'square'} size={25} color={Colors.primary} />
@@ -708,7 +628,7 @@ const AddEvent = ({ navigation }) => {
 								{i18n.t('push_now')}?
 							</Text>
 
-						</View> */}
+						</View>
 
 
 						<TouchableOpacity style={styles.btnLogin}

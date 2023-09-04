@@ -76,10 +76,11 @@ const TextSlider = ({ data }) => {
                 key={i}
                 style={{
                   opacity,
-                  height: 10,
-                  width: 10,
+                  height: 6,
+                  width: 6,
                   backgroundColor: "#595959",
-                  margin: 8,
+                  marginVertical: 8,
+                  marginHorizontal: 3,
                   borderRadius: 5,
                 }}
               />

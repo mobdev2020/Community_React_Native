@@ -32,54 +32,26 @@ const Report = (props) => {
 	const [isLoading, setIsLoading] = useState(false)
 	const [txtDescription, setTxtDescription] = useState('')
 
-	const [UserData, setUserData] = useState(JSON.parse(props.route.params.userData))
-
-	// Set Navigation Bar
-	useLayoutEffect(() => {
-		props.navigation.setOptions({
-			headerTitle: i18n.t('suggetion'),
-			headerTitleStyle: {
-				fontFamily: ConstantKey.MONTS_SEMIBOLD
-			},
-			headerStyle: {
-				backgroundColor: Colors.white,
-			},
-			headerTintColor: Colors.primaryRed,
-			headerBackTitleVisible: false,
-		});
-	}, [props]);
 
 
 
 		// API Add Sugession
 		const Api_Add_Suggetions = (isLoad) => {
-
 			setIsLoading(isLoad)
-	
-			Webservice.post(APIURL.addSuggestion,{
-				member_id : UserData.id,
+			Webservice.post(APIURL.AddSuggestion,{
 				description : txtDescription
 			})
 				.then(response => {
-	
-					if (response == null) {
-						setIsLoading(false)
-					}
-					console.log(JSON.stringify(response));
+					console.log("Api_Add_Suggetions",JSON.stringify(response));
 					setIsLoading(false)
-	
-					if (response.data.Status == '1') {
-	
-						Toast.showWithGravity(response.data.Msg, Toast.LONG, Toast.BOTTOM);
+					if (response.data.status == true) {
+						Toast.showWithGravity(response.data.message, Toast.LONG, Toast.BOTTOM);
 						setTxtDescription('')
-
 					} else {
-						Toast.showWithGravity(response.data.Msg, Toast.LONG, Toast.BOTTOM);
+						Toast.showWithGravity(response.data.message, Toast.LONG, Toast.BOTTOM);
 					}
-	
 				})
 				.catch((error) => {
-	
 					setIsLoading(false)
 					console.log(error)
 				})
@@ -107,8 +79,23 @@ const Report = (props) => {
 
 				<ScrollView style={styles.container}>
 					<View style={{ marginHorizontal: 20, }}>
+					<View style={{ flexDirection: "row", alignItems: "center",marginVertical:5  }}>
+						<TouchableOpacity onPress={() => { props.navigation.goBack() }}
+							style={{ marginRight: 10, marginBottom: 5, padding: 10 }}>
+							<Icon name={"chevron-left"} size={18} color={Colors.black} />
 
-						<Text style={{ fontSize: FontSize.FS_14, color: Colors.primaryRed, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
+						</TouchableOpacity>
+
+						<Text style={{
+							fontSize: FontSize.FS_22,
+							color: Colors.black,
+							fontFamily: ConstantKey.MONTS_SEMIBOLD,
+						}}>
+							{"Suggestion"}
+						</Text>
+
+					</View>
+						<Text style={{ fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
 							Message
 						</Text>
 						<View style={[styles.mobileView]}>
@@ -163,7 +150,7 @@ const styles = StyleSheet.create({
 		color: Colors.black,  paddingVertical: 0,
 	},
 	btnSubmit: {
-		backgroundColor: Colors.primaryRed,
+		backgroundColor: Colors.primary,
 		marginTop: 30, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
 		shadowColor: Colors.primaryRed, marginBottom : 20,
 		shadowOffset: { width: 0, height: 2 },

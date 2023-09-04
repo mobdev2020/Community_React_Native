@@ -7,12 +7,13 @@ import { ConstantKey } from "../../Constants/ConstantKey";
 const { width, height } = Dimensions.get("window");
 
 const Slide = ({ item }) => {
+  console.log("item.image_url :",item.image_url)
   return (
     <>
       {item?.image &&
         <View style={styles.cardView}>
 
-          <Image style={styles.image} source={{ uri: item.image }} />
+          <Image style={styles.image} source={{ uri: item.image_url }} />
 
         </View>}
         {item?.title &&

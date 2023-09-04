@@ -26,7 +26,7 @@ export default {
 	searchHere: "Search here",
 	alreadyAccount: "Already have an account? ",
 	enterFirstName: "Enter first name",
-	enterLastName: "Enter first name",
+	enterLastName: "Enter last name",
 	EnterFullName: 'Enter Full Name',
 
 	enterLastName: "Enter last name",

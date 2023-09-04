@@ -105,7 +105,8 @@ const ViewAllCategories = ({navigation}) => {
                         // ItemSeparatorComponent={<View style={{ width: 20, height: 20 }}></View>}
                         renderItem={({ item, index }) => (
                             <View style={{ alignItems: "center",marginBottom:14 }}>
-                                <TouchableOpacity style={{
+                                <TouchableOpacity onPress={() =>{navigate("SearchScreen",{isSearch : false,category:item})}}
+                                style={{
                                     backgroundColor: Colors.lightGrey01,
                                     width: 62,
                                     height: 62,

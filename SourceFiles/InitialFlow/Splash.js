@@ -79,13 +79,14 @@ const Splash = ({navigation}) => {
 	const getUserData = async () => {
 		try {
 			const value = await AsyncStorage.getItem(ConstantKey.USER_DATA)
-			if (value !== null) {
+			if (value !== null && value !== "") {
 				// value previously stored
 
 				var data = JSON.parse(value)
 				console.log("User Data: " + value)
 
 				navigation.replace('Home')
+				// navigation.replace('QrCode')
 			}
 			else {
 

@@ -29,14 +29,13 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import { SearchBar } from 'react-native-elements';
 
 
-const AddMeeting = ({ navigation }) => {
+const AddMeeting = (props) => {
 
 
 	const [isLoading, setIsLoading] = useState(false)
 	// const [userData, setUserData] = useState(JSON.parse(props.route.params.userData))
-	// const [MeetingData, setMeetingData] = useState(JSON.parse(props.route.params.meetingData))
-	// const [isEdit, setIsEdit] = useState(props.route.params.isEdit)
-	const [isEdit, setIsEdit] = useState(false)
+	const [MeetingData, setMeetingData] = useState(props.route.params.meetingData || [])
+	const [isEdit, setIsEdit] = useState(props.route.params.isEdit || false)
 
 	const [txtMeetingTitle, setTxtMeetingTitle] = useState('')
 	const [txtMeetingDesc, setTxtMeetingDesc] = useState('')
@@ -44,6 +43,8 @@ const AddMeeting = ({ navigation }) => {
 
 	const [openDatePicker, setOpenDatePicker] = useState(false);
 	const [StartDate, setStartDate] = useState(new Date())
+	const [openEndDatePicker, setOpenEndDatePicker] = useState(false)
+	const [EndDate, setEndDate] = useState(new Date())
 
 	const [isPushNow, setIsPushNow] = useState(0);
 
@@ -51,161 +52,124 @@ const AddMeeting = ({ navigation }) => {
 	const [visibleImg, setIsVisibleImg] = useState(false);
 
 
-	// Set Navigation Bar
-	// useLayoutEffect(() => {
-	// 	props.navigation.setOptions({
-	// 		headerTitle: isEdit ? i18n.t('edit_meeting') : i18n.t('add_meeting'),
-	// 		headerTitleStyle: {
-	// 			fontFamily: ConstantKey.MONTS_SEMIBOLD
-	// 		},
-	// 		headerStyle: {
-	// 			backgroundColor: Colors.white,
-	// 		},
-	// 		headerTintColor: Colors.primary,
-	// 		headerBackTitleVisible: false,
-	// 	});
-	// }, [props, isEdit]);
+	useEffect(() => {
+
+		if (isEdit) {
+			console.log("Meeting Data : " + JSON.stringify(MeetingData))
+
+			setTxtMeetingTitle(MeetingData.meeting_name)
+			setTxtMeetingDesc(MeetingData.meeting_desc)
+			setTxtMeetingLink(MeetingData.meeting_link != null ? MeetingData.meeting_link : '')
+			setStartDate(new Date(MeetingData.meeting_start_date))
+			setEndDate(new Date(MeetingData.meeting_end_date))
+			setIsPushNow(MeetingData.is_push == null ? 0 : MeetingData.is_push)
+
+			if (MeetingData.meeting_image != null) {
+				var data = {}
+				data['data'] = null
+				data['path'] = String(MeetingData.meeting_image_url)
+				setMeetingImg(data)
+			}
+
+		}
+
+	}, [])
 
 
+	// Add Meeting
+	const Api_AddMeeting = (isLoad) => {
+		setIsLoading(isLoad)
+		let body = new FormData();
+		body.append('meeting_name', txtMeetingTitle)
+		body.append('meeting_desc', txtMeetingDesc)
+		body.append('meeting_start_date', moment(StartDate).format("DD-MM-YYYY"))
+		body.append('meeting_end_date', moment(EndDate).format("DD-MM-YYYY"))
+		body.append('meeting_link', txtMeetingLink)
 
-	// useEffect(() => {
+		body.append('is_push', isPushNow)
+		if (MeetingImg != null) {
+			body.append('meeting_image',
+				{
+					uri: MeetingImg.path,
+					name: Platform.OS == 'android' ? "image.jpeg" : MeetingImg.filename,
+					type: MeetingImg.mime
+				});
+		}
+		Webservice.post(APIURL.AddMeeting, body)
+			.then(response => {
+				setIsLoading(false)
+				console.log(JSON.stringify("Api_AddMeeting Response : " + JSON.stringify(response)));
 
-	// 	if (isEdit) {
-	// 		console.log("Meeting Data : " + JSON.stringify(MeetingData))
+				if (response.data.status == true) {
+					Alert.alert("Sucess", "Meeting Added Sucessfully", [
+						{
+							text: 'Ok',
+							onPress: () => {
+								props.navigation.goBack()
+							}
+						}
+					], { cancelable: false })
+				} else {
+					alert(response.data.Msg)
+				}
 
-	// 		setTxtMeetingTitle(MeetingData.title)
-	// 		setTxtMeetingDesc(MeetingData.description)
-	// 		setTxtMeetingLink(MeetingData.location_link != null ? MeetingData.location_link : '')
-	// 		setStartDate(new Date(MeetingData.meeting_date))
-	// 		setIsPushNow(MeetingData.is_push == null ? 0 : MeetingData.is_push)
+			})
+			.catch((error) => {
 
-	// 		if (MeetingData.meeting_image != null) {
-	// 			var data = {}
-	// 			data['data'] = null
-	// 			data['path'] = String(MeetingData.meeting_image)
-	// 			setMeetingImg(data)
-	// 		}
-
-	// 	}
-
-	// }, [])
-
-
-	// // Add Meeting
-	// const Api_AddMeeting = (isLoad) => {
-
-	// 	setIsLoading(isLoad)
-
-	// 	let body = new FormData();
-
-	// 	body.append('title', txtMeetingTitle)
-	// 	body.append('description', txtMeetingDesc)
-	// 	body.append('meeting_date', moment(StartDate).format("DD-MM-YYYY"))
-	// 	body.append('location_link', txtMeetingLink)
-	// 	body.append('member_id', userData.id)
-
-	// 	body.append('is_push', isPushNow)
-	// 	if (MeetingImg != null) {
-	// 		body.append('meeting_image',
-	// 			{
-	// 				uri: MeetingImg.path,
-	// 				name: Platform.OS == 'android' ? "image.jpeg" : MeetingImg.filename,
-	// 				type: MeetingImg.mime
-	// 			});
-	// 	}
+				setIsLoading(false)
+				console.log(error)
+			})
+	}
 
 
-	// 	Webservice.post(APIURL.addMeeting, body)
-	// 		.then(response => {
+	// Edit Meeting
+	const Api_EditMeeting = (isLoad) => {
 
-	// 			setIsLoading(false)
-	// 			if (response == null) {
-	// 				setIsLoading(false)
-	// 			}
-	// 			console.log(JSON.stringify("Api_AddMeeting Response : " + JSON.stringify(response)));
-	// 			// setIsLoading(false)
+		setIsLoading(isLoad)
 
-	// 			if (response.data.Status == '1') {
+		let body = new FormData();
 
-	// 				Alert.alert("Sucess", "Meeting Added Sucessfully", [
-	// 					{
-	// 						text: 'Ok',
-	// 						onPress: () => {
-	// 							// props.route.params.onGoBack();
-	// 							props.navigation.goBack()
-	// 						}
-	// 					}
-	// 				], { cancelable: false })
-	// 			} else {
-	// 				alert(response.data.Msg)
-	// 			}
+		body.append('meeting_id', MeetingData.id)
+		body.append('meeting_name', txtMeetingTitle)
+		body.append('meeting_desc', txtMeetingDesc)
+		body.append('meeting_start_date', moment(StartDate).format("DD-MM-YYYY"))
+		body.append('meeting_end_date', moment(StartDate).format("DD-MM-YYYY"))
+		body.append('meeting_link', txtMeetingLink)
+		body.append('is_push', isPushNow)
+		if (MeetingImg != null && MeetingImg.data != null) {
+			body.append('meeting_image',
+				{
+					uri: MeetingImg.path,
+					name: Platform.OS == 'android' ? "image.jpeg" : MeetingImg.filename,
+					type: MeetingImg.mime
+				});
+		}
 
-	// 		})
-	// 		.catch((error) => {
+		Webservice.post(APIURL.EditMeeting, body)
+			.then(response => {
+				setIsLoading(false)
+				console.log(JSON.stringify("Api_EditMeeting Response : " + JSON.stringify(response)));
+				if (response.data.status == true) {
 
-	// 			setIsLoading(false)
-	// 			console.log(error)
-	// 		})
-	// }
+					Alert.alert("Sucess", "Meeting Updated Sucessfully", [
+						{
+							text: 'Ok',
+							onPress: () => {
+								props.navigation.goBack()
+							}
+						}
+					], { cancelable: false })
+				} else {
+					alert(response.data.Msg)
+				}
 
+			})
+			.catch((error) => {
 
-	// // Edit Meeting
-	// const Api_EditMeeting = (isLoad) => {
-
-	// 	setIsLoading(isLoad)
-
-	// 	let body = new FormData();
-
-	// 	body.append('meeting_id', MeetingData.id)
-	// 	body.append('title', txtMeetingTitle)
-	// 	body.append('description', txtMeetingDesc)
-	// 	body.append('meeting_date', moment(StartDate).format("DD-MM-YYYY"))
-	// 	body.append('location_link', txtMeetingLink)
-	// 	body.append('member_id', userData.id)
-
-	// 	body.append('is_push', isPushNow)
-	// 	if (MeetingImg != null && MeetingImg.data != null) {
-	// 		body.append('meeting_image',
-	// 			{
-	// 				uri: MeetingImg.path,
-	// 				name: Platform.OS == 'android' ? "image.jpeg" : MeetingImg.filename,
-	// 				type: MeetingImg.mime
-	// 			});
-	// 	}
-
-
-	// 	Webservice.post(APIURL.editMeeting, body)
-	// 		.then(response => {
-
-	// 			setIsLoading(false)
-	// 			if (response == null) {
-	// 				setIsLoading(false)
-	// 			}
-	// 			console.log(JSON.stringify("Api_EditMeeting Response : " + JSON.stringify(response)));
-	// 			// setIsLoading(false)
-
-	// 			if (response.data.Status == '1') {
-
-	// 				Alert.alert("Sucess", "Meeting Updated Sucessfully", [
-	// 					{
-	// 						text: 'Ok',
-	// 						onPress: () => {
-	// 							// props.route.params.onGoBack();
-	// 							props.navigation.goBack()
-	// 						}
-	// 					}
-	// 				], { cancelable: false })
-	// 			} else {
-	// 				alert(response.data.Msg)
-	// 			}
-
-	// 		})
-	// 		.catch((error) => {
-
-	// 			setIsLoading(false)
-	// 			console.log(error)
-	// 		})
-	// }
+				setIsLoading(false)
+				console.log(error)
+			})
+	}
 
 
 
@@ -293,7 +257,7 @@ const AddMeeting = ({ navigation }) => {
 
 			setOpenDatePicker(true);
 		} else {
-			// setOpenEndDatePicker(true)
+			setOpenEndDatePicker(true)
 		}
 	};
 
@@ -304,49 +268,48 @@ const AddMeeting = ({ navigation }) => {
 			setOpenDatePicker(false);
 		}
 		else {
-			// setOpenEndDatePicker(false)
+			setOpenEndDatePicker(false)
 		}
 	};
 
 
-	// const handleConfirm = (date, type) => {
-	// 	console.warn("A date has been picked: ", date);
+	const handleConfirm = (date, type) => {
+		console.warn("A date has been picked: ", date);
 
-	// 	setOpenDatePicker(false);
-	// 	// setOpenEndDatePicker(false)
+		setOpenDatePicker(false);
+		setOpenEndDatePicker(false)
 
-	// 	if(type == 'Start Date'){
-	// 		setStartDate(date)
-	// 	}else{
-	// 		// setEndDate(date)
-	// 	}
+		if (type == 'Start Date') {
+			setStartDate(date)
+		} else {
+			setEndDate(date)
+		}
 
-	// };
-
-
-	// const btnAddEditTap = () => {
-	// 	requestAnimationFrame(() => {
+	};
 
 
-	// 		if(txtMeetingTitle == ''){
-	// 			Toast.showWithGravity(i18n.t('enter_meeting_name'), Toast.LONG, Toast.BOTTOM);
-	// 		}else if(txtMeetingDesc == ''){
-	// 			Toast.showWithGravity(i18n.t('enter_event_desc'), Toast.LONG, Toast.BOTTOM);
-	// 		}else if(StartDate == null){
-	// 			Toast.showWithGravity(i18n.t('enter_event_date'), Toast.LONG, Toast.BOTTOM);
-	// 		}else if(MeetingImg == null){
-	// 			Toast.showWithGravity(i18n.t('select_event_image'), Toast.LONG, Toast.BOTTOM);
-	// 		}else{
+	const btnAddEditTap = () => {
+		requestAnimationFrame(() => {
+			if (MeetingImg == null) {
+				Toast.showWithGravity(i18n.t('select_event_image'), Toast.LONG, Toast.BOTTOM);
+			}
+			else if (txtMeetingTitle == '') {
+				Toast.showWithGravity(i18n.t('enter_meeting_name'), Toast.LONG, Toast.BOTTOM);
+			} else if (txtMeetingDesc == '') {
+				Toast.showWithGravity(i18n.t('enter_event_desc'), Toast.LONG, Toast.BOTTOM);
+			} else if (StartDate == null) {
+				Toast.showWithGravity(i18n.t('enter_event_date'), Toast.LONG, Toast.BOTTOM);
+			} else {
 
-	// 			if(isEdit){
-	// 				Api_EditMeeting(true)
-	// 			}
-	// 			else{
-	// 				Api_AddMeeting(true)
-	// 			}
-	// 		}
-	// 	})
-	// }
+				if (isEdit) {
+					Api_EditMeeting(true)
+				}
+				else {
+					Api_AddMeeting(true)
+				}
+			}
+		})
+	}
 
 
 	return (
@@ -356,7 +319,7 @@ const AddMeeting = ({ navigation }) => {
 
 				<ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps='always'>
 					<View style={{ flexDirection: "row", alignItems: "center", marginHorizontal: 10 }}>
-						<TouchableOpacity onPress={() => { navigation.goBack() }}
+						<TouchableOpacity onPress={() => { props.navigation.goBack() }}
 							style={{ marginRight: 10, marginBottom: 5, padding: 10 }}>
 							<Icon name={"chevron-left"} size={18} color={Colors.black} />
 
@@ -367,7 +330,7 @@ const AddMeeting = ({ navigation }) => {
 							color: Colors.black,
 							fontFamily: ConstantKey.MONTS_SEMIBOLD,
 						}}>
-							{i18n.t('add_meeting')}
+							{isEdit ? i18n.t("edit_meeting") : i18n.t("add_meeting")}
 						</Text>
 
 					</View>
@@ -456,7 +419,7 @@ const AddMeeting = ({ navigation }) => {
 						</View>
 
 						<Text style={{ fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
-							Meeting date
+							Meeting start date
 						</Text>
 						<TouchableOpacity style={[styles.mobileView]} onPress={() => showDatePicker('Start Date')}>
 
@@ -468,7 +431,18 @@ const AddMeeting = ({ navigation }) => {
 
 						</TouchableOpacity>
 
+						<Text style={{ fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
+							Meeting end date
+						</Text>
+						<TouchableOpacity style={[styles.mobileView,]} onPress={() => showDatePicker('End Date')}>
 
+							<Icon name={"calendar-alt"} size={20} color={Colors.primary} style={{ marginLeft: 10 }} />
+
+							<Text style={[styles.textInputMobile]}>
+								{moment(EndDate).format("DD-MM-YYYY")}
+							</Text>
+
+						</TouchableOpacity>
 
 						<Text style={{ fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
 							Location Link <Text style={{ color: Colors.primary }}>( Optional )</Text>
@@ -489,7 +463,7 @@ const AddMeeting = ({ navigation }) => {
 
 
 
-						{/* <View style={{ flexDirection: 'row', marginTop: 10, alignItems: 'center' }}>
+						<View style={{ flexDirection: 'row', marginTop: 10, alignItems: 'center' }}>
 
 							<TouchableOpacity onPress={() => setIsPushNow(isPushNow == 0 ? 1 : 0)}>
 								<Icon name={isPushNow == 1 ? 'check-square' : 'square'} size={25} color={Colors.primary} />
@@ -499,7 +473,7 @@ const AddMeeting = ({ navigation }) => {
 								{i18n.t('push_now')}?
 							</Text>
 
-						</View> */}
+						</View>
 
 
 						<TouchableOpacity style={styles.btnAddEdit}
@@ -522,6 +496,15 @@ const AddMeeting = ({ navigation }) => {
 						onCancel={() => hideDatePicker("Start Date")}
 						display={Platform.OS === "ios" ? "inline" : "default"}
 					/>
+					<DateTimePickerModal
+						isVisible={openEndDatePicker}
+						date={EndDate}
+						mode="date"
+						minimumDate={new Date()}
+						onConfirm={(date) => handleConfirm(date, 'End Date')}
+						onCancel={() => hideDatePicker("End Date")}
+						display={Platform.OS === "ios" ? "inline" : "default"}
+					/>
 
 
 					{MeetingImg != null ?
@@ -535,6 +518,7 @@ const AddMeeting = ({ navigation }) => {
 				</ScrollView>
 
 			</View>
+			{isLoading ? <LoadingView /> : null}
 		</SafeAreaView>
 	);
 };

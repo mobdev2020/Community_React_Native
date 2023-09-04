@@ -6,6 +6,7 @@ import { APIURL } from './APIURL';
 import Toast from 'react-native-simple-toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ConstantKey } from "./ConstantKey";
+import { navigate } from "./NavigationService";
 
 
 const ApiManager = axios.create({
@@ -25,10 +26,10 @@ ApiManager.interceptors.request.use(async config => {
 	var token = await AsyncStorage.getItem(ConstantKey.USER_DATA)
 	token = JSON.parse(token)
 	console.log('====================================');
-	console.log("User Token axios: " + token.token);
+	console.log("User Token axios: " + token);
 	console.log('====================================');
 	if (token) {
-		config.headers.Authorization = "Bearer "+token.token
+		config.headers.Authorization = "Bearer " + token?.token
 	}
 
 	return config
@@ -37,7 +38,7 @@ ApiManager.interceptors.request.use(async config => {
 /** Handle Response error from axios  */
 ApiManager.interceptors.response.use(response => {
 
-	
+
 	return response
 }, function (error) {
 
@@ -51,8 +52,12 @@ ApiManager.interceptors.response.use(response => {
 
 		Toast.showWithGravity("No Internet Connection", Toast.SHORT, Toast.CENTER);
 	}
-	else {
+	else if (error.hasOwnProperty("code") && error.code == 'ERR_NETWORK') {
 
+		Toast.showWithGravity("No Internet Connection", Toast.SHORT, Toast.CENTER);
+	}
+	else {
+		// navigate("Login")
 	}
 	return Promise.reject(error);
 })
@@ -68,10 +73,10 @@ import { APIURL } from './APIURL';
 const api = create({
   baseURL: APIURL.BASE_URL,
   headers: {
-      Accept: 'application/json',
-      'Content-Type' : 'application/x-www-form-urlencoded',
-      'Cache-Control': 'no-cache',
-      
+	  Accept: 'application/json',
+	  'Content-Type' : 'application/x-www-form-urlencoded',
+	  'Cache-Control': 'no-cache',
+	  
   },
   timeout: 100000
 });
@@ -87,10 +92,10 @@ api.addMonitor(monitor);
 
 api.addRequestTransform((request) => {
   if (R.contains(request.method, ['delete', 'post', 'put'])) {
-      if (!(request.data instanceof FormData)) {
-          request.headers['Content-Type'] = 'application/x-www-form-urlencoded';
-          request.data = qs.stringify(request.data);
-      }
+	  if (!(request.data instanceof FormData)) {
+		  request.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+		  request.data = qs.stringify(request.data);
+	  }
   }
 });
 
@@ -98,10 +103,10 @@ api.addRequestTransform((request) => {
 api.addResponseTransform((response) => {
   if(response.problem=='NETWORK_ERROR'){
 
-    Toast.showWithGravity("No Internet Connection", Toast.SHORT, Toast.CENTER);
+	Toast.showWithGravity("No Internet Connection", Toast.SHORT, Toast.CENTER);
   }else if(response.problem=='TIMEOUT_ERROR'){
 
-    Toast.showWithGravity("Server Not Responding", Toast.SHORT, Toast.CENTER);
+	Toast.showWithGravity("Server Not Responding", Toast.SHORT, Toast.CENTER);
   }
 });
 
