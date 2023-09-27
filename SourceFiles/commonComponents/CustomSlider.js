@@ -21,7 +21,7 @@ const CustomSlider = ({ data }) => {
                 borderRadius: 6,
                 backgroundColor: Colors.white,
 
-                height: 148,
+                // height: 148,
                 marginHorizontal:10,
                 marginTop:7,
                 shadowColor: "#000",
@@ -31,17 +31,17 @@ const CustomSlider = ({ data }) => {
                 },
                 shadowOpacity: 0.20,
                 shadowRadius: 1.41,
-                elevation: 2,
+                elevation: 3,
             }}>
                 <Text style={{
-                    fontSize: FontSize.FS_13,
+                    fontSize: FontSize.FS_8,
                     color: Colors.grey,
                     fontFamily: ConstantKey.MONTS_REGULAR,
                     textAlign: "right",
                 }}> {moment(item.created_at).format('DD/MM/YYYY')}
                 </Text>
                 <Text style={{
-                    fontSize: FontSize.FS_18,
+                    fontSize: FontSize.FS_12,
                     color: Colors.black,
                     fontFamily: ConstantKey.MONTS_SEMIBOLD,
                     textAlign: "center",
@@ -50,8 +50,8 @@ const CustomSlider = ({ data }) => {
                 </Text>
                 <Text numberOfLines={3}
                     style={{
-                        fontSize: FontSize.FS_14,
-                        color: "#525B7A",
+                        fontSize: FontSize.FS_10,
+                        color: Colors.black,
                         fontFamily: ConstantKey.MONTS_REGULAR,
                         textAlign: "center",
                         marginTop: 10,
@@ -67,7 +67,7 @@ const CustomSlider = ({ data }) => {
     return (
         <View style={styles.container}>
             <Carousel
-                pageIndicatorStyle={{ marginTop: 50 }}
+                pageIndicatorStyle={{ marginTop: 50, backgroundColor : Colors.primaryLight }}
                 // pageIndicatorStyle={{position:"absolute",top:20,left:0,right: 0,bottom:0}}
                 autoplay
                 autoplayTimeout={5000}
@@ -75,6 +75,7 @@ const CustomSlider = ({ data }) => {
                 index={0}
                 pageSize={BannerWidth}
                 activePageIndicatorStyle={{ backgroundColor: Colors.primary }}
+                
 
             >
                 {data.map((item, index) => renderPage(item, index))}

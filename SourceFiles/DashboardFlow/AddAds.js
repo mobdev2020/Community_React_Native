@@ -261,16 +261,15 @@ const AddAds = (props) => {
 
             <View style={styles.container}>
 
-                <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps='always'>
                     <View style={{ flexDirection: "row", alignItems: "center", marginHorizontal: 10 }}>
                         <TouchableOpacity onPress={() => { props.navigation.goBack() }}
-                            style={{ marginRight: 10, marginBottom: 5, padding: 10 }}>
+                            style={{ marginRight: 10, padding: 10 }}>
                             <Icon name={"chevron-left"} size={18} color={Colors.black} />
 
                         </TouchableOpacity>
 
                         <Text style={{
-                            fontSize: FontSize.FS_22,
+                            fontSize: FontSize.FS_18,
                             color: Colors.black,
                             fontFamily: ConstantKey.MONTS_SEMIBOLD,
                         }}>
@@ -278,6 +277,8 @@ const AddAds = (props) => {
                         </Text>
 
                     </View>
+                <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps='always'>
+
                     <View style={{
                         marginHorizontal: 20, marginVertical: 20, borderRadius: 6, borderWidth: 1, borderColor: Colors.black,
                         height: 200
@@ -320,16 +321,16 @@ const AddAds = (props) => {
                         </Text>
                         <View style={styles.mobileView}>
 
-                            <Icon name={"heading"} size={20} color={Colors.primary} style={{ marginLeft: 10, }} />
+                            {/* <Icon name={"heading"} size={20} color={Colors.primary} style={{ marginLeft: 10, }} /> */}
 
                             <TextInput style={styles.textInputMobile}
                                 value={TxtTitle}
-                                placeholder={'Title'}
+                                placeholder={'Enter Event Title'}
                                 onChangeText={(link) => setTxtTitle(link)}
                             />
 
                         </View>
-                        <Text style={{ fontSize: FontSize.FS_14, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 5 }}>
+                        <Text style={{ fontSize: FontSize.FS_14, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
                             Link
                         </Text>
 
@@ -377,22 +378,23 @@ const styles = StyleSheet.create({
     },
 
     mobileView: {
-        marginTop: 5, flexDirection: 'row', borderWidth: 1, borderColor: Colors.primary, borderRadius: 6, backgroundColor: Colors.white,
-        paddingVertical: 10//alignItems: 'center'
+        marginTop: 5, flexDirection: 'row', borderWidth: 1, borderColor: Colors.lightGrey01, borderRadius: 6, 
+        backgroundColor: Colors.lightGrey01,
+        paddingVertical: 10,alignItems: 'center'
     },
     textInputMobile: {
-        marginLeft: 10, marginRight: 10, flex: 1, fontSize: FontSize.FS_16, fontFamily: ConstantKey.MONTS_REGULAR,
+        marginLeft: 10, marginRight: 10, flex: 1, fontSize: FontSize.FS_14, fontFamily: ConstantKey.MONTS_REGULAR,
         color: Colors.black, paddingVertical: 0
     },
     btnAddEdit: {
         backgroundColor: Colors.black,
-        marginTop: 30, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',
-        shadowColor: Colors.primary, marginBottom: 20,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.4, shadowRadius: 2, elevation: 2
+        marginTop: 30, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',marginBottom: 20,
+        // shadowColor: Colors.primary, 
+        // shadowOffset: { width: 0, height: 2 },
+        // shadowOpacity: 0.4, shadowRadius: 2, elevation: 2
     },
     AddEditText: {
-        fontSize: FontSize.FS_20, color: Colors.white,
+        fontSize: FontSize.FS_16, color: Colors.white,
         fontFamily: ConstantKey.MONTS_SEMIBOLD
     },
 });

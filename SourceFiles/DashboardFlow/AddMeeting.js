@@ -468,7 +468,7 @@ const AddMeeting = (props) => {
 								</TouchableOpacity>
 
 								<Text style={{ fontFamily: ConstantKey.MONTS_REGULAR, color: Colors.black, fontSize: FontSize.FS_16, marginLeft: 10 }}>
-									{i18n.t('push_now')}???
+									{i18n.t('push_now')}?
 								</Text>
 
 							</View>

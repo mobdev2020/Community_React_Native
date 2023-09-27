@@ -64,7 +64,7 @@ const Profile = ({ navigation }) => {
 
     const storeData = async (value) => {
         try {
-            await AsyncStorage.setItem(ConstantKey.USER_DATA, value)
+            await AsyncStorage.setItem(ConstantKey.USER_DATA,JSON.stringify(value))
         } catch (e) {
             console.log("Error :", e)
         }
@@ -84,13 +84,11 @@ const Profile = ({ navigation }) => {
 
 
     return (
+        <SafeAreaView style={styles.container}>
         <View style={styles.container}>
             <View style={{ flex: 1, backgroundColor: Colors.white }}>
 
-
-                <ScrollView style={{}}>
-                    <SafeAreaView style={{ flex: 1, marginVertical: 10, marginHorizontal: 10 }}>
-                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" , marginHorizontal : 10}}>
                             <View style={{ flexDirection: "row", alignItems: "center", }}>
                                 <TouchableOpacity onPress={() => { navigation.goBack() }}
                                     style={{ marginRight: 10, marginBottom: 5, padding: 10 }}>
@@ -99,7 +97,7 @@ const Profile = ({ navigation }) => {
                                 </TouchableOpacity>
 
                                 <Text style={{
-                                    fontSize: FontSize.FS_26,
+                                    fontSize: FontSize.FS_18,
                                     color: Colors.black,
                                     fontFamily: ConstantKey.MONTS_SEMIBOLD,
                                 }}>
@@ -130,12 +128,14 @@ const Profile = ({ navigation }) => {
 
 
                         </View>
+                <ScrollView style={{}}>
+                        
                         {isLoading == false &&  <>
-                        <View style={{ marginHorizontal: 10, marginTop: 10, marginBottom: 5 }}>
+                        <View style={{ marginHorizontal: 20, marginTop: 10, marginBottom: 5 }}>
                             <Text style={{
-                                fontSize: FontSize.FS_22,
+                                fontSize: FontSize.FS_18,
                                 color: Colors.black,
-                                fontFamily: ConstantKey.MONTS_MEDIUM,
+                                fontFamily: ConstantKey.MONTS_SEMIBOLD,
 
                             }}>
                                 {i18n.t('PersonalProfile')}
@@ -143,17 +143,19 @@ const Profile = ({ navigation }) => {
                         </View>
                        
                         <View style={{
-                            borderRadius: 5,
-                            marginHorizontal: 10,
-                            padding: 10,
+                            borderRadius: 10,
+                            marginTop : 10,
+                            marginHorizontal: 20,
+                            padding: 15,
+                            backgroundColor : Colors.white,
                             shadowColor: "#000",
 								shadowOffset: {
 									width: 0,
-									height: 1,
+									height: 2,
 								},
 								shadowOpacity: 0.20,
-								shadowRadius: 1.41,
-								elevation: 2,
+								shadowRadius: 4,
+								elevation: 5,
                         }}>
                             <TouchableOpacity onPress={() => {
                                 navigate("PersonalProfile")
@@ -162,11 +164,11 @@ const Profile = ({ navigation }) => {
                                     backgroundColor: Colors.primary,
                                     alignSelf: "flex-end",
                                     paddingVertical: 2,
-                                    paddingHorizontal: 16,
+                                    paddingHorizontal: 20,
                                     borderRadius: 15,
                                 }}>
                                 <Text style={{
-                                    fontSize: FontSize.FS_14,
+                                    fontSize: FontSize.FS_10,
                                     fontFamily: ConstantKey.MONTS_REGULAR,
                                     color: Colors.white
                                 }}>{"Edit"}</Text>
@@ -176,16 +178,16 @@ const Profile = ({ navigation }) => {
                                 alignItems: "center",
                             }}  >
                                 <View style={{
-                                    backgroundColor: Colors.white, borderRadius: 6, marginLeft: 5, height: 90, width: 90, alignItems: 'center', justifyContent: 'center',
+                                    backgroundColor: Colors.white, borderRadius: 6,height: 90, width: 90, alignItems: 'center', justifyContent: 'center',
                                 }}>
-                                    <Image style={{ height: 80, width: 80, }}
+                                    <Image style={{ height: 80, width: 80, borderRadius : 10 }}
                                         resizeMode='cover'
                                         source={{ uri: UserData?.user?.avatar_url }} />
                                 </View>
                                 <View style={{ flex: 1, marginLeft: 20, backgroundColor: Colors.white }}>
-                                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 4 }}>
                                         <MaterialCommunityIcons name={"account"} size={18} color={Colors.black} style={{ marginRight: 5 }} />
-                                        <Text numberOfLines={1} adjustsFontSizeToFit={true} style={[styles.calloutTitle, { marginTop: 4 }]}>{UserData?.user?.first_name + " " + UserData?.user?.last_name}</Text>
+                                        <Text numberOfLines={1} adjustsFontSizeToFit={true} style={[styles.calloutTitle,]}>{UserData?.user?.first_name + " " + UserData?.user?.last_name}</Text>
                                     </View>
                                     <View style={{ flexDirection: "row", alignItems: "center" }}>
                                         <MaterialCommunityIcons name={"phone"} size={18} color={Colors.darkGrey} style={{ marginRight: 5 }} />
@@ -199,31 +201,30 @@ const Profile = ({ navigation }) => {
                             </View>
                         </View>
                      
-                        <View style={{ marginHorizontal: 10, marginTop: 20, marginBottom: 5 }}>
+                        <View style={{ marginHorizontal: 20, marginTop: 20, marginBottom: 5 }}>
                             <Text style={{
-                                fontSize: FontSize.FS_22,
+                                fontSize: FontSize.FS_18,
                                 color: Colors.black,
-                                fontFamily: ConstantKey.MONTS_MEDIUM,
+                                fontFamily: ConstantKey.MONTS_SEMIBOLD,
                             }}>
                                 {i18n.t('BusinessProfile')}
                             </Text>
                         </View>
-                        {console.log("UserData?.user?.is_business_profile :",UserData?.user?.is_business_profile)}
                         {UserData?.user?.is_business_profile == 1 ?
                             <View style={{
-                                borderRadius: 5,
-                                marginHorizontal: 10,
+                                borderRadius: 10,
+                                marginHorizontal: 20,
                                 padding: 10,
+                                marginTop : 10,
+                                backgroundColor : Colors.white,
                                 shadowColor: "#000",
 								shadowOffset: {
 									width: 0,
-									height: 1,
+									height: 2,
 								},
 								shadowOpacity: 0.20,
-								shadowRadius: 1.41,
-								elevation: 2,
-
-
+								shadowRadius: 4,
+								elevation: 5,
                             }}>
                                 {UserData?.user?.business ? <TouchableOpacity onPress={() => {
                                     navigate("BusinessProfile",{isFrom:"PROFILE"})
@@ -232,11 +233,11 @@ const Profile = ({ navigation }) => {
                                         backgroundColor: Colors.primary,
                                         alignSelf: "flex-end",
                                         paddingVertical: 2,
-                                        paddingHorizontal: 16,
+                                        paddingHorizontal: 20,
                                         borderRadius: 15,
                                     }}>
                                     <Text style={{
-                                        fontSize: FontSize.FS_14,
+                                        fontSize: FontSize.FS_10,
                                         fontFamily: ConstantKey.MONTS_REGULAR,
                                         color: Colors.white
                                     }}>{"Edit"}</Text>
@@ -248,9 +249,9 @@ const Profile = ({ navigation }) => {
                                         <Text style={[styles.calloutTitle, { marginTop: 4 }]}>{UserData?.user?.business?.business_name}</Text>
                                     </View>}
                                     {UserData?.user?.business?.subcategory_name &&
-                                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                        <View style={{ flexDirection: "row", alignItems: "center",  marginTop: 4  }}>
                                             <MaterialCommunityIcons name={"format-list-checkbox"} size={18} color={Colors.darkGrey} style={{ marginRight: 5 }} />
-                                            <Text style={[styles.calloutDescription, { marginTop: 4 }]}>{UserData?.user?.business?.subcategory_name}</Text>
+                                            <Text style={[styles.calloutDescription, {}]}>{UserData?.user?.business?.subcategory_name}</Text>
                                         </View>}
                                     {UserData?.user?.business?.phone &&
                                         <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -272,22 +273,24 @@ const Profile = ({ navigation }) => {
                             </View>
                             :
                             <View style={{
-                                borderRadius: 5,
-                                marginHorizontal: 10,
-                                padding: 10,
+                                borderRadius: 10,
+                                marginTop : 10,
+                                marginHorizontal: 20,
+                                padding: 15,
+                                backgroundColor : Colors.white,
                                 shadowColor: "#000",
 								shadowOffset: {
 									width: 0,
-									height: 1,
+									height: 2,
 								},
 								shadowOpacity: 0.20,
-								shadowRadius: 1.41,
-								elevation: 2,
+								shadowRadius: 4,
+								elevation: 5,
                                 alignItems: "center"
 
                             }}>
                                 <Text style={{
-                                    fontSize: FontSize.FS_22,
+                                    fontSize: FontSize.FS_14,
                                     color: Colors.black,
                                     fontFamily: ConstantKey.MONTS_MEDIUM,
                                     textAlign: "center"
@@ -299,7 +302,7 @@ const Profile = ({ navigation }) => {
                                 }}
                                     style={{
                                         borderRadius: 50,
-                                        margin: 10,
+                                        marginTop: 20,
                                         paddingVertical: 6,
                                         paddingHorizontal: 30,
                                         alignItems: "center",
@@ -307,7 +310,7 @@ const Profile = ({ navigation }) => {
 
                                     }}>
                                     <Text style={{
-                                        fontSize: FontSize.FS_16,
+                                        fontSize: FontSize.FS_14,
                                         color: Colors.white,
                                         fontFamily: ConstantKey.MONTS_MEDIUM,
                                         textAlign: "center"
@@ -317,7 +320,6 @@ const Profile = ({ navigation }) => {
                                 </TouchableOpacity>
                             </View>}
                             </> }
-                    </SafeAreaView>
                 </ScrollView>
             </View>
 
@@ -325,6 +327,7 @@ const Profile = ({ navigation }) => {
                 <LoadingView />
                 : null}
         </View>
+        </SafeAreaView>
     )
 }
 const styles = StyleSheet.create({
@@ -333,14 +336,14 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.white,
     },
     calloutTitle: {
-        fontSize: FontSize.FS_16,
+        fontSize: FontSize.FS_14,
         fontFamily: ConstantKey.MONTS_SEMIBOLD,
         color: Colors.black,
         flex:1
     },
     calloutDescription: {
         marginTop: 5,
-        fontSize: FontSize.FS_14,
+        fontSize: FontSize.FS_12,
         fontFamily: ConstantKey.MONTS_REGULAR,
         color: Colors.darkGrey,
         flex:1

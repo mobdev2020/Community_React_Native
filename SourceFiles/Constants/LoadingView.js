@@ -18,7 +18,7 @@ export default class LoadingView extends Component {
             <View style={styles.container}>
                 <View style={styles.indicatorView}>
 
-                    <ActivityIndicator size={'large'} color={Colors.primaryRed} />
+                    <ActivityIndicator size={'large'} color={Colors.primary} />
                     {this.props.text !== '' && this.props.text !== undefined ?
                         <Text style={styles.text} numberOfLines={2}>
                             {this.props.text}

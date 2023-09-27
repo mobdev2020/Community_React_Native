@@ -63,6 +63,7 @@ const Login = (props) => {
 				setFcmToken(JSON.parse(value))
 			}
 			else {
+				console.log("else call")
 				generateFCMToken()
 			}
 		} catch (e) {
@@ -186,13 +187,15 @@ const Login = (props) => {
 	// }
 
 	return (
+		<SafeAreaView style={styles.container}>
 		<View style={styles.container}>
 			<View style={{ flex: 1, backgroundColor: Colors.white }}>
 				<View style={{ justifyContent: 'center', marginHorizontal: 25, marginVertical: 40 }}>
 					<Text style={{
 						fontSize: FontSize.FS_26,
 						color: Colors.black,
-						fontFamily: ConstantKey.MONTS_SEMIBOLD
+						fontFamily: ConstantKey.MONTS_SEMIBOLD,
+						marginTop : 20
 					}}>
 						{i18n.t('login')}
 					</Text>
@@ -202,7 +205,7 @@ const Login = (props) => {
 						color: Colors.black,
 						fontFamily: ConstantKey.MONTS_MEDIUM,
 						marginTop: 40,
-						lineHeight: 20
+						lineHeight: FontSize.FS_20
 					}}>
 						{i18n.t('phoneNumber')}
 					</Text>
@@ -251,6 +254,7 @@ const Login = (props) => {
 				<LoadingView />
 				: null}
 		</View>
+		</SafeAreaView>
 	);
 };
 

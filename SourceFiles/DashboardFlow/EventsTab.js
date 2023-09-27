@@ -1,5 +1,5 @@
 
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, TouchableHighlight, TouchableHighlightBase, Linking, Alert } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, TouchableHighlight, TouchableHighlightBase, Linking, Alert, SafeAreaView } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Colors } from '../Constants/Colors'
 import { ConstantKey } from '../Constants/ConstantKey'
@@ -237,6 +237,7 @@ const EventsTab = () => {
 	}
 
 	return (
+		<SafeAreaView style={styles.container}>
 		<View style={{ flex: 1, backgroundColor: Colors.white }}>
 			<View style={{ marginVertical: 20 }}>
 				{(Role == "school" && index == 0) ?
@@ -385,7 +386,7 @@ const EventsTab = () => {
 					renderItem={({ item, index }) => {
 						return (
 
-							<View style={{
+							<TouchableOpacity style={{
 								marginHorizontal: 20,
 								marginVertical: 5,
 								backgroundColor: Colors.white,
@@ -394,13 +395,14 @@ const EventsTab = () => {
 								shadowColor: "#000",
 								shadowOffset: {
 									width: 0,
-									height: 1,
+									height: 2,
 								},
 								shadowOpacity: 0.20,
-								shadowRadius: 1.41,
-								elevation: 2,
+								shadowRadius: 4,
+								elevation: 5,
 								borderRadius : 10
-							}}>
+							}}
+							onPress={() => {console.log(item)}}>
 								<View style={{ width: "100%", height: ConstantKey.SCREEN_HEIGHT / 4.5, borderTopRightRadius : 10 }}>
 									<FastImage style={{ flex: 1, borderTopLeftRadius : 10, borderTopRightRadius : 10 }}
 										source={{ uri: item?.event_image_url }}
@@ -408,20 +410,23 @@ const EventsTab = () => {
 									/>
 									<View style={{ backgroundColor: Colors.white, position: "absolute", right: 0, paddingHorizontal: 12, paddingVertical: 6,
 								borderTopRightRadius : 10 }}>
-										<Text style={{ fontSize: FontSize.FS_10, color: Colors.black, fontFamily: ConstantKey.MONTS_SEMIBOLD }}>{moment(item?.event_start_date).format("DD-MM-YYYY")}</Text>
+										<Text style={{ fontSize: FontSize.FS_8, color: Colors.black, fontFamily: ConstantKey.MONTS_SEMIBOLD }}>
+											{moment(item?.event_start_date).format("DD-MM-YYYY")}
+										</Text>
 									</View>
 								</View>
 								<View style={{
 									padding: 8
 								}}>
 									<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-										{item?.event_name && <Text style={{ fontSize: FontSize.FS_16, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM }}>{item?.event_name}</Text>}
+										{item?.event_name && <Text style={{ fontSize: FontSize.FS_12, color: Colors.primary, fontFamily: ConstantKey.MONTS_SEMIBOLD }}>{item?.event_name}</Text>}
 
 									</View>
-									<Text numberOfLines={2} style={{ fontSize: FontSize.FS_12, color: Colors.black, fontFamily: ConstantKey.MONTS_REGULAR }}>{item?.event_desc}</Text>
-									{item?.event_link && <Text onPress={() => { Linking.openURL(item?.event_link) }} numberOfLines={1} style={{ fontSize: FontSize.FS_12, color: Colors.black, fontFamily: ConstantKey.MONTS_REGULAR, marginTop: 4 ,textDecorationLine:"underline"}}>{item?.event_link}</Text>}
+									<Text numberOfLines={2} style={{marginTop : 4, fontSize: FontSize.FS_10, color: Colors.black, fontFamily: ConstantKey.MONTS_REGULAR }}>{item?.event_desc}</Text>
+									{item?.event_link && <Text onPress={() => { Linking.openURL(item?.event_link) }} numberOfLines={1} style={{ fontSize: FontSize.FS_10, color: Colors.black, fontFamily: ConstantKey.MONTS_REGULAR, marginTop: 4 ,textDecorationLine:"underline"}}>{item?.event_link}</Text>}
 									{Role == "school" &&
-										<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-end", marginBottom: 5 }}>
+										<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-end",
+											 marginBottom: 5 , marginVertical : 10 }}>
 											<TouchableOpacity onPress={() => {
 												Alert.alert("Alert", "Are you sure you want to delete event?", [
 													{
@@ -448,7 +453,7 @@ const EventsTab = () => {
 											</TouchableOpacity>
 										</View>}
 								</View>
-							</View>
+							</TouchableOpacity>
 						)
 					}}
 				/> : null}
@@ -498,7 +503,7 @@ const EventsTab = () => {
 										resizeMode='cover'
 									/>
 									<View style={{ backgroundColor: Colors.white, position: "absolute", right: 0, paddingHorizontal: 12, paddingVertical: 6 }}>
-										<Text style={{ fontSize: FontSize.FS_10, color: Colors.black, fontFamily: ConstantKey.MONTS_SEMIBOLD }}>{moment(item?.training_start_date).format("DD-MM-YYYY")}</Text>
+										<Text style={{ fontSize: FontSize.FS_8, color: Colors.black, fontFamily: ConstantKey.MONTS_SEMIBOLD }}>{moment(item?.training_start_date).format("DD-MM-YYYY")}</Text>
 									</View>
 								</View>
 								<View style={{
@@ -507,10 +512,10 @@ const EventsTab = () => {
 
 
 									<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-										<Text style={{ fontSize: FontSize.FS_16, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM }}>{item?.training_name}</Text>
+										<Text style={{ fontSize: FontSize.FS_12, color: Colors.primary, fontFamily: ConstantKey.MONTS_SEMIBOLD }}>{item?.training_name}</Text>
 									</View>
-									<Text numberOfLines={2} style={{ fontSize: FontSize.FS_12, color: Colors.black, fontFamily: ConstantKey.MONTS_REGULAR }}>{item?.training_desc}</Text>
-									<Text onPress={() => { Linking.openURL(item?.training_link) }} numberOfLines={1} style={{ fontSize: FontSize.FS_12, color: Colors.black, fontFamily: ConstantKey.MONTS_REGULAR, marginTop: 4 }}>{item?.training_link}</Text>
+									<Text numberOfLines={2} style={{marginTop : 4, fontSize: FontSize.FS_10, color: Colors.black, fontFamily: ConstantKey.MONTS_REGULAR }}>{item?.training_desc}</Text>
+									<Text onPress={() => { Linking.openURL(item?.training_link) }} numberOfLines={1} style={{ fontSize: FontSize.FS_10, color: Colors.black, fontFamily: ConstantKey.MONTS_REGULAR, marginTop: 4 }}>{item?.training_link}</Text>
 
 
 								</View>
@@ -565,21 +570,22 @@ const EventsTab = () => {
 										resizeMode='cover'
 									/>
 									<View style={{ backgroundColor: Colors.white, position: "absolute", right: 0, paddingHorizontal: 12, paddingVertical: 6 }}>
-										<Text style={{ fontSize: FontSize.FS_10, color: Colors.black, fontFamily: ConstantKey.MONTS_SEMIBOLD }}>{moment(item?.meeting_start_date).format("DD-MM-YYYY")}</Text>
+										<Text style={{ fontSize: FontSize.FS_8, color: Colors.black, fontFamily: ConstantKey.MONTS_SEMIBOLD }}>{moment(item?.meeting_start_date).format("DD-MM-YYYY")}</Text>
 									</View>
 								</View>
 								<View style={{
 									padding: 8
 								}}>
 									<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-										<Text style={{ fontSize: FontSize.FS_16, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM }}>{item?.meeting_name}</Text>
+										<Text style={{ fontSize: FontSize.FS_12, color: Colors.primary, fontFamily: ConstantKey.MONTS_SEMIBOLD }}>{item?.meeting_name}</Text>
 									</View>
-									<Text numberOfLines={2} style={{ fontSize: FontSize.FS_12, color: Colors.black, fontFamily: ConstantKey.MONTS_REGULAR }}>{item?.meeting_desc}</Text>
-									<Text onPress={() => { Linking.openURL(item?.meeting_link) }} numberOfLines={1} style={{ fontSize: FontSize.FS_12, color: Colors.black, fontFamily: ConstantKey.MONTS_REGULAR, marginTop: 4 ,textDecorationLine:"underline"}}>{item?.meeting_link}</Text>
+									<Text numberOfLines={2} style={{marginTop : 4, fontSize: FontSize.FS_10, color: Colors.black, fontFamily: ConstantKey.MONTS_REGULAR }}>{item?.meeting_desc}</Text>
+									<Text onPress={() => { Linking.openURL(item?.meeting_link) }} numberOfLines={1} style={{ fontSize: FontSize.FS_10, color: Colors.black, fontFamily: ConstantKey.MONTS_REGULAR, marginTop: 4 ,textDecorationLine:"underline"}}>{item?.meeting_link}</Text>
 
 									{Role == "school" &&
 
-										<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-end", marginBottom: 5 }}>
+										<View style={{ flexDirection: "row", alignItems: "center", 
+										justifyContent: "flex-end", marginVertical : 10 }}>
 											<TouchableOpacity onPress={() => {
 												Alert.alert("Alert", "Are you sure you want to delete meeting?", [
 													{
@@ -612,6 +618,7 @@ const EventsTab = () => {
 				/> : null}
 			{isLoading ? <LoadingView /> : null}
 		</View >
+		</SafeAreaView>
 	)
 }
 const styles = StyleSheet.create({

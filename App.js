@@ -292,7 +292,7 @@ const App = () => {
 		if (enabled) {
 
 			console.log('Authorization status:', authStatus);
-
+			const asc = await messaging().registerDeviceForRemoteMessages()
 			getFcmToken()
 
 		} else {
@@ -305,6 +305,39 @@ const App = () => {
 			});
 		}
 	}
+	const sleep = ms => {
+		return new Promise(resolve => setTimeout(resolve, ms));
+	  };
+
+	  async function requestPermissionForNotification() {
+		try {
+		  const permission = await requestNotifications(["alert", "badge", "sound"]);
+		  if (permission.status === "granted") {
+			setupNotification();
+		  }
+		} catch (e) {
+		  console.log(e)
+		}
+	  };
+
+	async function setupNotification() {
+		try {
+	
+		  await sleep(5000)
+		  // TODO no need token for now, Will be used for future releases 
+		  const enabled = await firebase.messaging().hasPermission();
+		  await requestNotifications(['alert', 'badge', 'sound']);
+		  await messaging().registerForRemoteNotifications();
+		  const token = await firebase.messaging().getToken();
+		 
+		  firebase.messaging().onMessage(async (remoteMessage) => {
+	   
+		  });
+		} catch (e) {
+		  console.log(e)
+	
+		}
+	  }
 
 
 	const getFcmToken = async () => {

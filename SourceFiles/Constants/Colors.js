@@ -1,7 +1,7 @@
 export const Colors = {
 
     white: '#FFFFFF',
-    black: '#000000',
+    black: '#181818',
     black03: 'rgba(0,0,0,0.4)',
 
 	primaryRed : '#CF2030',
@@ -17,7 +17,7 @@ export const Colors = {
 	chateauGreen : '#45A540',
 	carrotOrange : '#F18716',
 	dodgerBlue : '#4682F9',
-
+	dimGray : "#636363",
 
 
 	primaryBlue:"#233D62",

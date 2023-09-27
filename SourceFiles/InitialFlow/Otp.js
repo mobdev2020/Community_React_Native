@@ -40,6 +40,8 @@ const Otp = (props) => {
     useEffect(() => {
         getFCMToken()
         Api_Send_Otp(true)
+
+        return () => setOtpCode('')
     }, [])
 
 
@@ -207,16 +209,24 @@ const Otp = (props) => {
     }
 
     return (
+        <SafeAreaView style={styles.container}>
         <View style={styles.container}>
             <View style={{ flex: 1, backgroundColor: Colors.white }}>
-                <View style={{ justifyContent: 'center', marginHorizontal: 20, marginVertical: 40 }}>
+                <View style={{ justifyContent: 'center', marginHorizontal: 20, marginVertical: 10, }}>
+                    <View style={{flexDirection : 'row', alignItems : 'center'}}>
+                        <TouchableOpacity onPress={() =>  props.navigation.goBack()}>
+                            <Icon name={'chevron-left'} color={Colors.black} size={20}/>
+                        </TouchableOpacity>
                     <Text style={{
-                        fontSize: FontSize.FS_26,
+                        fontSize: FontSize.FS_18,
                         color: Colors.black,
-                        fontFamily: ConstantKey.MONTS_SEMIBOLD
+                        fontFamily: ConstantKey.MONTS_SEMIBOLD,
+                        marginHorizontal : 20
                     }}>
                         {i18n.t('enterOtp')}
                     </Text>
+
+                    </View>
 
 
                     <View style={styles.otpView}>
@@ -266,6 +276,7 @@ const Otp = (props) => {
                 <LoadingView />
                 : null}
         </View>
+        </SafeAreaView>
     );
 };
 
@@ -300,7 +311,7 @@ const styles = StyleSheet.create({
     },
     otpView: {
         alignItems: 'center',
-        // marginHorizontal: pixelSizeHorizontal(30),
+        marginHorizontal: 20,
         marginVertical: 40
     },
     borderStyleBase: {

@@ -8,6 +8,7 @@ import {
   Animated,
 } from "react-native";
 import Slide from "./Slide";
+import { Colors } from "../../Constants/Colors";
 
 const { width, heigth } = Dimensions.get("window");
 let flatList;
@@ -81,7 +82,7 @@ const Banner = ({ data }) => {
                   opacity,
                   height: 6,
                   width: 6,
-                  backgroundColor: "#595959",
+                  backgroundColor:  Colors.primary,//"#595959",
                   marginVertical: 8,
                   marginHorizontal: 3,
                   borderRadius: 5,

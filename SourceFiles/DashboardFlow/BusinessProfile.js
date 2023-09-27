@@ -98,7 +98,7 @@ const BusinessProfile = (props) => {
 		Webservice.get(APIURL.GetProfile)
 			.then(response => {
 				setIsLoading(false)
-				console.log(JSON.stringify("Api_Get_Profile Response : " + JSON.stringify(response)));
+				console.log("Api_Get_Profile Response : " + JSON.stringify(response));
 				if (response.data.status == true) {
 					var business = response?.data?.data?.user?.business
 					if (business != null) {
@@ -108,6 +108,19 @@ const BusinessProfile = (props) => {
 						setBusinessPhone(business?.phone)
 						setBusinessEmail(business?.email)
 						setAddress(business?.address_line_one)
+						setCity(business?.city)
+						setPincode(business?.pincode)
+
+						if(business?.country != null){
+							setCountry(business?.country?.name)
+							setCountryId(business?.country.id)
+							var item = {id : business?.country.id, name : business?.country?.name}
+							Api_Get_State(true, item)
+						}
+						
+
+						setState(business?.state.name)
+						setStateId(business?.state?.id)
 					}
 
 				} else {
@@ -278,9 +291,9 @@ const BusinessProfile = (props) => {
 			else if (Category == null) {
 				Toast.showWithGravity("Please select category", Toast.LONG, Toast.BOTTOM);
 			}
-			else if (SubCategory == '') {
-				Toast.showWithGravity("Please enter sub category", Toast.LONG, Toast.BOTTOM);
-			}
+			// else if (SubCategory == '') {
+			// 	Toast.showWithGravity("Please enter sub category", Toast.LONG, Toast.BOTTOM);
+			// }
 			else if (BusinessPhone.length < 10) {
 				Toast.showWithGravity("Please enter valid phone number", Toast.LONG, Toast.BOTTOM);
 			}
@@ -315,13 +328,11 @@ const BusinessProfile = (props) => {
 	}
 
 	return (
+		<SafeAreaView style={styles.container}>
 		<View style={styles.container}>
 			<View style={{ flex: 1, backgroundColor: Colors.white }}>
 
-
-				<ScrollView style={{}}>
-					<SafeAreaView style={{ flex: 1, marginVertical: 10, marginHorizontal: 10 }}>
-						<View style={{ flexDirection: "row", alignItems: "center", }}>
+			<View style={{ flexDirection: "row", alignItems: "center",marginHorizontal : 10 }}>
 							<TouchableOpacity onPress={() => { props.navigation.goBack() }}
 								style={{ marginRight: 10, marginBottom: 5, padding: 10 }}>
 								<Icon name={"chevron-left"} size={20} color={Colors.black} />
@@ -329,7 +340,7 @@ const BusinessProfile = (props) => {
 							</TouchableOpacity>
 
 							<Text style={{
-								fontSize: FontSize.FS_26,
+								fontSize: FontSize.FS_18,
 								color: Colors.black,
 								fontFamily: ConstantKey.MONTS_SEMIBOLD,
 							}}>
@@ -337,13 +348,15 @@ const BusinessProfile = (props) => {
 							</Text>
 
 						</View>
-						<View style={{ marginHorizontal: 10 }}>
+				<ScrollView style={{}}>
+						
+						<View style={{ marginHorizontal: 20 }}>
 							<Text style={{
-								fontSize: FontSize.FS_18,
+								fontSize: FontSize.FS_14,
 								color: Colors.black,
 								fontFamily: ConstantKey.MONTS_MEDIUM,
 								marginTop: 10,
-								lineHeight: 20
+								lineHeight: FontSize.FS_20,
 							}}>
 								{i18n.t('BusinessName')}
 							</Text>
@@ -357,11 +370,11 @@ const BusinessProfile = (props) => {
 
 							</View>
 							<Text style={{
-								fontSize: FontSize.FS_18,
+								fontSize: FontSize.FS_14,
 								color: Colors.black,
 								fontFamily: ConstantKey.MONTS_MEDIUM,
 								marginTop: 10,
-								lineHeight: 20
+								lineHeight: FontSize.FS_20,
 							}}>
 								{i18n.t('Category')}
 							</Text>
@@ -372,8 +385,8 @@ const BusinessProfile = (props) => {
 
 								>
 									<Text style={{
-										fontSize: FontSize.FS_15,
-										color: Colors.lightGrey,
+										fontSize: FontSize.FS_14,
+										color: Category == "" ? Colors.lightGrey : Colors.dimGray,
 										fontFamily: ConstantKey.MONTS_REGULAR,
 										// marginTop:15
 									}}>
@@ -383,11 +396,11 @@ const BusinessProfile = (props) => {
 								</View>
 							</TouchableOpacity>
 							<Text style={{
-								fontSize: FontSize.FS_18,
+								fontSize: FontSize.FS_14,
 								color: Colors.black,
 								fontFamily: ConstantKey.MONTS_MEDIUM,
 								marginTop: 10,
-								lineHeight: 20
+								lineHeight: FontSize.FS_20,
 							}}>
 								{i18n.t('SubCategory')}
 							</Text>
@@ -401,11 +414,11 @@ const BusinessProfile = (props) => {
 								/>
 							</View>
 							<Text style={{
-								fontSize: FontSize.FS_18,
+								fontSize: FontSize.FS_14,
 								color: Colors.black,
 								fontFamily: ConstantKey.MONTS_MEDIUM,
 								marginTop: 10,
-								lineHeight: 20
+								lineHeight: FontSize.FS_20,
 							}}>
 								{i18n.t('BusinessPhone')}
 							</Text>
@@ -421,11 +434,11 @@ const BusinessProfile = (props) => {
 								/>
 							</View>
 							<Text style={{
-								fontSize: FontSize.FS_18,
+								fontSize: FontSize.FS_14,
 								color: Colors.black,
 								fontFamily: ConstantKey.MONTS_MEDIUM,
 								marginTop: 10,
-								lineHeight: 20
+								lineHeight: FontSize.FS_20,
 							}}>
 								{i18n.t('BusinessEmail')}
 							</Text>
@@ -439,26 +452,26 @@ const BusinessProfile = (props) => {
 								/>
 							</View>
 							<Text style={{
-								fontSize: FontSize.FS_26,
+								fontSize: FontSize.FS_18,
 								color: Colors.black,
 								fontFamily: ConstantKey.MONTS_SEMIBOLD,
-								marginTop: 15,
+								marginTop: 30,
 							}}>
 								{i18n.t('AddressInfo')}
 							</Text>
 							<Text style={{
-								fontSize: FontSize.FS_18,
+								fontSize: FontSize.FS_14,
 								color: Colors.black,
 								fontFamily: ConstantKey.MONTS_MEDIUM,
-								marginTop: 15,
-								lineHeight: 20
+								marginTop: 30,
+								lineHeight: FontSize.FS_20,
 							}}>
 								{i18n.t('Address')}
 							</Text>
 							{/* <View style={styles.mobileView}> */}
 							<TextInput style={{
-								height: 70, fontSize: FontSize.FS_16, fontFamily: ConstantKey.MONTS_REGULAR,
-								color: Colors.black, flex: 1, marginTop: 10, backgroundColor: Colors.lightGrey01, borderRadius: 6, paddingHorizontal: 10
+								height: 70, fontSize: FontSize.FS_14, fontFamily: ConstantKey.MONTS_REGULAR,
+								color: Colors.dimGray, flex: 1, marginTop: 10, backgroundColor: Colors.lightGrey01, borderRadius: 6, paddingHorizontal: 10
 
 							}}
 								multiline={true}
@@ -470,11 +483,11 @@ const BusinessProfile = (props) => {
 							/>
 							{/* </View> */}
 							<Text style={{
-								fontSize: FontSize.FS_18,
+								fontSize: FontSize.FS_14,
 								color: Colors.black,
 								fontFamily: ConstantKey.MONTS_MEDIUM,
 								marginTop: 10,
-								lineHeight: 20
+								lineHeight: FontSize.FS_20,
 							}}>
 								{"City"}
 							</Text>
@@ -488,11 +501,11 @@ const BusinessProfile = (props) => {
 								/>
 							</View>
 							<Text style={{
-								fontSize: FontSize.FS_18,
+								fontSize: FontSize.FS_14,
 								color: Colors.black,
 								fontFamily: ConstantKey.MONTS_MEDIUM,
 								marginTop: 10,
-								lineHeight: 20
+								lineHeight: FontSize.FS_20,
 							}}>
 								{"Pin code"}
 							</Text>
@@ -506,11 +519,11 @@ const BusinessProfile = (props) => {
 								/>
 							</View>
 							<Text style={{
-								fontSize: FontSize.FS_18,
+								fontSize: FontSize.FS_14,
 								color: Colors.black,
 								fontFamily: ConstantKey.MONTS_MEDIUM,
 								marginTop: 10,
-								lineHeight: 20
+								lineHeight: FontSize.FS_20,
 							}}>
 								{"Select Country"}
 							</Text>
@@ -520,8 +533,8 @@ const BusinessProfile = (props) => {
 
 								>
 									<Text style={{
-										fontSize: FontSize.FS_15,
-										color: Country == "" ? Colors.lightGrey : Colors.black,
+										fontSize: FontSize.FS_14,
+										color: Country == "" ? Colors.lightGrey : Colors.dimGray,
 										fontFamily: ConstantKey.MONTS_REGULAR,
 										// marginTop:15
 									}}>
@@ -531,11 +544,11 @@ const BusinessProfile = (props) => {
 								</View>
 							</TouchableOpacity>
 							<Text style={{
-								fontSize: FontSize.FS_18,
+								fontSize: FontSize.FS_14,
 								color: Colors.black,
 								fontFamily: ConstantKey.MONTS_MEDIUM,
 								marginTop: 10,
-								lineHeight: 20
+								lineHeight: FontSize.FS_20,
 							}}>
 								{"Select State"}
 							</Text>
@@ -553,8 +566,8 @@ const BusinessProfile = (props) => {
 
 								>
 									<Text style={{
-										fontSize: FontSize.FS_15,
-										color: State == "" ? Colors.lightGrey : Colors.black,
+										fontSize: FontSize.FS_14,
+										color: State == "" ? Colors.lightGrey : Colors.dimGray,
 										fontFamily: ConstantKey.MONTS_REGULAR,
 										// marginTop:15
 									}}>
@@ -566,11 +579,10 @@ const BusinessProfile = (props) => {
 							<TouchableOpacity style={styles.btnLogin}
 								onPress={() => btnBusinessProfile()}>
 								<Text style={styles.loginText}>
-									{i18n.t('CreateBusinesProfile')}
+									{i18n.t('SaveProfile')}
 								</Text>
 							</TouchableOpacity>
 						</View>
-					</SafeAreaView>
 				</ScrollView>
 			</View>
 
@@ -717,6 +729,7 @@ const BusinessProfile = (props) => {
 				</ScrollView>
 			</RBSheet>
 		</View>
+		</SafeAreaView>
 	)
 }
 const styles = StyleSheet.create({
@@ -725,19 +738,19 @@ const styles = StyleSheet.create({
 		backgroundColor: Colors.white,
 	},
 	mobileView: {
-		marginTop: 6, flexDirection: 'row', backgroundColor: Colors.lightGrey01, borderRadius: 6,
-		height: 44, alignItems: 'center'
+		marginTop: 10, flexDirection: 'row', backgroundColor: Colors.lightGrey01, borderRadius: 6,
+		height: 44, alignItems: 'center', 
 	},
 	textInputMobile: {
 		marginLeft: 10, marginRight: 10, height: 50, flex: 1, fontSize: FontSize.FS_14, fontFamily: ConstantKey.MONTS_REGULAR,
-		color: Colors.black,
+		color: Colors.dimGray
 	},
 	btnLogin: {
 		backgroundColor: Colors.black,
 		marginTop: 48, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',
 	},
 	loginText: {
-		fontSize: FontSize.FS_18, color: Colors.white,
+		fontSize: FontSize.FS_16, color: Colors.white,
 		fontFamily: ConstantKey.MONTS_SEMIBOLD
 	},
 });

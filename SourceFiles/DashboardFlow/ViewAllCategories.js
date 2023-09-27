@@ -19,7 +19,7 @@ import { version as versionNo } from '../../package.json'
 //Third Party
 import Toast from 'react-native-simple-toast';
 // import Icon from 'react-native-vector-icons/FontAwesome5';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import RBSheet from "react-native-raw-bottom-sheet";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackActions } from '@react-navigation/native';
@@ -64,24 +64,26 @@ const ViewAllCategories = ({navigation}) => {
 	}
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView style={{}}>
+          
 
 
-                <View style={{ flexDirection: "row", alignItems: "center",marginHorizontal:20,marginVertical:10 }}>
+                <View style={{ flexDirection: "row", alignItems: "center",marginHorizontal:10}}>
                     <TouchableOpacity onPress={() => { navigation.goBack() }}
-                        style={{  marginBottom: 5, }}>
-                        <Icon name={"chevron-left"} size={28} color={Colors.black} />
+                        style={{ marginRight: 10, padding : 10 }}>
+                        <Icon name={"chevron-left"} size={18} color={Colors.black} />
 
                     </TouchableOpacity>
 
                     <Text style={{
-                        fontSize: FontSize.FS_24,
+                        fontSize: FontSize.FS_18,
                         color: Colors.black,
                         fontFamily: ConstantKey.MONTS_SEMIBOLD,
                     }}>
                         {"Categories"}
                     </Text>
                 </View>
+
+                <ScrollView style={{}}>
                 <View style={{ marginHorizontal: 20, }}>
                     <FlatList
                         // horizontal
@@ -90,13 +92,13 @@ const ViewAllCategories = ({navigation}) => {
                         data={CategoryData}
                         // ItemSeparatorComponent={<View style={{ width: 20, height: 20 }}></View>}
                         renderItem={({ item, index }) => (
-                            <View style={{ alignItems: "center",marginBottom:14 }}>
+                            <View style={{ alignItems: "center",marginBottom:14, flex : 1 }}>
                                 <TouchableOpacity onPress={() =>{navigate("SearchScreen",{isSearch : false,category:item})}}
                                 style={{
-                                    backgroundColor: Colors.lightGrey01,
-                                    width: 62,
-                                    height: 62,
-                                    borderRadius: 50,
+                                    backgroundColor: Colors.primaryLight,
+                                    width: ConstantKey.SCREEN_WIDTH/6,
+                                    height: ConstantKey.SCREEN_WIDTH/6,
+                                    borderRadius: ConstantKey.SCREEN_WIDTH/6,
                                     padding: 15,
                                     alignItems: "center",
                                     justifyContent: "center",
@@ -104,7 +106,7 @@ const ViewAllCategories = ({navigation}) => {
                                     marginBottom:4
                                 }}>
 
-                                    <FastImage style={{ resizeMode: 'contain', width: 32, height: 32 }}
+                                    <FastImage style={{ resizeMode: 'contain', width: ConstantKey.SCREEN_WIDTH/12, height: ConstantKey.SCREEN_WIDTH/12 }}
                                         source={{uri :item.image_url}}
                                     />
 
@@ -113,6 +115,7 @@ const ViewAllCategories = ({navigation}) => {
                                     fontSize: FontSize.FS_14,
                                     color: Colors.black,
                                     fontFamily: ConstantKey.MONTS_MEDIUM,
+                                    marginTop : 4
                                 }}>
                                    {item?.name}
                                 </Text>

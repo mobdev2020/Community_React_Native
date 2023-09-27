@@ -112,7 +112,7 @@ const QrCode = (props) => {
                     margin: 20,
                     textAlign:"center",
                     alignSelf:"center",
-                    lineHeight:30
+                    lineHeight: FontSize.FS_30,
                 }}>
                     {"Scan QRCode & Join \n School Community "}
                 </Text>

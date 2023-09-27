@@ -12,7 +12,10 @@ const Slide = ({ item }) => {
     <>
       {item?.image &&
         <TouchableOpacity onPress={() => {
-          Linking.openURL(item?.url)
+          if(item?.url != null){
+            Linking.openURL(item?.url)
+
+          }
         }} style={styles.cardView}>
 
           <FastImage style={styles.image} source={{ uri: item.image_url }} />
@@ -24,15 +27,15 @@ const Slide = ({ item }) => {
 
 const styles = StyleSheet.create({
   cardView: {
-    width: width,
-    height: height / 3.5,
+    width: width -20,
+    height: height / 3.8,
     backgroundColor: "white",
     marginHorizontal: 10,
     borderRadius: 6,
   },
   image: {
-    width: width,
-    height: height / 3.5,
+    width: width -20,
+    height: height / 3.8,
   },
 });
 

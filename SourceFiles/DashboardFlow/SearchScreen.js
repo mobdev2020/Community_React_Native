@@ -106,7 +106,7 @@ const SearchScreen = ({ navigation, route }) => {
         Webservice.post(APIURL.GetBusiness, body)
             .then(response => {
                 setIsLoading(false)
-                // console.log("Api_Get_Business Response : " + JSON.stringify(response.data.data));
+                console.log("Api_Get_Business Response : " + JSON.stringify(response.data.data));
                 if (response.data.status == true) {
 
                     var data = response.data.data?.data
@@ -197,19 +197,19 @@ const SearchScreen = ({ navigation, route }) => {
         }
     };
     return (
+        <SafeAreaView style={styles.container}>
         <View style={styles.container}>
-            <ScrollView >
-                <SafeAreaView style={{ flex: 1, marginVertical: 10, marginHorizontal: 10 }}>
-                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between",marginHorizontal : 10 }}>
                         <View style={{ flexDirection: "row", alignItems: "center", }}>
                             <TouchableOpacity onPress={() => { navigation.goBack() }}
-                                style={{ marginRight: 10, marginBottom: 5, padding: 10 }}>
+                                style={{ marginRight: 10, padding: 10 }}>
                                 <Icon name={"chevron-left"} size={18} color={Colors.black} />
 
                             </TouchableOpacity>
 
                             <Text style={{
-                                fontSize: FontSize.FS_22,
+                                fontSize: FontSize.FS_18,
                                 color: Colors.black,
                                 fontFamily: ConstantKey.MONTS_SEMIBOLD,
                             }}>
@@ -225,7 +225,10 @@ const SearchScreen = ({ navigation, route }) => {
                             <MaterialCommunityIcons name={"filter-outline"} size={28} color={Colors.primary} style={{ marginRight: 10 }} />
                         </TouchableOpacity>
                     </View>
-                    <View style={{ marginHorizontal: 10 }}>
+
+            <ScrollView >
+                   
+                    <View style={{ marginHorizontal: 20 }}>
 
                         <View style={styles.mobileView}>
                             <MaterialCommunityIcons name={"magnify"} size={20} color={Colors.primary} style={{ marginLeft: 10 }} />
@@ -301,9 +304,6 @@ const SearchScreen = ({ navigation, route }) => {
                                 </Text>
                             </TouchableOpacity>
                         </View>
-
-
-
                     </View>
                     <FlatList
                         style={{ marginTop: 10 }}
@@ -330,50 +330,50 @@ const SearchScreen = ({ navigation, route }) => {
                         }
                         renderItem={({ item, index }) => (
                             <View key={item.business_name} style={{
-                                borderRadius: 5,
-                                marginHorizontal: 10,
+                                borderRadius: 10,
+                                backgroundColor : Colors.white,
+                                marginHorizontal: 20,
                                 marginTop: 20,
                                 padding: 12,
                                 shadowColor: "#000",
-                                shadowOffset: {
-                                    width: 0,
-                                    height: 1,
-                                },
-                                shadowOpacity: 0.20,
-                                shadowRadius: 1.41,
-                                elevation: 2,
+								shadowOffset: {
+									width: 0,
+									height: 2,
+								},
+								shadowOpacity: 0.20,
+								shadowRadius: 4,
+								elevation: 5,
                             }}>
-                                {console.log("i",item)}
 
                                 <View style={{ flex: 1, backgroundColor: Colors.white }}>
                                     <View style={{ flexDirection: "row", alignItems: "center" }}>
                                         {/* <MaterialCommunityIcons name={"domain"} size={18} color={Colors.primary} style={{ marginRight: 5 }} /> */}
                                         <Text style={[styles.calloutTitle, { marginTop: 4 }]}>{item?.business_name}</Text>
                                     </View>
-                                    <View style={{ flexDirection: "row", alignItems: "center" ,}}>
+                                    <View style={{ flexDirection: "column", alignItems: "center" , marginTop : 5}}>
                                         {/* <MaterialCommunityIcons name={"domain"} size={18} color={Colors.primary} style={{ marginRight: 5 }} /> */}
-                                        {/* <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                        <View style={{ flexDirection: "row", alignItems: "center" , flex : 1}}>
                                             <Text style={[styles.calloutSubTitle, { marginTop: 4 }]}>{"Category : "}</Text>
-                                            <Text style={[styles.calloutDescription, { marginTop: 4 }]}>{item?.subcategory_name}</Text>
-                                        </View> */}
-                                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                            <Text style={[styles.calloutDescription, { marginTop: 4, flex : 1 }]}>{item?.category?.name}</Text>
+                                        </View>
+                                        <View style={{ flexDirection: "row", alignItems: "center", flex:1 }}>
                                             <Text style={[styles.calloutSubTitle, { marginTop: 4 }]}>{"Sub Category : "}</Text>
-                                            <Text style={[styles.calloutDescription, { marginTop: 4 }]}>{item?.subcategory_name}</Text>
+                                            <Text style={[styles.calloutDescription, { marginTop: 4,flex : 1 }]}>{item?.subcategory_name}</Text>
                                         </View>
 
                                     </View>
-
-                                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                   
+                                    <View style={{ flexDirection: "row", alignItems: "center", marginTop : 10 }}>
                                         <MaterialCommunityIcons name={"phone"} size={18} color={Colors.black} style={{ marginRight: 5 }} />
-                                        <Text style={styles.calloutDescription}>{item?.phone}</Text>
+                                        <Text style={[styles.calloutDescription,{marginTop : 0}]}>{item?.phone}</Text>
                                     </View>
-                                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                    <View style={{ flexDirection: "row", alignItems: "center" ,marginTop : 10}}>
                                         <MaterialCommunityIcons name={"email"} size={18} color={Colors.black} style={{ marginRight: 5 }} />
-                                        <Text style={styles.calloutDescription}>{item?.email}</Text>
+                                        <Text style={[styles.calloutDescription,{marginTop : 0}]}>{item?.email}</Text>
                                     </View>
-                                    <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                        <MaterialCommunityIcons name={"map-marker-outline"} size={18} color={Colors.black} style={{ marginRight: 5 }} />
-                                        <Text style={styles.calloutDescription}>{item?.address_line_one}</Text>
+                                    <View style={{ flexDirection: "row", alignItems: "center" ,marginTop : 10}}>
+                                        {/* <MaterialCommunityIcons name={"map-marker-outline"} size={18} color={Colors.black} style={{ marginRight: 5 }} /> */}
+                                        <Text style={[styles.calloutDescription,{marginTop : 0}]}>{item?.address}</Text>
                                     </View>
                                 </View>
                             </View>
@@ -382,7 +382,6 @@ const SearchScreen = ({ navigation, route }) => {
                     />
 
 
-                </SafeAreaView>
                 <RBSheet
                     ref={refRBSheet}
                     closeOnDragDown={true}
@@ -455,6 +454,7 @@ const SearchScreen = ({ navigation, route }) => {
                 <LoadingView />
                 : null}
         </View>
+        </SafeAreaView>
     )
 }
 const styles = StyleSheet.create({
@@ -481,20 +481,20 @@ const styles = StyleSheet.create({
         fontFamily: ConstantKey.MONTS_SEMIBOLD
     },
     calloutTitle: {
-        fontSize: FontSize.FS_16,
+        fontSize: FontSize.FS_12,
         fontFamily: ConstantKey.MONTS_SEMIBOLD,
         color: Colors.black
     },
     calloutSubTitle: {
-        fontSize: FontSize.FS_13,
+        fontSize: FontSize.FS_10,
         fontFamily: ConstantKey.MONTS_MEDIUM,
         color: Colors.black
     },
     calloutDescription: {
         marginTop: 5,
-        fontSize: FontSize.FS_14,
+        fontSize: FontSize.FS_10,
         fontFamily: ConstantKey.MONTS_REGULAR,
-        color: Colors.darkGrey,
+        color: Colors.black,
 
     },
     centeredView: {

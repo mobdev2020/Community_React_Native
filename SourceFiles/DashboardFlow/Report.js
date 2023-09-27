@@ -76,9 +76,7 @@ const Report = (props) => {
 		<SafeAreaView style={styles.container}>
 			<View style={styles.container}>
 
-				<ScrollView style={styles.container}>
-					<View style={{ marginHorizontal: 20, }}>
-					<View style={{ flexDirection: "row", alignItems: "center",marginVertical:5  }}>
+			<View style={{ flexDirection: "row", alignItems: "center",marginVertical:5 , marginHorizontal : 10 }}>
 						<TouchableOpacity onPress={() => { props.navigation.goBack() }}
 							style={{ marginRight: 10, marginBottom: 5, padding: 10 }}>
 							<Icon name={"chevron-left"} size={18} color={Colors.black} />
@@ -86,7 +84,7 @@ const Report = (props) => {
 						</TouchableOpacity>
 
 						<Text style={{
-							fontSize: FontSize.FS_22,
+							fontSize: FontSize.FS_18,
 							color: Colors.black,
 							fontFamily: ConstantKey.MONTS_SEMIBOLD,
 						}}>
@@ -94,7 +92,10 @@ const Report = (props) => {
 						</Text>
 
 					</View>
-						<Text style={{ fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
+				<ScrollView style={styles.container}>
+					<View style={{ marginHorizontal: 20, }}>
+					
+						<Text style={{ fontSize: FontSize.FS_14, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
 							Message
 						</Text>
 						<View style={[styles.mobileView]}>
@@ -141,22 +142,22 @@ const styles = StyleSheet.create({
 		backgroundColor: Colors.white,
 	},
 	mobileView: {
-		marginTop: 10, flexDirection: 'row', borderWidth: 1, borderColor: Colors.darkGrey, borderRadius: 6, backgroundColor: Colors.white,
+		marginTop: 10, flexDirection: 'row', borderRadius: 10, backgroundColor: Colors.lightGrey01,
 		paddingVertical : 10, minHeight : 100
 	},
 	textInputMobile: {
-		marginLeft: 10, marginRight: 10, flex: 1, fontSize: FontSize.FS_16, fontFamily: ConstantKey.MONTS_REGULAR,
+		marginLeft: 10, marginRight: 10, flex: 1, fontSize: FontSize.FS_14, fontFamily: ConstantKey.MONTS_REGULAR,
 		color: Colors.black,  paddingVertical: 0,
 	},
 	btnSubmit: {
-		backgroundColor: Colors.primary,
-		marginTop: 30, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',
-		shadowColor: Colors.primaryRed, marginBottom : 20,
-		shadowOffset: { width: 0, height: 2 },
-		shadowOpacity: 0.4, shadowRadius: 2, elevation: 2
+		backgroundColor: Colors.black,
+		marginTop: 30, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',marginBottom : 20,
+		// shadowColor: Colors.primaryRed, 
+		// shadowOffset: { width: 0, height: 2 },
+		// shadowOpacity: 0.4, shadowRadius: 2, elevation: 2
 	},
 	submitText: {
-		fontSize: FontSize.FS_20, color: Colors.white,
+		fontSize: FontSize.FS_16, color: Colors.white,
 		fontFamily: ConstantKey.MONTS_SEMIBOLD
 	},
 });

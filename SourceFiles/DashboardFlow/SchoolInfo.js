@@ -61,12 +61,11 @@ const SchoolInfo = (props) => {
             })
     }
 
-
-
     return (
+        <SafeAreaView style={styles.container}>
         <View style={styles.container}>
                 <Text style={{
-                    fontSize: FontSize.FS_22,
+                    fontSize: FontSize.FS_18,
                     color: Colors.black,
                     fontFamily: ConstantKey.MONTS_SEMIBOLD,
                     marginVertical:15,
@@ -111,6 +110,7 @@ const SchoolInfo = (props) => {
                 <LoadingView />
                 : null}
         </View>
+        </SafeAreaView>
     );
 };
 

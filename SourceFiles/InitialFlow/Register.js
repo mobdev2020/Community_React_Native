@@ -133,6 +133,7 @@ const Register = (props) => {
 			device_type: Platform.OS == "android" ? 1 : 2,
 			device_token: FcmToken,
 			parent_id: SchoolId,
+			kids_information : description
 		})
 			.then(response => {
 				console.log("Register Response : ", response.data)
@@ -174,12 +175,12 @@ const Register = (props) => {
 			else if (txtMobile.length < 10) {
 				Toast.showWithGravity(i18n.t('validMobile'), Toast.LONG, Toast.BOTTOM);
 			}
-			else if (!validateEmail(txtEmail)) {
-				Toast.showWithGravity(i18n.t('validEmail'), Toast.LONG, Toast.BOTTOM);
-			}
-			else if (description == "") {
-				Toast.showWithGravity("Please enter your kids information", Toast.LONG, Toast.BOTTOM);
-			}
+			// else if (!validateEmail(txtEmail)) {
+			// 	Toast.showWithGravity(i18n.t('validEmail'), Toast.LONG, Toast.BOTTOM);
+			// }
+			// else if (description == "") {
+			// 	Toast.showWithGravity("Please enter your kids information", Toast.LONG, Toast.BOTTOM);
+			// }
 
 			else {
 
@@ -241,7 +242,7 @@ const Register = (props) => {
 								color: Colors.black,
 								fontFamily: ConstantKey.MONTS_MEDIUM,
 								marginTop: 30,
-								lineHeight: 20
+								lineHeight: FontSize.FS_20,
 							}}>
 								{i18n.t('firstName')}
 							</Text>
@@ -259,7 +260,7 @@ const Register = (props) => {
 								color: Colors.black,
 								fontFamily: ConstantKey.MONTS_MEDIUM,
 								marginTop: 20,
-								lineHeight: 20
+								lineHeight: FontSize.FS_20,
 							}}>
 								{i18n.t('lastName')}
 							</Text>
@@ -278,7 +279,7 @@ const Register = (props) => {
 								color: Colors.black,
 								fontFamily: ConstantKey.MONTS_MEDIUM,
 								marginTop: 20,
-								lineHeight: 20
+								lineHeight: FontSize.FS_20,
 							}}>
 								{i18n.t('phoneNumber')}
 							</Text>
@@ -298,7 +299,7 @@ const Register = (props) => {
 								color: Colors.black,
 								fontFamily: ConstantKey.MONTS_MEDIUM,
 								marginTop: 20,
-								lineHeight: 20
+								lineHeight: FontSize.FS_20,
 							}}>
 								{i18n.t('email')}
 							</Text>

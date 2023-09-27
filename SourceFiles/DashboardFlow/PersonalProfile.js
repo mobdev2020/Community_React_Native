@@ -183,13 +183,11 @@ const PersonalProfile = ({ navigation }) => {
     }
 
     return (
+        <SafeAreaView style={styles.container}>
         <View style={styles.container}>
             <View style={{ flex: 1, backgroundColor: Colors.white }}>
 
-
-                <ScrollView style={{}}>
-                    <SafeAreaView style={{ flex: 1, marginVertical: 10, marginHorizontal: 10 }}>
-                        <View style={{ flexDirection: "row", alignItems: "center", }}>
+            <View style={{ flexDirection: "row", alignItems: "center", marginHorizontal : 10 }}>
                             <TouchableOpacity onPress={() => { navigation.goBack() }}
                                 style={{ marginRight: 10, marginBottom: 5, padding: 10 }}>
                                 <Icon name={"chevron-left"} size={20} color={Colors.black} />
@@ -197,7 +195,7 @@ const PersonalProfile = ({ navigation }) => {
                             </TouchableOpacity>
 
                             <Text style={{
-                                fontSize: FontSize.FS_26,
+                                fontSize: FontSize.FS_18,
                                 color: Colors.black,
                                 fontFamily: ConstantKey.MONTS_SEMIBOLD,
                             }}>
@@ -205,7 +203,9 @@ const PersonalProfile = ({ navigation }) => {
                             </Text>
 
                         </View>
-                        <View style={{ marginHorizontal: 10 }}>
+                <ScrollView style={{}}>
+                        
+                        <View style={{ marginHorizontal: 20 }}>
                             {/* <View style={{
                                 marginLeft: 20, marginRight: 20, marginTop: 30, width: ConstantKey.SCREEN_WIDTH / 3, height: ConstantKey.SCREEN_WIDTH / 3,
                                 borderWidth: 1, borderRadius: (ConstantKey.SCREEN_WIDTH / 3) / 2, borderColor: Colors.primaryRed, alignSelf: 'center'
@@ -222,11 +222,11 @@ const PersonalProfile = ({ navigation }) => {
                             </View>
 
                             <Text style={{
-                                fontSize: FontSize.FS_18,
+                                fontSize: FontSize.FS_14,
                                 color: Colors.black,
                                 fontFamily: ConstantKey.MONTS_MEDIUM,
                                 marginTop: 10,
-                                lineHeight: 20
+                                lineHeight: FontSize.FS_20,
                             }}>
                                 {"First Name"}
                             </Text>
@@ -239,11 +239,11 @@ const PersonalProfile = ({ navigation }) => {
                                 />
                             </View>
                             <Text style={{
-                                fontSize: FontSize.FS_18,
+                                fontSize: FontSize.FS_14,
                                 color: Colors.black,
                                 fontFamily: ConstantKey.MONTS_MEDIUM,
                                 marginTop: 10,
-                                lineHeight: 20
+                                lineHeight: FontSize.FS_20,
                             }}>
                                 {"Last Name"}
                             </Text>
@@ -257,11 +257,11 @@ const PersonalProfile = ({ navigation }) => {
                             </View>
                             <Text style={{
                                 
-                                fontSize: FontSize.FS_18,
+                                fontSize: FontSize.FS_14,
                                 color: Colors.black,
                                 fontFamily: ConstantKey.MONTS_MEDIUM,
                                 marginTop: 20,
-                                lineHeight: 20
+                                lineHeight: FontSize.FS_20,
                             }}>
                                 {i18n.t('phoneNumber')}
                             </Text>
@@ -277,11 +277,11 @@ const PersonalProfile = ({ navigation }) => {
 
 
                             <Text style={{
-                                fontSize: FontSize.FS_18,
+                                fontSize: FontSize.FS_14,
                                 color: Colors.black,
                                 fontFamily: ConstantKey.MONTS_MEDIUM,
                                 marginTop: 20,
-                                lineHeight: 20
+                                lineHeight: FontSize.FS_20,
                             }}>
                                 {i18n.t('email')}
                             </Text>
@@ -303,7 +303,6 @@ const PersonalProfile = ({ navigation }) => {
                                 </Text>
                             </TouchableOpacity>
                         </View>
-                    </SafeAreaView>
                 </ScrollView>
             </View>
 
@@ -311,6 +310,7 @@ const PersonalProfile = ({ navigation }) => {
                 <LoadingView  />
                 : null}
         </View>
+        </SafeAreaView>
     )
 }
 const styles = StyleSheet.create({
@@ -323,15 +323,15 @@ const styles = StyleSheet.create({
         height: 50, alignItems: 'center'
     },
     textInputMobile: {
-        marginLeft: 10, marginRight: 10, height: 50, flex: 1, fontSize: FontSize.FS_16, fontFamily: ConstantKey.MONTS_REGULAR,
-        color: Colors.black,
+        marginLeft: 10, marginRight: 10, height: 50, flex: 1, fontSize: FontSize.FS_14, fontFamily: ConstantKey.MONTS_REGULAR,
+        color: Colors.dimGray,
     },
     btnLogin: {
         backgroundColor: Colors.black,
         marginTop: 48, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',
     },
     loginText: {
-        fontSize: FontSize.FS_18, color: Colors.white,
+        fontSize: FontSize.FS_16, color: Colors.white,
         fontFamily: ConstantKey.MONTS_SEMIBOLD
     },
 });

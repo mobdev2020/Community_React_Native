@@ -3,6 +3,7 @@ import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 
 export const FontSize = {
 
+    FS_8: RFValue(8,736),
     FS_10: RFValue(10,736),
     FS_11: RFValue(11,736),
     FS_12: RFValue(12,736),
