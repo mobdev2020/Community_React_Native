@@ -13,7 +13,6 @@ import Webservice from '../Constants/API'
 import LoadingView from '../Constants/LoadingView'
 import { APIURL } from '../Constants/APIURL';
 import { version as versionNo } from '../../package.json'
-import ChangePasswordModal from './ChangePasswordModal';
 
 // Third Party
 import { StackActions } from '@react-navigation/native';
@@ -26,7 +25,6 @@ import ImagePicker from 'react-native-image-crop-picker';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import ImageView from "react-native-image-viewing";
 import RBSheet from "react-native-raw-bottom-sheet";
-import { SearchBar } from 'react-native-elements';
 import Navigation from '../Constants/Navigation';
 import { navigate } from '../Constants/NavigationService';
 
@@ -67,7 +65,7 @@ const AddEvent = (props) => {
 		// Api_GetContacts(true, userData)
 
 		if (isEdit) {
-			console.log("Event Data : " + JSON.stringify(EventData))
+			// console.log("Event Data : " + JSON.stringify(EventData))
 
 			setTxtEventName(EventData.event_name)
 			setTxtEventDesc(EventData.event_desc)
@@ -101,7 +99,7 @@ const AddEvent = (props) => {
 		body.append('event_start_date', moment(StartDate).format("DD-MM-YYYY"))
 		body.append('event_end_date', moment(EndDate).format("DD-MM-YYYY"))
 		body.append('is_push', isPushNow)
-		console.log("EventImg :",EventImg)
+		// console.log("EventImg :",EventImg)
 		if (EventImg != null) {
 			body.append('event_image',
 				{
@@ -119,12 +117,12 @@ const AddEvent = (props) => {
 				if (response == null) {
 					setIsLoading(false)
 				}
-				console.log(JSON.stringify("Api_AddEvent Response : " + JSON.stringify(response)));
+				// console.log(JSON.stringify("Api_AddEvent Response : " + JSON.stringify(response)));
 				// setIsLoading(false)
 
 				if (response.data.status == true) {
 
-					Alert.alert("Sucess", "Event Added Sucessfully", [
+					Alert.alert("Success", "Event Added Successfully", [
 						{
 							text: 'Ok',
 							onPress: () => {
@@ -151,7 +149,6 @@ const AddEvent = (props) => {
 		setIsLoading(isLoad)
 
 		let body = new FormData();
-console.log("EventData.id",EventData.id)
 		body.append('event_id', EventData.id)
 		body.append('event_name', txtEventName)
 		body.append('event_desc', txtEventDesc)
@@ -175,7 +172,7 @@ console.log("EventData.id",EventData.id)
 				if (response == null) {
 					setIsLoading(false)
 				}
-				console.log(JSON.stringify("Api_AddEvent Response : " + JSON.stringify(response)));
+				// console.log(JSON.stringify("Api_AddEvent Response : " + JSON.stringify(response)));
 				// setIsLoading(false)
 
 				if (response.data.status == true) {
@@ -225,7 +222,7 @@ console.log("EventData.id",EventData.id)
 							compressImageQuality: 0.6
 						}).then(images => {
 
-							console.log(images);
+							// console.log(images);
 
 							setIsLoading(false)
 							setEventImg(images)
@@ -254,7 +251,7 @@ console.log("EventData.id",EventData.id)
 							compressImageQuality: 0.6
 						}).then(images => {
 
-							console.log(images);
+							// console.log(images);
 
 							setIsLoading(false)
 
@@ -399,31 +396,7 @@ console.log("EventData.id",EventData.id)
 
 	};
 
-
-	// Action Methods
-	const SelectUserTap = (item) => {
-		requestAnimationFrame(() => {
-
-			const index2 = ContactList.map(item => item.id).indexOf(item.id);
-			console.log('Index: ', index2); // Found the object index
-
-			setSelectedUser(item)
-
-			refRBUsers.current.close()
-
-		})
-	}
-
-
-	// Render Sprator
-	const Saprator = () => {
-		return (
-			<View style={{ height: 10, }}></View>
-		)
-	}
-
-
-
+	
 	return (
 		<SafeAreaView style={styles.container}>
 
@@ -447,30 +420,24 @@ console.log("EventData.id",EventData.id)
 
 					</View>
 					<View style={{
-						marginHorizontal: 20, marginVertical: 20, borderRadius: 10, borderWidth: 1, borderColor: Colors.primary,
+						marginHorizontal: 20, marginVertical: 20, borderRadius: 6, borderWidth: 1, borderColor: Colors.black,
 						height: 200,
 					}}>
-
-						{/* <TouchableOpacity onPress={() => EventImg != null ?  setIsVisibleImg(true) : {}}>
-						<Image style={{height : '100%', width : '100%', resizeMode : EventImg == null ? 'contain' : 'cover',  borderRadius : 10,}}
-							source={EventImg == null ? Images.MagnusLogo : {uri : EventImg.path}}/>
-					</TouchableOpacity> */}
-					{/* {console.log("EventImg",EventImg.path)} */}
 						{EventImg == null ?
 							<TouchableOpacity onPress={() => {
 								btnSelectImage()
 							}}
 								style={{ flex: 1, alignSelf: "center", justifyContent: "center", alignItems: "center" }}>
-								<MaterialCommunityIcons name={"cloud-upload-outline"} size={40} color={Colors.primary} />
+								<MaterialCommunityIcons name={"cloud-upload-outline"} size={40} color={Colors.black} />
 								<Text style={{
 									fontSize: FontSize.FS_16,
-									color: Colors.primary,
+									color: Colors.black,
 									fontFamily: ConstantKey.MONTS_SEMIBOLD,
 									textAlign: "center"
 								}}>Upload Event photo</Text>
 							</TouchableOpacity> :
 							<TouchableOpacity onPress={() => EventImg != null ? setIsVisibleImg(true) : {}}>
-								<Image style={{ height: '100%', width: '100%', resizeMode: EventImg == null ? 'contain' : 'cover', borderRadius: 10, }}
+								<Image style={{ height: '100%', width: '100%', resizeMode: EventImg == null ? 'contain' : 'cover', borderRadius: 6, }}
 									source={{ uri:  EventImg.path }} />
 							</TouchableOpacity>
 						}
@@ -478,8 +445,8 @@ console.log("EventData.id",EventData.id)
 						<View style={{ position: 'absolute', width: '100%' }}>
 
 							<TouchableOpacity style={{
-								alignSelf: 'flex-end', backgroundColor: Colors.primary, padding: 10,
-								borderBottomLeftRadius: 10, borderTopRightRadius: 10
+								alignSelf: 'flex-end', backgroundColor: Colors.black, padding: 10,
+								borderBottomLeftRadius: 5, borderTopRightRadius: 5
 							}}
 								onPress={() => btnSelectImage()}>
 
@@ -489,57 +456,7 @@ console.log("EventData.id",EventData.id)
 					</View>
 
 					<View style={{ marginHorizontal: 20, }}>
-
-						{/* <Text style={{ fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
-							Event Type
-						</Text> */}
-
-						{/* <View style={{ flexDirection: 'row', marginTop: 10, }}>
-
-							<TouchableOpacity style={{ flexDirection: 'row', flex: 0.5 }}
-								onPress={() => btnToggleEventType('announcement')}>
-								<Icon name={EventType == 'announcement' ? 'dot-circle' : 'circle'} size={20} color={Colors.primary} />
-								<Text style={{ marginLeft: 5, fontFamily: ConstantKey.MONTS_REGULAR, fontSize: FontSize.FS_16, color: Colors.black, }}>
-									{i18n.t('announcement')}
-								</Text>
-							</TouchableOpacity>
-
-							<TouchableOpacity style={{ flexDirection: 'row', flex: 0.5 }}
-								onPress={() => btnToggleEventType('birthday')}>
-								<Icon name={EventType == 'birthday' ? 'dot-circle' : 'circle'} size={20} color={Colors.primary} />
-								<Text style={{ marginLeft: 5, fontFamily: ConstantKey.MONTS_REGULAR, fontSize: FontSize.FS_16, color: Colors.black, }}>
-									{i18n.t('birthday')}
-								</Text>
-							</TouchableOpacity>
-
-						</View> */}
-
-
-						{/* {EventType == 'birthday' ?
-							<>
-								<Text style={{ fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
-									Select Member
-								</Text>
-								<TouchableOpacity style={[styles.mobileView]} onPress={() => {
-										if(isEdit){
-
-										}else{
-											refRBUsers.current.open()
-										}
-									}}>
-
-									<Icon name={"user"} size={20} color={Colors.primary} style={{ marginLeft: 10 }} />
-
-									<Text style={[styles.textInputMobile]}>
-										{SelectedUser == null ? '' : SelectedUser.name}
-									</Text>
-									<Icon name={"chevron-down"} size={20} color={Colors.primary} style={{ marginRight: 10 }} />
-								</TouchableOpacity>
-							</>
-							: null} */}
-
-
-						<Text style={{ fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
+						<Text style={{ fontSize: FontSize.FS_14, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
 							Event Name
 						</Text>
 
@@ -556,7 +473,7 @@ console.log("EventData.id",EventData.id)
 
 						</View>
 
-						<Text style={{ fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
+						<Text style={{ fontSize: FontSize.FS_14, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
 							Event description
 						</Text>
 						<View style={[styles.mobileView]}>
@@ -573,7 +490,7 @@ console.log("EventData.id",EventData.id)
 
 						</View>
 
-						<Text style={{ fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
+						<Text style={{ fontSize: FontSize.FS_14, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
 							Event start date
 						</Text>
 						<TouchableOpacity style={[styles.mobileView]} onPress={() => showDatePicker('Start Date')}>
@@ -587,7 +504,7 @@ console.log("EventData.id",EventData.id)
 						</TouchableOpacity>
 
 
-						<Text style={{ fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
+						<Text style={{ fontSize: FontSize.FS_14, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
 							Event end date
 						</Text>
 						<TouchableOpacity style={[styles.mobileView]} onPress={() => showDatePicker('End Date')}>
@@ -601,8 +518,8 @@ console.log("EventData.id",EventData.id)
 						</TouchableOpacity>
 
 
-						<Text style={{ fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
-							Event Link <Text style={{ color: Colors.primary }}>( Optional )</Text>
+						<Text style={{ fontSize: FontSize.FS_14, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
+							Event Link <Text style={{ color: Colors.black }}>( Optional )</Text>
 						</Text>
 
 						<View style={styles.mobileView}>
@@ -617,19 +534,19 @@ console.log("EventData.id",EventData.id)
 
 						</View>
 
-
+						{!isEdit  &&
 						<View style={{ flexDirection: 'row', marginTop: 20, alignItems: 'center',marginHorizontal:5 ,}}>
 
-							<TouchableOpacity onPress={() => setIsPushNow(isPushNow == 0 ? 1 : 0)}>
-								<Icon name={isPushNow == 1 ? 'check-square' : 'square'} size={25} color={Colors.primary} />
-							</TouchableOpacity>
+						<TouchableOpacity onPress={() => setIsPushNow(isPushNow == 0 ? 1 : 0)}>
+							<Icon name={isPushNow == 1 ? 'check-square' : 'square'} size={25} color={Colors.primary} />
+						</TouchableOpacity>
 
-							<Text style={{ fontFamily: ConstantKey.MONTS_REGULAR, color: Colors.black, fontSize: FontSize.FS_16, marginLeft: 10 }}>
-								{i18n.t('push_now')}?
-							</Text>
+						<Text style={{ fontFamily: ConstantKey.MONTS_REGULAR, color: Colors.black, fontSize: FontSize.FS_16, marginLeft: 10 }}>
+							{i18n.t('push_now')}??
+						</Text>
 
-						</View>
-
+					</View>
+}
 
 						<TouchableOpacity style={styles.btnLogin}
 							onPress={() => btnAddEditTap()}>
@@ -654,6 +571,7 @@ console.log("EventData.id",EventData.id)
 						isVisible={openEndDatePicker}
 						date={EndDate}
 						mode="date"
+						minimumDate={StartDate}
 						onConfirm={(date) => handleConfirm(date, 'End Date')}
 						onCancel={hideDatePicker}
 					// display={Platform.OS === "ios" ? "inline" : "default"} 
@@ -666,91 +584,6 @@ console.log("EventData.id",EventData.id)
 							visible={visibleImg}
 							onRequestClose={() => setIsVisibleImg(false)}
 						/> : null}
-
-
-					{ /* User picker PopUp */}
-					<RBSheet
-						ref={refRBUsers}
-						closeOnDragDown={true}
-						closeOnPressMask={true}
-						height={ConstantKey.SCREEN_HEIGHT / 1.5}
-						customStyles={{
-							wrapper: {
-								backgroundColor: Colors.black03 //"transparent"
-							},
-							draggableIcon: {
-								backgroundColor: Colors.primary
-							},
-							container: {
-								borderTopLeftRadius: 20, borderTopRightRadius: 20
-							}
-						}}
-					>
-						<View style={{ flexDirection: 'row', marginLeft: 20, marginRight: 20 }}>
-							<Text style={{ flex: 1, fontSize: FontSize.FS_16, color: Colors.primary, fontFamily: ConstantKey.MONTS_BOLD }}>
-								{i18n.t('selectMember')}
-							</Text>
-
-							<TouchableOpacity>
-								<Text style={{ fontSize: FontSize.FS_16, color: Colors.primary, fontFamily: ConstantKey.MONTS_BOLD }}
-									onPress={() => refRBUsers.current.close()}>
-									{i18n.t('done')}
-								</Text>
-							</TouchableOpacity>
-						</View>
-
-						<SearchBar
-							lightTheme
-							showCancel
-							round
-							placeholder="Search Here..."
-							containerStyle={{
-								backgroundColor: Colors.white, borderWidth: 1, borderColor: 'rgba(173,186,200,0.4)',
-								borderRadius: 5, height: 50, marginLeft: 20, marginRight: 20, marginTop: 20
-							}}
-							inputContainerStyle={{ backgroundColor: Colors.white, height: 30, padding: 0 }}
-							onClear={() => {
-								setFilteredName('')
-								setFilterContactList(ContactList)
-							}}
-							inputStyle={{ fontFamily: ConstantKey.MONTS_SEMIBOLD, fontSize: FontSize.FS_14, color: Colors.black, height: 50 }}
-							onChangeText={updateSearch}
-							value={FilteredName}
-						/>
-
-						<FlatList style={{ marginTop: 20 }}
-							data={FilterContactList}
-							keyboardShouldPersistTaps={'handled'}
-							ListHeaderComponent={Saprator}
-							ListFooterComponent={Saprator}
-							ItemSeparatorComponent={Saprator}
-							keyExtractor={(item, index) => index}
-							renderItem={({ item, index }) => {
-								return (
-									<TouchableOpacity style={{
-										borderRadius: 10, backgroundColor: Colors.white, padding: 10, marginBottom: 10, marginLeft: 20, marginRight: 20,
-										borderColor: SelectedUser == null ? Colors.primary : (SelectedUser.id == item.id ? Colors.primary : Colors.primary), borderWidth: 1
-									}}
-										onPress={() => SelectUserTap(item)}>
-
-										<Text style={{ fontSize: FontSize.FS_16, color: Colors.black, fontFamily: ConstantKey.MONTS_SEMIBOLD, }}>
-											{item.name}
-										</Text>
-
-										{item.business_profile != null ?
-											<Text style={{ marginTop: 10, fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_REGULAR, }}>
-												{item.business_profile}
-											</Text>
-											: null}
-
-									</TouchableOpacity>
-								)
-							}}
-						/>
-					</RBSheet>
-
-
-
 				</ScrollView>
 				{isLoading ? <LoadingView /> : null}
 			</View>
@@ -766,7 +599,7 @@ const styles = StyleSheet.create({
 		backgroundColor: Colors.white,
 	},
 	mobileView: {
-		marginTop: 5, flexDirection: 'row', borderWidth: 1, borderColor: Colors.primary, borderRadius: 10, backgroundColor: Colors.white,
+		marginTop: 5, flexDirection: 'row',  borderRadius: 6, backgroundColor: Colors.lightGrey01,
 		paddingVertical: 10//alignItems: 'center'
 	},
 	textInputMobile: {
@@ -774,8 +607,8 @@ const styles = StyleSheet.create({
 		color: Colors.black, paddingVertical: 0
 	},
 	btnLogin: {
-		backgroundColor: Colors.primary,
-		marginTop: 30, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
+		backgroundColor: Colors.black,
+		marginTop: 30, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',
 		shadowColor: Colors.primary, marginBottom: 20,
 		shadowOffset: { width: 0, height: 2 },
 		shadowOpacity: 0.4, shadowRadius: 2, elevation: 2

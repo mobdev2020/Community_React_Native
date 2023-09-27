@@ -25,9 +25,9 @@ ApiManager.interceptors.request.use(async config => {
 	/**  Set Barear Token in Haeder */
 	var token = await AsyncStorage.getItem(ConstantKey.USER_DATA)
 	token = JSON.parse(token)
-	console.log('====================================');
-	console.log("User Token axios: " + token);
-	console.log('====================================');
+	// console.log('====================================');
+	// console.log("User Token axios: " + token);
+	// console.log('====================================');
 	if (token) {
 		config.headers.Authorization = "Bearer " + token?.token
 	}

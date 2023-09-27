@@ -48,6 +48,10 @@ export const Images = {
 	Suggestion : require('../assets/images/ic_suggestion.png'),
 	UserGif : require('../assets/images/ic_user_placeholder.jpeg'),
 	Shop : require('../assets/images/ic_shop.png'),
-	Poster : require('../assets/images/poster.png')
+	Poster : require('../assets/images/poster.png'),
+	School_logo : require('../assets/images/school_logo.png'),
+	ic_delete : require('../assets/images/ic_delete.png'),
+	ic_edit : require('../assets/images/ic_edit.png'),
+
 
 }

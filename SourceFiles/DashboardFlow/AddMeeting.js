@@ -13,7 +13,6 @@ import Webservice from '../Constants/API'
 import LoadingView from '../Constants/LoadingView'
 import { APIURL } from '../Constants/APIURL';
 import { version as versionNo } from '../../package.json'
-import ChangePasswordModal from './ChangePasswordModal';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 // Third Party
@@ -26,7 +25,6 @@ import ImagePicker from 'react-native-image-crop-picker';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import ImageView from "react-native-image-viewing";
 import RBSheet from "react-native-raw-bottom-sheet";
-import { SearchBar } from 'react-native-elements';
 
 
 const AddMeeting = (props) => {
@@ -62,7 +60,7 @@ const AddMeeting = (props) => {
 			setTxtMeetingLink(MeetingData.meeting_link != null ? MeetingData.meeting_link : '')
 			setStartDate(new Date(MeetingData.meeting_start_date))
 			setEndDate(new Date(MeetingData.meeting_end_date))
-			setIsPushNow(MeetingData.is_push == null ? 0 : MeetingData.is_push)
+			// setIsPushNow(MeetingData.is_push == null ? 0 : MeetingData.is_push)
 
 			if (MeetingData.meeting_image != null) {
 				var data = {}
@@ -101,7 +99,7 @@ const AddMeeting = (props) => {
 				console.log(JSON.stringify("Api_AddMeeting Response : " + JSON.stringify(response)));
 
 				if (response.data.status == true) {
-					Alert.alert("Sucess", "Meeting Added Sucessfully", [
+					Alert.alert("Success", "Meeting Added Successfully", [
 						{
 							text: 'Ok',
 							onPress: () => {
@@ -135,7 +133,7 @@ const AddMeeting = (props) => {
 		body.append('meeting_start_date', moment(StartDate).format("DD-MM-YYYY"))
 		body.append('meeting_end_date', moment(StartDate).format("DD-MM-YYYY"))
 		body.append('meeting_link', txtMeetingLink)
-		body.append('is_push', isPushNow)
+		// body.append('is_push', isPushNow)
 		if (MeetingImg != null && MeetingImg.data != null) {
 			body.append('meeting_image',
 				{
@@ -151,7 +149,7 @@ const AddMeeting = (props) => {
 				console.log(JSON.stringify("Api_EditMeeting Response : " + JSON.stringify(response)));
 				if (response.data.status == true) {
 
-					Alert.alert("Sucess", "Meeting Updated Sucessfully", [
+					Alert.alert("Success", "Meeting Updated Successfully", [
 						{
 							text: 'Ok',
 							onPress: () => {
@@ -335,12 +333,12 @@ const AddMeeting = (props) => {
 
 					</View>
 					<View style={{
-						marginHorizontal: 20, marginVertical: 20, borderRadius: 10, borderWidth: 1, borderColor: Colors.primary,
+						marginHorizontal: 20, marginVertical: 20, borderRadius: 6, borderWidth: 1, borderColor: Colors.black,
 						height: 200
 					}}>
 
 						{/* <TouchableOpacity onPress={() => MeetingImg != null ? setIsVisibleImg(true) : {}}>
-							<Image style={{ height: '100%', width: '100%', resizeMode: MeetingImg == null ? 'contain' : 'cover', borderRadius: 10, }}
+							<Image style={{ height: '100%', width: '100%', resizeMode: MeetingImg == null ? 'contain' : 'cover', borderRadius: 6, }}
 								source={MeetingImg == null ? Images.MagnusLogo : { uri: MeetingImg.path }} />
 						</TouchableOpacity> */}
 
@@ -350,16 +348,16 @@ const AddMeeting = (props) => {
 								btnSelectImage()
 							}}
 								style={{ flex: 1, alignSelf: "center", justifyContent: "center", alignItems: "center" }}>
-								<MaterialCommunityIcons name={"cloud-upload-outline"} size={40} color={Colors.primary} />
+								<MaterialCommunityIcons name={"cloud-upload-outline"} size={40} color={Colors.black} />
 								<Text style={{
 									fontSize: FontSize.FS_16,
-									color: Colors.primary,
+									color: Colors.black,
 									fontFamily: ConstantKey.MONTS_SEMIBOLD,
 									textAlign: "center"
 								}}>Upload Meeting photo</Text>
 							</TouchableOpacity> :
 							<TouchableOpacity onPress={() => MeetingImg != null ? setIsVisibleImg(true) : {}}>
-								<Image style={{ height: '100%', width: '100%', resizeMode: MeetingImg == null ? 'contain' : 'cover', borderRadius: 10, }}
+								<Image style={{ height: '100%', width: '100%', resizeMode: MeetingImg == null ? 'contain' : 'cover', borderRadius: 6, }}
 									source={MeetingImg == null ? Images.MagnusLogo : { uri: MeetingImg.path }} />
 							</TouchableOpacity>
 						}
@@ -367,8 +365,8 @@ const AddMeeting = (props) => {
 						<View style={{ position: 'absolute', width: '100%' }}>
 
 							<TouchableOpacity style={{
-								alignSelf: 'flex-end', backgroundColor: Colors.primary, padding: 10,
-								borderBottomLeftRadius: 10, borderTopRightRadius: 10
+								alignSelf: 'flex-end', backgroundColor: Colors.black, padding: 10,
+								borderBottomLeftRadius: 5, borderTopRightRadius: 5
 							}}
 								onPress={() => btnSelectImage()}>
 
@@ -384,8 +382,8 @@ const AddMeeting = (props) => {
 					<View style={{ marginHorizontal: 20, }}>
 
 
-						<Text style={{ fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
-							Title
+						<Text style={{ fontSize: FontSize.FS_14, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
+							Meeting Title
 						</Text>
 
 						<View style={styles.mobileView}>
@@ -401,8 +399,8 @@ const AddMeeting = (props) => {
 
 						</View>
 
-						<Text style={{ fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
-							Description
+						<Text style={{ fontSize: FontSize.FS_14, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
+						Meeting Description
 						</Text>
 						<View style={[styles.mobileView]}>
 
@@ -418,7 +416,7 @@ const AddMeeting = (props) => {
 
 						</View>
 
-						<Text style={{ fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
+						<Text style={{ fontSize: FontSize.FS_14, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
 							Meeting start date
 						</Text>
 						<TouchableOpacity style={[styles.mobileView]} onPress={() => showDatePicker('Start Date')}>
@@ -431,7 +429,7 @@ const AddMeeting = (props) => {
 
 						</TouchableOpacity>
 
-						<Text style={{ fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
+						<Text style={{ fontSize: FontSize.FS_14, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
 							Meeting end date
 						</Text>
 						<TouchableOpacity style={[styles.mobileView,]} onPress={() => showDatePicker('End Date')}>
@@ -444,8 +442,8 @@ const AddMeeting = (props) => {
 
 						</TouchableOpacity>
 
-						<Text style={{ fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
-							Location Link <Text style={{ color: Colors.primary }}>( Optional )</Text>
+						<Text style={{ fontSize: FontSize.FS_14, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>
+							Location Link <Text style={{ color: Colors.black }}>( Optional )</Text>
 						</Text>
 
 						<View style={styles.mobileView}>
@@ -462,20 +460,20 @@ const AddMeeting = (props) => {
 
 
 
+						{!isEdit  &&
+							<View style={{ flexDirection: 'row', marginTop: 10, alignItems: 'center' }}>
 
-						<View style={{ flexDirection: 'row', marginTop: 10, alignItems: 'center' }}>
+								<TouchableOpacity onPress={() => setIsPushNow(isPushNow == 0 ? 1 : 0)}>
+									<Icon name={isPushNow == 1 ? 'check-square' : 'square'} size={25} color={Colors.primary} />
+								</TouchableOpacity>
 
-							<TouchableOpacity onPress={() => setIsPushNow(isPushNow == 0 ? 1 : 0)}>
-								<Icon name={isPushNow == 1 ? 'check-square' : 'square'} size={25} color={Colors.primary} />
-							</TouchableOpacity>
+								<Text style={{ fontFamily: ConstantKey.MONTS_REGULAR, color: Colors.black, fontSize: FontSize.FS_16, marginLeft: 10 }}>
+									{i18n.t('push_now')}???
+								</Text>
 
-							<Text style={{ fontFamily: ConstantKey.MONTS_REGULAR, color: Colors.black, fontSize: FontSize.FS_16, marginLeft: 10 }}>
-								{i18n.t('push_now')}?
-							</Text>
+							</View>
 
-						</View>
-
-
+						}
 						<TouchableOpacity style={styles.btnAddEdit}
 							onPress={() => btnAddEditTap()}>
 							<Text style={styles.AddEditText}>
@@ -500,7 +498,7 @@ const AddMeeting = (props) => {
 						isVisible={openEndDatePicker}
 						date={EndDate}
 						mode="date"
-						minimumDate={new Date()}
+						minimumDate={StartDate}
 						onConfirm={(date) => handleConfirm(date, 'End Date')}
 						onCancel={() => hideDatePicker("End Date")}
 						display={Platform.OS === "ios" ? "inline" : "default"}
@@ -531,7 +529,7 @@ const styles = StyleSheet.create({
 	},
 
 	mobileView: {
-		marginTop: 5, flexDirection: 'row', borderWidth: 1, borderColor: Colors.primary, borderRadius: 10, backgroundColor: Colors.white,
+		marginTop: 5, flexDirection: 'row', borderWidth: 1, borderColor: Colors.primary, borderRadius: 6, backgroundColor: Colors.white,
 		paddingVertical: 10//alignItems: 'center'
 	},
 	textInputMobile: {
@@ -539,8 +537,8 @@ const styles = StyleSheet.create({
 		color: Colors.black, paddingVertical: 0
 	},
 	btnAddEdit: {
-		backgroundColor: Colors.primary,
-		marginTop: 30, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
+		backgroundColor: Colors.black,
+		marginTop: 30, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',
 		shadowColor: Colors.primary, marginBottom: 20,
 		shadowOffset: { width: 0, height: 2 },
 		shadowOpacity: 0.4, shadowRadius: 2, elevation: 2

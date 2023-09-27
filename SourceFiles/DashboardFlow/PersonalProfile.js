@@ -211,8 +211,8 @@ const PersonalProfile = ({ navigation }) => {
                                 borderWidth: 1, borderRadius: (ConstantKey.SCREEN_WIDTH / 3) / 2, borderColor: Colors.primaryRed, alignSelf: 'center'
                             }}> */}
 
-                            <View style={{ width: 100, height: 100, borderRadius: 100, borderWidth: 1, alignItems: "center", justifyContent: "center", marginVertical: 20 }}>
-                                <FastImage style={{ width: 96, height: 96, borderRadius: 100, }}
+                            <View style={{ width: 100, height: 100, borderRadius: 60, alignItems: "center", justifyContent: "center", marginVertical: 20 }}>
+                                <FastImage style={{ width: 96, height: 96, borderRadius: 60, }}
                                     source={{ uri: ProfileImg == null ? UserData?.user?.avatar_url :ProfileImg.path }}
                                 // resizeMode='contain'
                                 />
@@ -235,7 +235,7 @@ const PersonalProfile = ({ navigation }) => {
                                     value={FirstName}
                                     placeholder={i18n.t('enterFirstName')}
                                     returnKeyType={'done'}
-                                    onChangeText={(txtname) => setFirstName(txtname)}
+                                    onChangeText={(txtname) => setFirstName(txtname.replace(/[^A-Za-z\s]/ig, ''))}
                                 />
                             </View>
                             <Text style={{
@@ -252,10 +252,11 @@ const PersonalProfile = ({ navigation }) => {
                                     value={LastName}
                                     placeholder={i18n.t('enterLastName')}
                                     returnKeyType={'done'}
-                                    onChangeText={(txtname) => setLastName(txtname)}
+                                    onChangeText={(txtname) => setLastName(txtname.replace(/[^A-Za-z\s]/ig, ''))}
                                 />
                             </View>
                             <Text style={{
+                                
                                 fontSize: FontSize.FS_18,
                                 color: Colors.black,
                                 fontFamily: ConstantKey.MONTS_MEDIUM,
@@ -265,11 +266,12 @@ const PersonalProfile = ({ navigation }) => {
                                 {i18n.t('phoneNumber')}
                             </Text>
                             <View style={styles.mobileView}>
-                                <TextInput style={styles.textInputMobile}
+                                <TextInput style={[styles.textInputMobile,{color:Colors.lightGrey}]}
                                     value={PhoneNumber}
                                     placeholder={i18n.t('SelectCategory')}
                                     returnKeyType={'done'}
                                     onChangeText={(txtname) => setPhoneNumber(txtname)}
+                                    editable={false}
                                 />
                             </View>
 
@@ -283,6 +285,7 @@ const PersonalProfile = ({ navigation }) => {
                             }}>
                                 {i18n.t('email')}
                             </Text>
+                            
                             <View style={styles.mobileView}>
                                 <TextInput style={styles.textInputMobile}
                                     value={Email}
@@ -305,7 +308,7 @@ const PersonalProfile = ({ navigation }) => {
             </View>
 
             {isLoading ?
-                <LoadingView text={"Please Wait..."} />
+                <LoadingView  />
                 : null}
         </View>
     )
@@ -316,7 +319,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.white,
     },
     mobileView: {
-        marginTop: 10, flexDirection: 'row', backgroundColor: Colors.lightGrey01, borderRadius: 10,
+        marginTop: 10, flexDirection: 'row', backgroundColor: Colors.lightGrey01, borderRadius: 6,
         height: 50, alignItems: 'center'
     },
     textInputMobile: {
@@ -324,8 +327,8 @@ const styles = StyleSheet.create({
         color: Colors.black,
     },
     btnLogin: {
-        backgroundColor: Colors.primary,
-        marginTop: 48, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
+        backgroundColor: Colors.black,
+        marginTop: 48, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',
     },
     loginText: {
         fontSize: FontSize.FS_18, color: Colors.white,

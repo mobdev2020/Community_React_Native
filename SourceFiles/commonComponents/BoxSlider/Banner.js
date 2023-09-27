@@ -15,7 +15,7 @@ let flatList;
 function infiniteScroll(dataList) {
   const numberOfData = dataList.length;
   let scrollValue = 0,
-    scrolled = 0;
+    scrolled = -10;
 
   setInterval(function () {
     scrolled++;
@@ -26,11 +26,10 @@ function infiniteScroll(dataList) {
     }
 
     this.flatList.scrollToOffset({ animated: true, offset: scrollValue });
-  }, 3000);
+  }, 2000);
 }
 
 const Banner = ({ data }) => {
-  console.log("dataaaa",data)
   const scrollX = new Animated.Value(0);
   let position = Animated.divide(scrollX, width);
   const [dataList, setDataList] = useState(data);
@@ -62,7 +61,10 @@ const Banner = ({ data }) => {
           }}
           onScroll={Animated.event([
             { nativeEvent: { contentOffset: { x: scrollX } } },
-          ])}
+            
+          ],
+          { useNativeDriver: false } 
+          )}
         />
 
         <View style={styles.dotView}>
@@ -73,7 +75,7 @@ const Banner = ({ data }) => {
               extrapolate: "clamp",
             });
             return (
-              <Animated.View
+              <Animated.View 
                 key={i}
                 style={{
                   opacity,

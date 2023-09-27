@@ -13,7 +13,6 @@ import Webservice from '../Constants/API'
 import LoadingView from '../Constants/LoadingView'
 import { APIURL } from '../Constants/APIURL';
 import { version as versionNo } from '../../package.json'
-import PolicyModal from '../DashboardFlow/PolicyModal';
 import messaging from '@react-native-firebase/messaging';
 
 
@@ -32,6 +31,7 @@ const AskBusinessProfile = (props) => {
     const [openPrivacy, setOpenPrivacy] = useState(false)
     const [FcmToken, setFcmToken] = useState("")
     useEffect(() => {
+        // console.log("props?.route?.params?.body?.parent_id",props?.route?.params?.body?.parent_id)
         getFCMToken()
     }, [])
 
@@ -74,7 +74,7 @@ const AskBusinessProfile = (props) => {
             is_register_business: 0,
             device_type: Platform.OS == "android" ? 1 : 2,
             device_token: FcmToken,
-            parent_id: 5,
+            parent_id: props?.route?.params?.body?.parent_id,
         })
             .then(response => {
                 console.log("Register Response : ", response.data)
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.white,
     },
     mobileView: {
-        marginTop: 10, flexDirection: 'row', backgroundColor: Colors.lightGrey01, borderRadius: 10,
+        marginTop: 10, flexDirection: 'row', backgroundColor: Colors.lightGrey01, borderRadius: 6,
         height: 50, alignItems: 'center'
     },
     countryCodeText: {
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     },
     btnLogin: {
         backgroundColor: Colors.primary,
-        marginTop: 48, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
+        marginTop: 48, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',
     },
     loginText: {
         fontSize: FontSize.FS_18, color: Colors.white,

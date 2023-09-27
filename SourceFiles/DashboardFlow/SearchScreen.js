@@ -33,6 +33,7 @@ const SearchScreen = ({ navigation, route }) => {
     const [HidePagination, setHidePagination] = useState(false)
     const [CategoryData, setCategoryData] = useState([])
     const [modalVisible, setModalVisible] = useState(false);
+    const [clear, setClear] = useState(false);
     const [SelectedBusinessData, setSelectedBusinessData] = useState([])
 
     const refRBSheet = useRef();
@@ -42,7 +43,6 @@ const SearchScreen = ({ navigation, route }) => {
         console.log("route.params.isSearch ::", route.params.isSearch)
 
         if (route.params.isSearch == false) {
-            console.log("route.params.category ::", route.params.category)
             setSelectedBusinessData(route.params.category)
             setSearchText(route.params.category?.name)
             Api_Get_Business(true, route.params.category)
@@ -70,52 +70,85 @@ const SearchScreen = ({ navigation, route }) => {
         }
     }, [])
 
+    useEffect(() => {
+        console.log("B")
+        if (SearchText == "" && clear == true) {
+            console.log("A")
 
-    // useEffect(() => {
+            SearchButton((callback) => {
+                if (callback == true && SearchEnable == true) {
+                    setSelectedBusinessData([]);
+                    Api_Get_Business(true);
+                    Api_Get_Category(true)
 
-    //     Api_Get_Category(true)
+                }
+            })
+        }
 
-    //         Api_Get_Business(true)
-    // }, [SelectedBusinessData])
-
-
+    }, [SearchText])
 
     const Api_Get_Business = (isLoad, item) => {
         setIsLoading(isLoad)
         let body = new FormData();
-        console.log("SearchEnable :", SearchEnable)
-        if (!SearchEnable) {
-            body.append('category_id', item?.id)
-            body.append('keyword', item?.name)
+        if (!SearchEnable && item?.id) {
+            body.append('category_id', item?.id ? item?.id : null)
         }
-        if (SearchEnable) {
-            body.append('keyword', SearchText)
+        else if (SearchEnable && SearchText !== "") {
+            body.append('keyword', SearchText.toLowerCase())
         }
+        else {
 
+        }
         body.append('page', CurrentPage)
+
         console.log("Final Body :", body)
 
         Webservice.post(APIURL.GetBusiness, body)
             .then(response => {
                 setIsLoading(false)
-                // console.log(JSON.stringify("Api_Get_Business Response : " + JSON.stringify(response)));
+                // console.log("Api_Get_Business Response : " + JSON.stringify(response.data.data));
                 if (response.data.status == true) {
-                    var data = response?.data?.data
-                    console.log("Business Data : ", data)
-                    if (response?.data?.data?.next_page_url !== null) {
-                        setHidePagination(true)
-                        setIsLoading(false)
+
+                    var data = response.data.data?.data
+                    if (CurrentPage > 1) {
+                        const unique = [...new Map(data.map(m => [m.id, m])).values()];
+                        console.log("unique", unique.length)
+                        console.log("BusinessData", BusinessData.length)
+                        const NewBusinessData = [...BusinessData, ...unique];
+                        console.log("NewBusinessData", NewBusinessData.length)
+                        setBusinessData(NewBusinessData);
+
                     }
-                    setCurrentPage(CurrentPage + 1)
-                    setBusinessData(data?.data)
+                    else {
+                        console.log("BusinessData", data.length)
+                        setBusinessData(data);
+
+                    }
+
+                    setIsLoading(false);
+                    console.log("response.data.data.next_page_url", response.data.data.next_page_url)
+
+                    if (response.data.data.next_page_url == null) {
+                        setHidePagination(true)
+                    } else {
+                        setHidePagination(false)
+                        setCurrentPage(CurrentPage + 1)
+                    }
+
+
+
                 } else {
+                    console.log("Buis", BusinessData.length)
                     setBusinessData([])
+                    setHidePagination(true)
                     setIsLoading(false)
+                    console.log(response.data.message)
                     // alert(response.data.message)
                 }
             })
             .catch((error) => {
                 setIsLoading(false)
+                setHidePagination(true)
                 console.log(error)
             })
     }
@@ -148,6 +181,21 @@ const SearchScreen = ({ navigation, route }) => {
             callback(true);
         }
     }
+
+    const handleBlur = (txt) => {
+        // Check if the TextInput value has become blank and it was not blank before
+        console.log("BLur Call ::::", txt)
+        if (txt === true) {
+            SearchButton((callback) => {
+                if (callback == true && SearchEnable == true) {
+                    setSelectedBusinessData([]);
+                    Api_Get_Business(true);
+                    Api_Get_Category(true)
+
+                }
+            })
+        }
+    };
     return (
         <View style={styles.container}>
             <ScrollView >
@@ -171,6 +219,7 @@ const SearchScreen = ({ navigation, route }) => {
 
                         <TouchableOpacity style={{ padding: 5 }} onPress={() => {
                             SearchEnable = false
+                            setCurrentPage(1)
                             refRBSheet.current.open()
                         }}>
                             <MaterialCommunityIcons name={"filter-outline"} size={28} color={Colors.primary} style={{ marginRight: 10 }} />
@@ -184,33 +233,51 @@ const SearchScreen = ({ navigation, route }) => {
                                 value={SearchText}
                                 placeholder={i18n.t('searchHere')}
                                 returnKeyType={'done'}
+                                // onBlur={()=>handleBlur()}
                                 onChangeText={(txtname) => {
-                                    { 
+                                    {
                                         setSearchText(txtname)
-                                        console.log("txtname",txtname.length)
-                                        if(!txtname.trim()){
-                                         console.log("txtname blank")
-                                         SearchButton((callback) => {
-                                            if (callback == true && SearchEnable == true) {
-                                                setSelectedBusinessData([]);
-                                                Api_Get_Business(true);
-                                                Api_Get_Category(true)
-                            
-                                            }
-                                        })
-                                       }
-                                       else{
-                                       
-    
-                                       }
+                                        setCurrentPage(1)
+                                        console.log("txtname", txtname.length)
+                                        if (txtname.length == 0) {
+                                            console.log("if")
+                                            setSearchText("")
+                                            setClear(true)
+                                            // handleBlur(true)
+                                        }
+                                        // if (txtname.length == 0) {
+                                        //     console.log("txtname blank")
+                                        //     SearchButton((callback) => {
+                                        //         if (callback == true && SearchEnable == true) {
+                                        //             setSelectedBusinessData([]);
+                                        //             Api_Get_Business(true);
+                                        //             Api_Get_Category(true)
+
+                                        //         }
+                                        //     })
+                                        // }
+                                        // else {
+
+
+                                        // }
                                     }
                                 }}
-                                 
-                                // autoFocus={route.params.isSearch == true ? true : false}
+
+                            // autoFocus={route.params.isSearch == true ? true : false}
                             />
                             {/* <TouchableOpacity  onPress={() => refRBSheet.current.open()}>
                                 <MaterialCommunityIcons name={"filter-outline"} size={20} color={Colors.primary} style={{ marginRight: 10 }} />
                             </TouchableOpacity> */}
+                            {SearchText.length > 0 && <TouchableOpacity onPress={() => {
+                                setSelectedBusinessData([]);
+                                setClear(true)
+                                setSearchText("")
+                                // Api_Get_Business(true);
+                                // Api_Get_Category(true)
+
+                            }}>
+                                <MaterialCommunityIcons name={"close"} size={20} color={Colors.primary} style={{ marginLeft: 10 }} />
+                            </TouchableOpacity>}
                             <TouchableOpacity onPress={() => {
                                 if (SearchText.length > 0) {
                                     SearchButton((callback) => {
@@ -220,11 +287,11 @@ const SearchScreen = ({ navigation, route }) => {
                                         }
                                     })
                                 }
-                                
+
 
 
                             }}
-                                style={{ backgroundColor: SearchText.length > 0 ?Colors.primary : Colors.lightGrey, padding: 8, marginHorizontal: 5, borderRadius: 8 }} >
+                                style={{ backgroundColor: SearchText.length > 0 ? Colors.primary : Colors.lightGrey, padding: 8, marginHorizontal: 5, borderRadius: 6 }} >
                                 <Text style={{
                                     fontSize: FontSize.FS_14,
                                     color: Colors.white,
@@ -243,63 +310,69 @@ const SearchScreen = ({ navigation, route }) => {
                         data={BusinessData}
                         // ListFooterComponent={<View style={{ height: 40 }}></View>}
                         ListEmptyComponent={
-                        !isLoading &&
-                        <View style={{ justifyContent: "center", alignItems: "center", padding: 10, alignSelf: "center", borderRadius: 10, marginTop: 100 }}>
-                            <Text style={{ fontSize: FontSize.FS_16, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM, }}>{"No Data Found"}</Text>
+                            (!isLoading && BusinessData.length <= 0) &&
+                            <View style={{ justifyContent: "center", alignItems: "center", padding: 10, alignSelf: "center", borderRadius: 6, marginTop: 100 }}>
+                                <Text style={{ fontSize: FontSize.FS_16, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM, }}>{"No Data Found"}</Text>
 
-                        </View>}
-                        ListFooterComponent={({ item, index }) => {
-                            return (
-                                <View>
-                                    {
+                            </View>}
+                        ListFooterComponent=
+                        {
 
-                                        setHidePagination == false && isLoading == false ?
-                                            <TouchableOpacity onPress={() => {
-                                                Api_Get_Events(true)
-                                            }}
-                                                style={{ marginVertical: 25, alignSelf: "center" }}>
-                                                <Text style={{ fontSize: FontSize.FS_18, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM }}>{"See More"}</Text>
+                            HidePagination == false && !isLoading && BusinessData.length >= 0 ?
+                                <TouchableOpacity onPress={() => {
+                                    Api_Get_Business(true)
+                                }}
+                                    style={{ marginVertical: 25, alignSelf: "center" }}>
+                                    <Text style={{ fontSize: FontSize.FS_18, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM }}>{"See More"}</Text>
 
-                                            </TouchableOpacity> : <View style={{ height: 20 }}></View>
+                                </TouchableOpacity> : <View style={{ height: 20 }}></View>
 
-                                    }
-
-                                </View>
-
-
-                            )
-                        }}
+                        }
                         renderItem={({ item, index }) => (
-                            <View style={{
+                            <View key={item.business_name} style={{
                                 borderRadius: 5,
                                 marginHorizontal: 10,
                                 marginTop: 20,
                                 padding: 12,
-                                borderWidth: 1,
-                                borderColor: Colors.primary,
+                                shadowColor: "#000",
+                                shadowOffset: {
+                                    width: 0,
+                                    height: 1,
+                                },
+                                shadowOpacity: 0.20,
+                                shadowRadius: 1.41,
+                                elevation: 2,
                             }}>
+                                {console.log("i",item)}
+
                                 <View style={{ flex: 1, backgroundColor: Colors.white }}>
                                     <View style={{ flexDirection: "row", alignItems: "center" }}>
                                         {/* <MaterialCommunityIcons name={"domain"} size={18} color={Colors.primary} style={{ marginRight: 5 }} /> */}
                                         <Text style={[styles.calloutTitle, { marginTop: 4 }]}>{item?.business_name}</Text>
                                     </View>
-                                    <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                        <MaterialCommunityIcons name={"domain"} size={18} color={Colors.primary} style={{ marginRight: 5 }} />
+                                    <View style={{ flexDirection: "row", alignItems: "center" ,}}>
+                                        {/* <MaterialCommunityIcons name={"domain"} size={18} color={Colors.primary} style={{ marginRight: 5 }} /> */}
+                                        {/* <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                            <Text style={[styles.calloutSubTitle, { marginTop: 4 }]}>{"Category : "}</Text>
+                                            <Text style={[styles.calloutDescription, { marginTop: 4 }]}>{item?.subcategory_name}</Text>
+                                        </View> */}
+                                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                            <Text style={[styles.calloutSubTitle, { marginTop: 4 }]}>{"Sub Category : "}</Text>
+                                            <Text style={[styles.calloutDescription, { marginTop: 4 }]}>{item?.subcategory_name}</Text>
+                                        </View>
 
-                                        {/* <Text style={[styles.calloutSubTitle, { marginTop: 4 }]}>{"Category : "}</Text> */}
-                                        <Text style={[styles.calloutDescription, { marginTop: 4 }]}>{item?.subcategory_name}</Text>
                                     </View>
 
                                     <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                        <MaterialCommunityIcons name={"phone"} size={18} color={Colors.primary} style={{ marginRight: 5 }} />
+                                        <MaterialCommunityIcons name={"phone"} size={18} color={Colors.black} style={{ marginRight: 5 }} />
                                         <Text style={styles.calloutDescription}>{item?.phone}</Text>
                                     </View>
                                     <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                        <MaterialCommunityIcons name={"email"} size={18} color={Colors.primary} style={{ marginRight: 5 }} />
+                                        <MaterialCommunityIcons name={"email"} size={18} color={Colors.black} style={{ marginRight: 5 }} />
                                         <Text style={styles.calloutDescription}>{item?.email}</Text>
                                     </View>
                                     <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                        <MaterialCommunityIcons name={"map-marker-outline"} size={18} color={Colors.primary} style={{ marginRight: 5 }} />
+                                        <MaterialCommunityIcons name={"map-marker-outline"} size={18} color={Colors.black} style={{ marginRight: 5 }} />
                                         <Text style={styles.calloutDescription}>{item?.address_line_one}</Text>
                                     </View>
                                 </View>
@@ -392,7 +465,7 @@ const styles = StyleSheet.create({
 
     },
     mobileView: {
-        marginTop: 10, flexDirection: 'row', backgroundColor: Colors.lightGrey01, borderRadius: 10,
+        marginTop: 10, flexDirection: 'row', backgroundColor: Colors.lightGrey01, borderRadius: 6,
         height: 50, alignItems: 'center', borderWidth: 1, borderColor: Colors.primary
     },
     textInputMobile: {
@@ -401,7 +474,7 @@ const styles = StyleSheet.create({
     },
     btnLogin: {
         backgroundColor: Colors.primary,
-        marginTop: 48, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
+        marginTop: 48, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',
     },
     loginText: {
         fontSize: FontSize.FS_18, color: Colors.white,
@@ -410,12 +483,12 @@ const styles = StyleSheet.create({
     calloutTitle: {
         fontSize: FontSize.FS_16,
         fontFamily: ConstantKey.MONTS_SEMIBOLD,
-        color: Colors.primary
+        color: Colors.black
     },
     calloutSubTitle: {
         fontSize: FontSize.FS_13,
         fontFamily: ConstantKey.MONTS_MEDIUM,
-        color: Colors.primary
+        color: Colors.black
     },
     calloutDescription: {
         marginTop: 5,

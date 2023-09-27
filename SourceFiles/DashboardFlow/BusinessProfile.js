@@ -16,9 +16,9 @@ import { APIURL } from '../Constants/APIURL';
 import Toast from 'react-native-simple-toast';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Dropdown } from 'react-native-material-dropdown-v2';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import FastImage from 'react-native-fast-image';
+import { createNavigatorFactory } from '@react-navigation/native';
 
 const BusinessProfile = (props) => {
 
@@ -33,20 +33,66 @@ const BusinessProfile = (props) => {
 	const [Address, setAddress] = useState('')
 	const [FcmToken, setFcmToken] = useState("")
 	const [UserData, setUserData] = useState(null);
+	const [City, setCity] = useState("");
+	const [Pincode, setPincode] = useState("");
+	const [CoutryId, setCountryId] = useState("");
+	const [Country, setCountry] = useState("");
+	const [CountryData, setCountryData] = useState(null);
+	const [StateId, setStateId] = useState("");
+	const [State, setState] = useState("");
+	const [StateData, setStateData] = useState(null);
 
 	const refRBSheet = useRef();
+	const CountrySheet = useRef();
+	const StateSheet = useRef();
 
 	useEffect(() => {
 		getFCMToken()
 		Api_Get_Category(true)
-		console.log("props?.route?.params", props?.route?.params)
+		Api_Get_Country(true)
+		console.log("props?.route?.params", props?.route?.params?.body)
 		if (props?.route?.params?.isFrom == "PROFILE") {
 			Api_Get_Profile(true)
 		}
 	}, [])
 
 
-
+	const Api_Get_Country = (isLoad, item) => {
+		setIsLoading(isLoad)
+		Webservice.get(APIURL.GetCountry)
+			.then(response => {
+				setIsLoading(false)
+				// console.log(JSON.stringify("Api_Get_Country Response : " + JSON.stringify(response)));
+				if (response.data.status == true) {
+					var coutryData = response?.data?.data
+					setCountryData(coutryData)
+				} else {
+					alert(response.data.message)
+				}
+			})
+			.catch((error) => {
+				setIsLoading(false)
+				console.log(error)
+			})
+	}
+	const Api_Get_State = (isLoad, item) => {
+		setIsLoading(isLoad)
+		Webservice.get(APIURL.GetState + "?country_id=" + item.id)
+			.then(response => {
+				setIsLoading(false)
+				console.log(JSON.stringify("Api_Get_State Response : " + JSON.stringify(response)));
+				if (response.data.status == true) {
+					var stateData = response?.data?.data
+					setStateData(stateData)
+				} else {
+					alert(response.data.message)
+				}
+			})
+			.catch((error) => {
+				setIsLoading(false)
+				console.log(error)
+			})
+	}
 	const Api_Get_Profile = (isLoad) => {
 		setIsLoading(isLoad)
 		Webservice.get(APIURL.GetProfile)
@@ -117,7 +163,14 @@ const BusinessProfile = (props) => {
 		body.append('subcategory', SubCategory)
 		body.append('business_mobile_number', BusinessPhone)
 		body.append('business_email_address', BusinessEmail)
-		body.append('business_address_line_one', Address)
+		// body.append('business_address_line_one', Address)
+		body.append('business_address', Address)
+		body.append('business_city', City)
+		body.append('business_country_id', CoutryId)
+		body.append('business_pincode', Pincode)
+
+		body.append('business_state_id', StateId)
+		body.append('is_business_profile', 1)
 
 		Webservice.post(APIURL.UpdateBusiness, body)
 			.then(response => {
@@ -174,10 +227,16 @@ const BusinessProfile = (props) => {
 		body.append('subcategory', SubCategory)
 		body.append('business_mobile_number', BusinessPhone)
 		body.append('business_email_address', BusinessEmail)
-		body.append('business_address_line_one', Address)
+		body.append('business_address', Address)
+		body.append('business_city', City)
+		body.append('business_country_id', CoutryId)
+		body.append('business_pincode', Pincode)
+
+		body.append('business_state_id', StateId)
+
 		body.append('device_type', Platform.OS == "android" ? 1 : 2)
 		body.append('device_token', FcmToken)
-		body.append('parent_id', 5)
+		body.append('parent_id', props?.route?.params?.body?.parent_id)
 		Webservice.post(APIURL.register, body)
 			.then(response => {
 				console.log("Register Response : ", response.data)
@@ -230,13 +289,24 @@ const BusinessProfile = (props) => {
 			} else if (Address == "") {
 				Toast.showWithGravity("Please enter business address", Toast.LONG, Toast.BOTTOM);
 			}
+			else if (createNavigatorFactory == "") {
+				Toast.showWithGravity("Please enter city", Toast.LONG, Toast.BOTTOM);
+			} else if (Pincode == "") {
+				Toast.showWithGravity("Please enter pincode", Toast.LONG, Toast.BOTTOM);
+			} else if (Country == "") {
+				Toast.showWithGravity("Please select country", Toast.LONG, Toast.BOTTOM);
+			} else if (State == "") {
+				Toast.showWithGravity("Please select state", Toast.LONG, Toast.BOTTOM);
+			}
 			else {
 				console.log("route?.params?.isFrom ::", props?.route?.params?.isFrom)
-				if (props?.route?.params?.isFrom == "REGISTER") {
-					Api_Register(true)
+				if (props?.route?.params?.isFrom == "PROFILE") {
+					Api_Update_Business(true)
+
 				}
 				else {
-					Api_Update_Business(true)
+					console.log("1")
+					Api_Register(true)
 
 				}
 			}
@@ -290,7 +360,7 @@ const BusinessProfile = (props) => {
 								fontSize: FontSize.FS_18,
 								color: Colors.black,
 								fontFamily: ConstantKey.MONTS_MEDIUM,
-								marginTop: 20,
+								marginTop: 10,
 								lineHeight: 20
 							}}>
 								{i18n.t('Category')}
@@ -316,7 +386,7 @@ const BusinessProfile = (props) => {
 								fontSize: FontSize.FS_18,
 								color: Colors.black,
 								fontFamily: ConstantKey.MONTS_MEDIUM,
-								marginTop: 20,
+								marginTop: 10,
 								lineHeight: 20
 							}}>
 								{i18n.t('SubCategory')}
@@ -327,14 +397,14 @@ const BusinessProfile = (props) => {
 									placeholder={i18n.t('EnterCategory')}
 									keyboardType={'default'}
 									returnKeyType={'next'}
-									onChangeText={(txt) => setSubCategory(txt)}
+									onChangeText={(txt) => setSubCategory(txt.replace(/[^A-Za-z\s]/ig, ''))}
 								/>
 							</View>
 							<Text style={{
 								fontSize: FontSize.FS_18,
 								color: Colors.black,
 								fontFamily: ConstantKey.MONTS_MEDIUM,
-								marginTop: 20,
+								marginTop: 10,
 								lineHeight: 20
 							}}>
 								{i18n.t('BusinessPhone')}
@@ -345,6 +415,7 @@ const BusinessProfile = (props) => {
 									autoCapitalize={'none'}
 									placeholder={i18n.t('EnterBusinessPhone')}
 									returnKeyType={'done'}
+									keyboardType='number-pad'
 									onChangeText={(txt) => setBusinessPhone(txt)}
 									maxLength={10}
 								/>
@@ -353,7 +424,7 @@ const BusinessProfile = (props) => {
 								fontSize: FontSize.FS_18,
 								color: Colors.black,
 								fontFamily: ConstantKey.MONTS_MEDIUM,
-								marginTop: 20,
+								marginTop: 10,
 								lineHeight: 20
 							}}>
 								{i18n.t('BusinessEmail')}
@@ -371,7 +442,7 @@ const BusinessProfile = (props) => {
 								fontSize: FontSize.FS_26,
 								color: Colors.black,
 								fontFamily: ConstantKey.MONTS_SEMIBOLD,
-								marginTop: 20,
+								marginTop: 15,
 							}}>
 								{i18n.t('AddressInfo')}
 							</Text>
@@ -379,15 +450,15 @@ const BusinessProfile = (props) => {
 								fontSize: FontSize.FS_18,
 								color: Colors.black,
 								fontFamily: ConstantKey.MONTS_MEDIUM,
-								marginTop: 20,
+								marginTop: 15,
 								lineHeight: 20
 							}}>
 								{i18n.t('Address')}
 							</Text>
 							{/* <View style={styles.mobileView}> */}
 							<TextInput style={{
-								height: 100, fontSize: FontSize.FS_16, fontFamily: ConstantKey.MONTS_REGULAR,
-								color: Colors.black, flex: 1, marginTop: 10, backgroundColor: Colors.lightGrey01, borderRadius: 10, paddingHorizontal: 10
+								height: 70, fontSize: FontSize.FS_16, fontFamily: ConstantKey.MONTS_REGULAR,
+								color: Colors.black, flex: 1, marginTop: 10, backgroundColor: Colors.lightGrey01, borderRadius: 6, paddingHorizontal: 10
 
 							}}
 								multiline={true}
@@ -398,6 +469,100 @@ const BusinessProfile = (props) => {
 								onChangeText={(txt) => setAddress(txt)}
 							/>
 							{/* </View> */}
+							<Text style={{
+								fontSize: FontSize.FS_18,
+								color: Colors.black,
+								fontFamily: ConstantKey.MONTS_MEDIUM,
+								marginTop: 10,
+								lineHeight: 20
+							}}>
+								{"City"}
+							</Text>
+							<View style={styles.mobileView}>
+								<TextInput style={styles.textInputMobile}
+									value={City}
+									placeholder={"Enter City"}
+									keyboardType={'default'}
+									returnKeyType={'next'}
+									onChangeText={(txt) => setCity(txt.replace(/[^A-Za-z\s]/ig, ''))}
+								/>
+							</View>
+							<Text style={{
+								fontSize: FontSize.FS_18,
+								color: Colors.black,
+								fontFamily: ConstantKey.MONTS_MEDIUM,
+								marginTop: 10,
+								lineHeight: 20
+							}}>
+								{"Pin code"}
+							</Text>
+							<View style={styles.mobileView}>
+								<TextInput style={styles.textInputMobile}
+									value={Pincode}
+									placeholder={"Enter City"}
+									keyboardType={'number-pad'}
+									returnKeyType={'next'}
+									onChangeText={(txt) => setPincode(txt)}
+								/>
+							</View>
+							<Text style={{
+								fontSize: FontSize.FS_18,
+								color: Colors.black,
+								fontFamily: ConstantKey.MONTS_MEDIUM,
+								marginTop: 10,
+								lineHeight: 20
+							}}>
+								{"Select Country"}
+							</Text>
+							<TouchableOpacity onPress={() => CountrySheet.current.open()}
+								style={styles.mobileView}>
+								<View style={[styles.textInputMobile, { flexDirection: "row", alignItems: "center", justifyContent: "space-between" }]}
+
+								>
+									<Text style={{
+										fontSize: FontSize.FS_15,
+										color: Country == "" ? Colors.lightGrey : Colors.black,
+										fontFamily: ConstantKey.MONTS_REGULAR,
+										// marginTop:15
+									}}>
+										{Country == "" ? "Select Country" : Country}
+									</Text>
+									<Icon name={"chevron-down"} size={14} color={Colors.lightGrey} />
+								</View>
+							</TouchableOpacity>
+							<Text style={{
+								fontSize: FontSize.FS_18,
+								color: Colors.black,
+								fontFamily: ConstantKey.MONTS_MEDIUM,
+								marginTop: 10,
+								lineHeight: 20
+							}}>
+								{"Select State"}
+							</Text>
+							<TouchableOpacity onPress={() => {
+								if (Country == "") {
+									alert("Please select country")
+								}
+								else {
+									StateSheet.current.open()
+								}
+							}
+							}
+								style={styles.mobileView}>
+								<View style={[styles.textInputMobile, { flexDirection: "row", alignItems: "center", justifyContent: "space-between" }]}
+
+								>
+									<Text style={{
+										fontSize: FontSize.FS_15,
+										color: State == "" ? Colors.lightGrey : Colors.black,
+										fontFamily: ConstantKey.MONTS_REGULAR,
+										// marginTop:15
+									}}>
+										{State == "" ? "Select State" : State}
+									</Text>
+									<Icon name={"chevron-down"} size={14} color={Colors.lightGrey} />
+								</View>
+							</TouchableOpacity>
 							<TouchableOpacity style={styles.btnLogin}
 								onPress={() => btnBusinessProfile()}>
 								<Text style={styles.loginText}>
@@ -433,7 +598,6 @@ const BusinessProfile = (props) => {
 						data={CategoryData}
 						ItemSeparatorComponent={<View style={{ width: 20, }}></View>}
 						renderItem={({ item, index }) => (
-							// <View style={{ alignItems: "center" }}>
 							<TouchableOpacity onPress={() => {
 								refRBSheet.current.close()
 								setCategory(item)
@@ -456,9 +620,98 @@ const BusinessProfile = (props) => {
 									{item.name}
 								</Text>
 							</TouchableOpacity>
+						)}
+					/>
+				</ScrollView>
+			</RBSheet>
+			<RBSheet height={ConstantKey.SCREEN_WIDTH * 1.3}
+				ref={CountrySheet}
+				closeOnDragDown={true}
+				closeOnPressMask={true}
+				customStyles={{
+					wrapper: {
+						backgroundColor: Colors.black03
+					},
+					draggableIcon: {
+						backgroundColor: Colors.primary
+					}
+				}}
+			>
+				<ScrollView>
+					<FlatList
+						showsHorizontalScrollIndicator={false}
+						style={{ marginTop: 10 }}
+						data={CountryData}
+						ItemSeparatorComponent={<View style={{ width: 20, }}></View>}
+						renderItem={({ item, index }) => (
+							<TouchableOpacity onPress={() => {
+								CountrySheet.current.close()
+								setCountry(item?.name)
+								setCountryId(item.id)
+								Api_Get_State(true, item)
+							}}
+								style={{
+									padding: 15,
+									alignItems: "center",
+									flexDirection: "row"
+								}}>
 
-							// </View>
+								{/* <FastImage style={{ resizeMode: 'contain', width: 24, height: 24 }}
+									source={{ uri: item.image_url }}
+								/> */}
+								<Text style={{
+									fontSize: FontSize.FS_14,
+									color: Colors.black,
+									fontFamily: ConstantKey.MONTS_MEDIUM,
+									marginLeft: 10
+								}}>
+									{item.name}
+								</Text>
+							</TouchableOpacity>
+						)}
+					/>
+				</ScrollView>
+			</RBSheet>
+			<RBSheet height={ConstantKey.SCREEN_WIDTH * 1.3}
+				ref={StateSheet}
+				closeOnDragDown={true}
+				closeOnPressMask={true}
+				customStyles={{
+					wrapper: {
+						backgroundColor: Colors.black03
+					},
+					draggableIcon: {
+						backgroundColor: Colors.primary
+					}
+				}}
+			>
+				<ScrollView>
+					<FlatList
+						showsHorizontalScrollIndicator={false}
+						style={{ marginTop: 10 }}
+						data={StateData}
+						ItemSeparatorComponent={<View style={{ width: 20, }}></View>}
+						renderItem={({ item, index }) => (
+							<TouchableOpacity onPress={() => {
+								StateSheet.current.close()
+								setState(item?.name)
+								setStateId(item?.id)
+							}}
+								style={{
+									padding: 15,
+									alignItems: "center",
+									flexDirection: "row"
+								}}>
 
+								<Text style={{
+									fontSize: FontSize.FS_14,
+									color: Colors.black,
+									fontFamily: ConstantKey.MONTS_MEDIUM,
+									marginLeft: 10
+								}}>
+									{item.name}
+								</Text>
+							</TouchableOpacity>
 						)}
 					/>
 				</ScrollView>
@@ -472,16 +725,16 @@ const styles = StyleSheet.create({
 		backgroundColor: Colors.white,
 	},
 	mobileView: {
-		marginTop: 10, flexDirection: 'row', backgroundColor: Colors.lightGrey01, borderRadius: 10,
-		height: 50, alignItems: 'center'
+		marginTop: 6, flexDirection: 'row', backgroundColor: Colors.lightGrey01, borderRadius: 6,
+		height: 44, alignItems: 'center'
 	},
 	textInputMobile: {
-		marginLeft: 10, marginRight: 10, height: 50, flex: 1, fontSize: FontSize.FS_16, fontFamily: ConstantKey.MONTS_REGULAR,
+		marginLeft: 10, marginRight: 10, height: 50, flex: 1, fontSize: FontSize.FS_14, fontFamily: ConstantKey.MONTS_REGULAR,
 		color: Colors.black,
 	},
 	btnLogin: {
-		backgroundColor: Colors.primary,
-		marginTop: 48, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
+		backgroundColor: Colors.black,
+		marginTop: 48, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',
 	},
 	loginText: {
 		fontSize: FontSize.FS_18, color: Colors.white,

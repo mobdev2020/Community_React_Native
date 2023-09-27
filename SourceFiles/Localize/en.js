@@ -1,6 +1,6 @@
 export default {
 
-	appName: 'Magnus Network',
+	appName: 'Community',
 
 	searchUser: 'Search User',
 	done: 'Done',

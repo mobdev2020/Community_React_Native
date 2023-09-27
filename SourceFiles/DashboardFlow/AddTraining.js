@@ -16,7 +16,6 @@ import Webservice from '../Constants/API'
 import LoadingView from '../Constants/LoadingView'
 import { APIURL } from '../Constants/APIURL';
 import { version as versionNo } from '../../package.json'
-import ChangePasswordModal from './ChangePasswordModal';
 
 // Third Party
 import { StackActions } from '@react-navigation/native';
@@ -391,12 +390,12 @@ const AddTraining = ({navigation}) => {
 
 					</View>
 					<View style={{
-						marginHorizontal: 20, marginVertical: 20, borderRadius: 10, borderWidth: 1, borderColor: Colors.primary,
+						marginHorizontal: 20, marginVertical: 20, borderRadius: 6, borderWidth: 1, borderColor: Colors.primary,
 						height: 200,
 					}}>
 
 						{/* <TouchableOpacity onPress={() => TrainingData != null ? setIsVisibleImg(true) : {}}>
-							<Image style={{ height: '100%', width: '100%', resizeMode: TrainingData == null ? 'contain' : 'cover', borderRadius: 10, }}
+							<Image style={{ height: '100%', width: '100%', resizeMode: TrainingData == null ? 'contain' : 'cover', borderRadius: 6, }}
 								source={TrainingData == null ? Images.MagnusLogo : { uri: ImgTraining.path }} />
 						</TouchableOpacity> */}
 
@@ -414,14 +413,14 @@ const AddTraining = ({navigation}) => {
                             }}>Upload Training photo</Text>
 							</TouchableOpacity> :
 							<TouchableOpacity onPress={() => TrainingData != null ? setIsVisibleImg(true) : {}}>
-								<Image style={{ height: '100%', width: '100%', resizeMode: TrainingData == null ? 'contain' : 'cover', borderRadius: 10, }}
+								<Image style={{ height: '100%', width: '100%', resizeMode: TrainingData == null ? 'contain' : 'cover', borderRadius: 6, }}
 									source={TrainingData == null ? Images.MagnusLogo : { uri: EventImg.path }} />
 							</TouchableOpacity>
 						}
 						<View style={{ position: 'absolute', width: '100%' }}>
 							<TouchableOpacity style={{
 								alignSelf: 'flex-end', backgroundColor: Colors.primary, padding: 10,
-								borderBottomLeftRadius: 10, borderTopRightRadius: 10
+								borderBottomLeftRadius: 5, borderTopRightRadius: 5
 							}}
 								onPress={() => btnSelectImage()}>
 
@@ -556,7 +555,7 @@ const styles = StyleSheet.create({
 		backgroundColor: Colors.white,
 	},
 	mobileView: {
-		marginTop: 5, flexDirection: 'row', borderWidth: 1, borderColor: Colors.darkGrey, borderRadius: 10, backgroundColor: Colors.white,
+		marginTop: 5, flexDirection: 'row', borderWidth: 1, borderColor: Colors.darkGrey, borderRadius: 6, backgroundColor: Colors.white,
 		paddingVertical : 10//alignItems: 'center'
 	},
 	textInputMobile: {
@@ -565,7 +564,7 @@ const styles = StyleSheet.create({
 	},
 	btnSubmit: {
 		backgroundColor: Colors.primary,
-		marginTop: 30, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
+		marginTop: 30, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',
 		shadowColor: Colors.primary, marginBottom : 20,
 		shadowOffset: { width: 0, height: 2 },
 		shadowOpacity: 0.4, shadowRadius: 2, elevation: 2

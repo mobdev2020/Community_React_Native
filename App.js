@@ -157,7 +157,7 @@ const App = () => {
 
 
 	useEffect(() => {
-		LogBox.ignoreAllLogs(); 
+		LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
 		if (Platform.OS == 'ios') {
 			requestUserPermission();
 		} else {
@@ -249,7 +249,7 @@ const App = () => {
 						onPress: () => NavigationService.navigate('MembersProfile', { member_data: String(notification.member_id) }),
 						style: "cancel"
 					},
-					{ text: "Close", onPress: () => console.log("OK Pressed") }
+					{ text: "Close", onPress: () => {} }
 				])
 
 
@@ -309,6 +309,7 @@ const App = () => {
 
 	const getFcmToken = async () => {
 		const fcmToken = await messaging().getToken();
+		console.log("APP Your Firebase Token is :", fcmToken);
 		if (fcmToken) {
 
 			storeToken(JSON.stringify(fcmToken))
@@ -323,11 +324,13 @@ const App = () => {
 
 	//Helper Methods
 	const storeToken = async (value) => {
+		console.log("STORE Your Firebase Token is :", value);
+
 		try {
 			await AsyncStorage.setItem(ConstantKey.FCM_TOKEN, value)
 
 		} catch (e) {
-			// saving error
+			console.log("ASYNC ERROR",e)
 		}
 	}
 
@@ -371,7 +374,7 @@ const App = () => {
 const styles = StyleSheet.create({
 	btnNavigate: {
 		backgroundColor: Colors.primaryRed,
-		height: moderateScale(45), borderRadius: 10, alignItems: 'center', justifyContent: 'center',
+		height: moderateScale(45), borderRadius: 6, alignItems: 'center', justifyContent: 'center',
 		shadowColor: Colors.primaryRed,
 		shadowOffset: { width: 0, height: 2 }, width: '50%', alignSelf: 'center',
 		shadowOpacity: 0.4, shadowRadius: 2, elevation: 2, marginVertical: moderateScale(15)

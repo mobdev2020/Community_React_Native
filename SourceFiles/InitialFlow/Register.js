@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, ScrollView, Switch, Platform } from 'react-native';
 
 
 // Constants
@@ -13,7 +13,6 @@ import Webservice from '../Constants/API'
 import LoadingView from '../Constants/LoadingView'
 import { APIURL } from '../Constants/APIURL';
 import { version as versionNo } from '../../package.json'
-import PolicyModal from '../DashboardFlow/PolicyModal';
 import messaging from '@react-native-firebase/messaging';
 
 
@@ -26,17 +25,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // create a component
 const Register = (props) => {
 	const [isLoading, setIsLoading] = useState(false)
-	const [txtFirstName, setTxtFirstName] = useState('')
-	const [txtLastName, setTxtLastName] = useState('')
-	const [txtEmail, setTxtEmail] = useState('')
-	const [txtMobile, setTxtMobile] = useState(props?.route?.params?.data?.mobile_number ||'')
-	const [SchoolId, setSchoolId] = useState(props?.route?.params?.school_id ||'')
-	const [txtPassword, setTxtPassword] = useState('')
-	const [acceptTerms, setAcceptTerms] = useState(true)
-	const [openPrivacy, setOpenPrivacy] = useState(false)
+	const [txtFirstName, setTxtFirstName] = useState(props?.route?.params?.data?.user?.first_name || '')
+	const [txtLastName, setTxtLastName] = useState(props?.route?.params?.data?.user?.last_name || '')
+	const [txtEmail, setTxtEmail] = useState(props?.route?.params?.data?.user?.email || '')
+	const [description, setDescription] = useState(props?.route?.params?.data?.user?.kids_information || '')
+	const [txtMobile, setTxtMobile] = useState(props?.route?.params?.data?.user?.phone || '')
+	const [SchoolId, setSchoolId] = useState(props?.route?.params?.data?.user?.parent_id || '')
+	const [isEnabled, setIsEnabled] = useState(false);
 	const [FcmToken, setFcmToken] = useState("")
 	useEffect(() => {
-
+		console.log("UserData from login :", props?.route?.params?.data)
 		getFCMToken()
 	}, [])
 
@@ -69,45 +67,7 @@ const Register = (props) => {
 		}
 
 	}
-	const Api_Register = (isLoad) => {
-		setIsLoading(isLoad)
-		Webservice.post(APIURL.register, {
-			first_name: txtFirstName,
-			last_name: txtLastName,
-			email_address: txtEmail,
-			mobile_number: txtMobile,
-			is_register_business: 0,
-			device_type: Platform.OS == "android" ? 1 : 2,
-			device_token: FcmToken,
-			parent_id: 5,
-		})
-			.then(response => {
-				console.log("Register Response : ", response.data)
-				if (response == null) {
-					setIsLoading(false)
-				}
-				setIsLoading(false)
 
-				if (response.data.status == true) {
-					var dict = {};
-					dict.first_name = txtFirstName
-					dict.last_name = txtLastName
-					dict.email_address = txtEmail
-					dict.mobile_number = txtMobile
-					dict.isFrom = "REGISTER"
-					props.navigation.navigate("Otp", { data: dict })
-					// storeUserData(response.data.data)
-				} else {
-					Toast.showWithGravity(response.data.message, Toast.LONG, Toast.BOTTOM);
-				}
-
-			})
-			.catch((error) => {
-
-				setIsLoading(false)
-				console.log(error)
-			})
-	}
 	const Api_Login_check = (isLoad) => {
 
 		setIsLoading(isLoad)
@@ -115,12 +75,12 @@ const Register = (props) => {
 		Webservice.post(APIURL.login, {
 
 			mobile_number: txtMobile,
-			device_type:Platform.OS == "android" ?1 :2,
+			device_type: Platform.OS == "android" ? 1 : 2,
 			device_token: FcmToken
 
 		})
 			.then(response => {
-				console.log("Login response : ",JSON.stringify(response));
+				// console.log("Login response : ",JSON.stringify(response));
 				setIsLoading(false)
 
 				if (response.data.status == true) {
@@ -137,7 +97,10 @@ const Register = (props) => {
 					dict.email_address = txtEmail
 					dict.mobile_number = txtMobile
 					dict.isFrom = "REGISTER"
-					props.navigation.navigate("Otp", { data: dict })
+					dict.parent_id = props.route.params.school_id,
+						// console.log("REGISTER FORM DATA :", dict)
+
+						props.navigation.navigate("Otp", { data: dict })
 				}
 
 			})
@@ -158,6 +121,38 @@ const Register = (props) => {
 	const validateEmail = (email) => {
 		const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 		return (regex.test(email))
+	}
+	const Api_Register = (isLoad) => {
+		setIsLoading(isLoad)
+		Webservice.post(APIURL.register, {
+			first_name: txtFirstName,
+			last_name: txtLastName,
+			email_address: txtEmail,
+			mobile_number: txtMobile,
+			is_register_business: 0,
+			device_type: Platform.OS == "android" ? 1 : 2,
+			device_token: FcmToken,
+			parent_id: SchoolId,
+		})
+			.then(response => {
+				console.log("Register Response : ", response.data)
+				if (response == null) {
+					setIsLoading(false)
+				}
+				setIsLoading(false)
+
+				if (response.data.status == true) {
+					storeUserData(JSON.stringify(response.data.data))
+				} else {
+					Toast.showWithGravity(response.data.message, Toast.LONG, Toast.BOTTOM);
+				}
+
+			})
+			.catch((error) => {
+
+				setIsLoading(false)
+				console.log(error)
+			})
 	}
 	// Action Methods
 	const btnRegisterTap = () => {
@@ -181,24 +176,31 @@ const Register = (props) => {
 			}
 			else if (!validateEmail(txtEmail)) {
 				Toast.showWithGravity(i18n.t('validEmail'), Toast.LONG, Toast.BOTTOM);
-			} else {
-				var dict = {};
-				dict.first_name = txtFirstName
-				dict.last_name = txtLastName
-				dict.email_address = txtEmail
-				dict.mobile_number = txtMobile
-				console.log("Register Dict : ", dict)
-				// props.navigation.navigate("AskBusinessProfile",{body : dict})
-				Api_Login_check(true)
+			}
+			else if (description == "") {
+				Toast.showWithGravity("Please enter your kids information", Toast.LONG, Toast.BOTTOM);
+			}
+
+			else {
+
+				if (isEnabled) {
+					var dict = {};
+					dict.first_name = txtFirstName
+					dict.last_name = txtLastName
+					dict.email_address = txtEmail
+					dict.mobile_number = txtMobile
+					dict.parent_id = SchoolId
+					props.navigation.navigate("BusinessProfile", { body: dict })
+				}
+				else {
+					Api_Register(true)
+				}
 			}
 
 		})
 	}
 
-	const toggleTerms = (value) => {
 
-		setAcceptTerms(!acceptTerms)
-	}
 
 	const btnLoginTap = () => {
 		requestAnimationFrame(() => {
@@ -229,7 +231,7 @@ const Register = (props) => {
 								color: Colors.black,
 								fontFamily: ConstantKey.MONTS_SEMIBOLD,
 							}}>
-								{i18n.t('Register')}
+								{"Basic Information"}
 							</Text>
 
 						</View>
@@ -244,12 +246,12 @@ const Register = (props) => {
 								{i18n.t('firstName')}
 							</Text>
 							<View style={styles.mobileView}>
-								<Icon name={"user"} size={20} color={Colors.black} style={{ marginLeft: 10 }} />
+								<Icon name={"user"} size={20} color={Colors.primary} style={{ marginLeft: 10 }} />
 								<TextInput style={styles.textInputMobile}
 									value={txtFirstName}
 									placeholder={i18n.t('enterFirstName')}
 									returnKeyType={'done'}
-									onChangeText={(txtname) => setTxtFirstName(txtname)}
+									onChangeText={(txtname) => setTxtFirstName(txtname.replace(/[^A-Za-z\s]/ig, ''))}
 								/>
 							</View>
 							<Text style={{
@@ -262,12 +264,13 @@ const Register = (props) => {
 								{i18n.t('lastName')}
 							</Text>
 							<View style={styles.mobileView}>
-								<Icon name={"user"} size={20} color={Colors.black} style={{ marginLeft: 10 }} />
+								<Icon name={"user"} size={20} color={Colors.primary} style={{ marginLeft: 10 }} />
 								<TextInput style={styles.textInputMobile}
 									value={txtLastName}
 									placeholder={i18n.t('enterLastName')}
 									returnKeyType={'done'}
-									onChangeText={(txtname) => setTxtLastName(txtname)}
+									onChangeText={(txtname) => setTxtLastName(txtname.replace(/[^A-Za-z\s]/ig, ''))}
+									keyboardType='default'
 								/>
 							</View>
 							<Text style={{
@@ -280,7 +283,7 @@ const Register = (props) => {
 								{i18n.t('phoneNumber')}
 							</Text>
 							<View style={styles.mobileView}>
-								<Icon name={"mobile-alt"} size={20} color={Colors.black} style={{ marginLeft: 10 }} />
+								<Icon name={"mobile-alt"} size={20} color={Colors.primary} style={{ marginLeft: 10 }} />
 								<TextInput style={styles.textInputMobile}
 									maxLength={10}
 									value={txtMobile}
@@ -300,19 +303,56 @@ const Register = (props) => {
 								{i18n.t('email')}
 							</Text>
 							<View style={styles.mobileView}>
-								<Icon name={"at"} size={18} color={Colors.black} style={{ marginLeft: 10 }} />
+								<Icon name={"at"} size={18} color={Colors.primary} style={{ marginLeft: 10 }} />
 								<TextInput style={styles.textInputMobile}
 									value={txtEmail}
 									autoCapitalize={'none'}
 									placeholder={i18n.t('enterEmailAddress')}
-									returnKeyType={'done'}
+									returnKeyType={'next'}
 									onChangeText={(txtEmail) => setTxtEmail(txtEmail)}
 								/>
 							</View>
+							<View style={{
+								marginTop: 10, backgroundColor: Colors.lightGrey01, borderRadius: 6,
+								height: 120,
+							}}>
+								{/* <Icon name={"at"} size={18} color={Colors.primary} style={{ marginLeft: 10 }} /> */}
+								<TextInput style={{
+									marginLeft: 10, marginRight: 10, height: 120, flex: 1, fontSize: FontSize.FS_16, fontFamily: ConstantKey.MONTS_REGULAR,
+									color: Colors.black, alignContent: "flex-start"
+								}}
+									multiline={true}
+									value={description}
+									autoCapitalize={'none'}
+									placeholder={"Description of your kids"}
+									returnKeyType={'done'}
+									onChangeText={(dec) => setDescription(dec)}
+								/>
+							</View>
+							<View style={{ marginTop: 16, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+								<Text style={{
+									fontSize: FontSize.FS_18,
+									color: Colors.black,
+									fontFamily: ConstantKey.MONTS_SEMIBOLD,
+								}}>
+									{"Do you want to Join Business Community?"}
+								</Text>
+								<Switch
+									trackColor={{ false: Colors.grey, true: Colors.primary }}
+									thumbColor={isEnabled ? Colors.white : '#f4f3f4'}
+									ios_backgroundColor="#3e3e3e"
+									onValueChange={(val) => {
+										console.log("SWITCH :", val)
+										setIsEnabled(val)
+									}}
+									value={isEnabled}
+								/>
+							</View>
+
 							<TouchableOpacity style={styles.btnLogin}
 								onPress={() => btnRegisterTap()}>
 								<Text style={styles.loginText}>
-									{i18n.t('Register')}
+									{"Next"}
 								</Text>
 							</TouchableOpacity>
 						</View>
@@ -324,19 +364,14 @@ const Register = (props) => {
 										fontFamily: ConstantKey.MONTS_REGULAR
 									}}
 										onPress={() => btnLoginTap()}>
-										{i18n.t('alreadyAccount')}<Text style={{ color: Colors.purple, fontFamily: ConstantKey.MONTS_SEMIBOLD }}>{i18n.t('login')}</Text>
+										{i18n.t('alreadyAccount')}<Text style={{ color: Colors.primary, fontFamily: ConstantKey.MONTS_SEMIBOLD }}>{"Login Now"}</Text>
 									</Text>
 								</TouchableOpacity>
 								: null}
 
 						</View>
 
-						<PolicyModal
-							isOpen={openPrivacy}
-							onClose={() => {
-								setOpenPrivacy(false)
-							}}
-						/>
+
 
 					</SafeAreaView>
 					{/* </ScrollView> */}
@@ -344,7 +379,7 @@ const Register = (props) => {
 			</View>
 
 			{isLoading ?
-				<LoadingView text={"Please Wait..."} />
+				<LoadingView />
 				: null}
 		</View>
 		// </SafeAreaView>
@@ -358,7 +393,7 @@ const styles = StyleSheet.create({
 		backgroundColor: Colors.white,
 	},
 	mobileView: {
-		marginTop: 10, flexDirection: 'row', backgroundColor: Colors.lightGrey01, borderRadius: 10,
+		marginTop: 10, flexDirection: 'row', backgroundColor: Colors.lightGrey01, borderRadius: 6,
 		height: 50, alignItems: 'center'
 	},
 	countryCodeText: {
@@ -370,8 +405,8 @@ const styles = StyleSheet.create({
 		color: Colors.black,
 	},
 	btnLogin: {
-		backgroundColor: Colors.primary,
-		marginTop: 48, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
+		backgroundColor: Colors.black,
+		marginTop: 48, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',
 	},
 	loginText: {
 		fontSize: FontSize.FS_18, color: Colors.white,

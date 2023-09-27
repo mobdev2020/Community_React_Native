@@ -1,7 +1,6 @@
 
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, TouchableHighlight, TouchableHighlightBase, Linking, Alert } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
-import LinearGradient from 'react-native-linear-gradient'
 import { Colors } from '../Constants/Colors'
 import { ConstantKey } from '../Constants/ConstantKey'
 import { FontSize } from '../Constants/FontSize'
@@ -13,6 +12,8 @@ import { APIURL } from '../Constants/APIURL'
 import LoadingView from '../Constants/LoadingView'
 import Webservice from '../Constants/API'
 import { useFocusEffect } from '@react-navigation/native'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import moment from 'moment'
 
 const EventsTab = () => {
 
@@ -33,6 +34,7 @@ const EventsTab = () => {
 	useFocusEffect(
 		useCallback(() => {
 			console.log("ENTER EVENTS TAB = TRUE")
+			setIsLoading(true)
 			Api_Get_Events(true)
 			Api_Get_Training(true)
 			Api_Get_Meeting(true)
@@ -58,7 +60,7 @@ const EventsTab = () => {
 
 		try {
 			const response = await Webservice.get(APIURL.GetEvents + "?page=" + EventCurrentPage);
-			console.log("Api_Get_Events Response: " + JSON.stringify(response.data.data));
+			console.log("Api_Get_Events Response: " + JSON.stringify(response));
 
 			if (response.data.status === true) {
 				var data = response.data.data?.data;
@@ -75,13 +77,15 @@ const EventsTab = () => {
 					setEventCurrentPage(EventCurrentPage + 1);
 				}
 			} else {
-				alert(response.data.message);
+				// alert(response.data.message);
 				setIsLoading(false);
+				setEventHidePagination(true);
 
 			}
 		} catch (error) {
 			setIsLoading(false);
 			console.log(error);
+			setEventHidePagination(true);
 		}
 	}
 	const Api_Delete_Events = async (isLoad, items) => {
@@ -97,7 +101,7 @@ const EventsTab = () => {
 					var data = EventsData.filter((item) => item.id !== items.id)
 					setEventsData(data)
 					// setEventCurrentPage(EventCurrentPage - 1)
-					Alert.alert("Sucess", "Advertises Deleted Sucessfully", [
+					Alert.alert("Success", "Event Deleted Successfully", [
 						{
 							text: 'Ok',
 							onPress: () => {
@@ -140,13 +144,15 @@ const EventsTab = () => {
 				}
 
 			} else {
-				alert(response.data.message)
+				// alert(response.data.message)
+				setTrainingHidePagination(true)
 				setIsLoading(false);
 			}
 		}
 		catch (error) {
 			setIsLoading(false)
 			console.log(error)
+			setTrainingHidePagination(true)
 		}
 	}
 	const Api_Get_Meeting = async (isLoad) => {
@@ -170,12 +176,14 @@ const EventsTab = () => {
 				}
 
 			} else {
-				alert(response.data.message)
+				// alert(response.data.message)
 				setIsLoading(false);
+				setMeetingHidePagination(true);
 			}
 		}
 		catch (error) {
 			setIsLoading(false)
+			setMeetingHidePagination(true);
 			console.log(error)
 		}
 	}
@@ -190,7 +198,7 @@ const EventsTab = () => {
 				if (response.data.status == true) {
 					var data = MeetingData.filter((item) => item.id !== items.id)
 					setMeetingData(data)
-					Alert.alert("Sucess", "Meeting Deleted Sucessfully", [
+					Alert.alert("Success", "Meeting Deleted Successfully", [
 						{
 							text: 'Ok',
 							onPress: () => {
@@ -244,7 +252,7 @@ const EventsTab = () => {
 							height: 34,
 							alignItems: 'center',
 							justifyContent: 'center',
-							borderRadius: 8,
+							borderRadius: 6,
 							borderWidth: 1,
 							borderColor: Colors.primary
 						}}>
@@ -269,7 +277,7 @@ const EventsTab = () => {
 							height: 34,
 							alignItems: 'center',
 							justifyContent: 'center',
-							borderRadius: 8,
+							borderRadius: 6,
 							borderWidth: 1,
 							borderColor: Colors.primary
 						}}>
@@ -294,7 +302,7 @@ const EventsTab = () => {
 							height: 34,
 							alignItems: 'center',
 							justifyContent: 'center',
-							borderRadius: 8,
+							borderRadius: 6,
 							borderWidth: 1,
 							borderColor: Colors.primary
 						}}>
@@ -313,7 +321,7 @@ const EventsTab = () => {
 					<TouchableOpacity onPress={() => {
 						setIndex(0)
 					}} style={{
-						flex: 1, marginLeft: 8, borderRadius: 8, height: 34, backgroundColor: index == 0 ? Colors.primary : Colors.lightGrey01
+						flex: 1, marginLeft: 8, borderRadius: 6, height: 34, backgroundColor: index == 0 ? Colors.black : Colors.lightGrey01
 					}}>
 
 						<View style={styles.buttonContainer}>
@@ -327,7 +335,7 @@ const EventsTab = () => {
 					<TouchableOpacity onPress={() => {
 						setIndex(1)
 					}} style={{
-						flex: 1, marginLeft: 8, borderRadius: 8, height: 34, backgroundColor: index == 1 ? Colors.primary : Colors.lightGrey01
+						flex: 1, marginLeft: 8, borderRadius: 6, height: 34, backgroundColor: index == 1 ? Colors.black : Colors.lightGrey01
 					}}>
 
 						<View style={styles.buttonContainer}>
@@ -341,7 +349,7 @@ const EventsTab = () => {
 					<TouchableOpacity onPress={() => {
 						setIndex(2)
 					}} style={{
-						flex: 1, marginLeft: 8, borderRadius: 8, height: 34, backgroundColor: index == 2 ? Colors.primary : Colors.lightGrey01
+						flex: 1, marginLeft: 8, borderRadius: 6, height: 34, backgroundColor: index == 2 ? Colors.black : Colors.lightGrey01
 					}}>
 						<View style={styles.buttonContainer}>
 							<Text style={[styles.buttonText, { color: index == 2 ? Colors.white : Colors.lightGrey }]}>
@@ -352,12 +360,13 @@ const EventsTab = () => {
 				</View>
 			</View>
 			{console.log("EventsData Final :", EventsData.length)}
-			{index == 0 ?
+			{(EventsData.length >= 0 && index == 0 && isLoading == false) ?
 				<FlatList
 					data={EventsData}
+					contentContainerStyle={{ paddingBottom: 40 }}
 					keyExtractor={(item, index) => index}
 					ListFooterComponent={
-						(EventHidePagination == false && index == 0 && isLoading == false) &&
+						(EventHidePagination == false && index == 0 && isLoading == false && EventsData.length >= 0) &&
 						<View>
 							<TouchableOpacity onPress={() => {
 								Api_Get_Events(true)
@@ -369,70 +378,87 @@ const EventsTab = () => {
 						</View>
 					}
 					ListEmptyComponent={
-						!isLoading &&
-						<View style={{ justifyContent: "center", alignItems: "center", padding: 10, alignSelf: "center", borderRadius: 10, marginTop: 100 }}>
+						(isLoading === false && EventsData.length <= 0) &&
+						<View style={{ justifyContent: "center", alignItems: "center", padding: 10, alignSelf: "center", borderRadius: 6, marginTop: 100 }}>
 							<Text style={{ fontSize: FontSize.FS_16, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM, }}>{"No Data Found"}</Text>
 						</View>}
 					renderItem={({ item, index }) => {
 						return (
 
-							<View style={{ marginHorizontal: 20, marginVertical: 5, backgroundColor: Colors.lightGrey01, borderRadius: 12, borderWidth: 1, borderColor: Colors.primary }}>
-								<View style={{ width: "100%", height: ConstantKey.SCREEN_HEIGHT / 4.5 }}>
-									<FastImage style={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0, flex: 1, borderRadius: 12 }}
+							<View style={{
+								marginHorizontal: 20,
+								marginVertical: 5,
+								backgroundColor: Colors.white,
+								borderBottomLeftRadius: 8,
+								borderBottomRightRadius: 8,
+								shadowColor: "#000",
+								shadowOffset: {
+									width: 0,
+									height: 1,
+								},
+								shadowOpacity: 0.20,
+								shadowRadius: 1.41,
+								elevation: 2,
+								borderRadius : 10
+							}}>
+								<View style={{ width: "100%", height: ConstantKey.SCREEN_HEIGHT / 4.5, borderTopRightRadius : 10 }}>
+									<FastImage style={{ flex: 1, borderTopLeftRadius : 10, borderTopRightRadius : 10 }}
 										source={{ uri: item?.event_image_url }}
 										resizeMode='cover'
 									/>
+									<View style={{ backgroundColor: Colors.white, position: "absolute", right: 0, paddingHorizontal: 12, paddingVertical: 6,
+								borderTopRightRadius : 10 }}>
+										<Text style={{ fontSize: FontSize.FS_10, color: Colors.black, fontFamily: ConstantKey.MONTS_SEMIBOLD }}>{moment(item?.event_start_date).format("DD-MM-YYYY")}</Text>
+									</View>
 								</View>
 								<View style={{
-									borderBottomLeftRadius: 12,
-									borderBottomRightRadius: 12,
 									padding: 8
 								}}>
 									<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-									{item?.event_name &&	<Text style={{ fontSize: FontSize.FS_16, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM }}>{item?.event_name}</Text> }
-										<Text style={{ fontSize: FontSize.FS_10, color: Colors.black, fontFamily: ConstantKey.MONTS_REGULAR }}>{item?.event_start_date}</Text>
+										{item?.event_name && <Text style={{ fontSize: FontSize.FS_16, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM }}>{item?.event_name}</Text>}
+
 									</View>
 									<Text numberOfLines={2} style={{ fontSize: FontSize.FS_12, color: Colors.black, fontFamily: ConstantKey.MONTS_REGULAR }}>{item?.event_desc}</Text>
-									{item?.event_link &&<Text onPress={() => { Linking.openURL(item?.event_link) }} numberOfLines={1} style={{ fontSize: FontSize.FS_12, color: Colors.endeavour, fontFamily: ConstantKey.MONTS_REGULAR, marginTop: 4 }}>{item?.event_link}</Text> }
+									{item?.event_link && <Text onPress={() => { Linking.openURL(item?.event_link) }} numberOfLines={1} style={{ fontSize: FontSize.FS_12, color: Colors.black, fontFamily: ConstantKey.MONTS_REGULAR, marginTop: 4 ,textDecorationLine:"underline"}}>{item?.event_link}</Text>}
 									{Role == "school" &&
-									<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-end", marginVertical: 5 }}>
-										<TouchableOpacity onPress={() => {
-											Alert.alert("Alert", "Are you sure wan't to delete advertises?", [
-												{
-													text: 'No',
-													onPress: () => {
+										<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-end", marginBottom: 5 }}>
+											<TouchableOpacity onPress={() => {
+												Alert.alert("Alert", "Are you sure you want to delete event?", [
+													{
+														text: 'No',
+														onPress: () => {
+														}
+													},
+													{
+														text: 'Yes',
+														onPress: () => {
+															Api_Delete_Events(true, item)
+														}
 													}
-												},
-												{
-													text: 'Yes',
-													onPress: () => {
-														Api_Delete_Events(true, item)
-													}
-												}
-											], { cancelable: true })
-										}}
-											style={{ borderColor: Colors.grey01, borderRadius: 25, paddingVertical: 2, paddingHorizontal: 20, alignItems: "center", borderWidth: 1, marginRight: 12 }}>
-											<Text style={{ fontSize: FontSize.FS_13, color: Colors.grey01, fontFamily: ConstantKey.MONTS_REGULAR, }}>{"Delete"}</Text>
+												], { cancelable: true })
+											}}
+												style={{ paddingHorizontal: 20 }}>
+												<FastImage style={{ width: 20, height: 20 }} source={Images.ic_delete} />
 
-										</TouchableOpacity>
-										<TouchableOpacity onPress={() => { navigate("AddEvent", { isEdit: true, EventData: item }) }}
-											style={{ backgroundColor: Colors.primary, borderRadius: 25, paddingVertical: 2, paddingHorizontal: 26, alignItems: "center" }}>
-											<Text style={{ fontSize: FontSize.FS_13, color: Colors.white, fontFamily: ConstantKey.MONTS_REGULAR }}>{"Edit"}</Text>
+											</TouchableOpacity>
+											<TouchableOpacity onPress={() => { navigate("AddEvent", { isEdit: true, EventData: item }) }}
+												style={{ paddingRight: 10 }}>
+												<FastImage style={{ width: 20, height: 20 }} source={Images.ic_edit} />
 
-										</TouchableOpacity>
-									</View> }
+											</TouchableOpacity>
+										</View>}
 								</View>
 							</View>
 						)
 					}}
 				/> : null}
 
-			{index == 1 && TrainingData.length > 0  ?
+			{index == 1 ?
 				<FlatList
 					data={TrainingData}
 					keyExtractor={(item, index) => index}
 					ListFooterComponent={
-						(TrainingHidePagination == false && index == 1 && isLoading == false) &&
+						(TrainingHidePagination == false && index == 1 && isLoading == false && TrainingData.length >= 0) &&
 						<View>
 							<TouchableOpacity onPress={() => {
 								Api_Get_Training(true)
@@ -444,31 +470,47 @@ const EventsTab = () => {
 						</View>
 					}
 					ListEmptyComponent={
-						<View style={{ justifyContent: "center", alignItems: "center", padding: 10, alignSelf: "center", borderRadius: 10, marginTop: 100 }}>
+						(isLoading == false && TrainingData.length <= 0) &&
+						<View style={{ justifyContent: "center", alignItems: "center", padding: 10, alignSelf: "center", borderRadius: 6, marginTop: 100 }}>
 							<Text style={{ fontSize: FontSize.FS_16, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM, }}>{"No Data Found"}</Text>
 						</View>}
 					renderItem={({ item, index }) => {
 						return (
-							<View style={{ marginHorizontal: 20, marginVertical: 5, backgroundColor: Colors.lightGrey01, borderRadius: 12, borderWidth: 1, borderColor: Colors.primary }}>
+							<View style={{
+								marginHorizontal: 20,
+								marginVertical: 5,
+								backgroundColor: Colors.white,
+								borderBottomLeftRadius: 8,
+								borderBottomRightRadius: 8,
+								shadowColor: "#000",
+								shadowOffset: {
+									width: 0,
+									height: 1,
+								},
+								shadowOpacity: 0.20,
+								shadowRadius: 1.41,
+								elevation: 2,
+							}}>
+
 								<View style={{ width: "100%", height: ConstantKey.SCREEN_HEIGHT / 4.5 }}>
-									<FastImage style={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0, flex: 1, borderRadius: 12 }}
+									<FastImage style={{ flex: 1, }}
 										source={{ uri: item?.training_image_url }}
 										resizeMode='cover'
 									/>
+									<View style={{ backgroundColor: Colors.white, position: "absolute", right: 0, paddingHorizontal: 12, paddingVertical: 6 }}>
+										<Text style={{ fontSize: FontSize.FS_10, color: Colors.black, fontFamily: ConstantKey.MONTS_SEMIBOLD }}>{moment(item?.training_start_date).format("DD-MM-YYYY")}</Text>
+									</View>
 								</View>
 								<View style={{
-									borderBottomLeftRadius: 12,
-									borderBottomRightRadius: 12,
 									padding: 8
 								}}>
 
 
 									<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-										<Text style={{ fontSize: FontSize.FS_16, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM }}>{item?.training_name}</Text>
-										<Text style={{ fontSize: FontSize.FS_10, color: Colors.black, fontFamily: ConstantKey.MONTS_REGULAR }}>{item?.training_start_date}</Text>
+										<Text style={{ fontSize: FontSize.FS_16, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM }}>{item?.training_name}</Text>
 									</View>
 									<Text numberOfLines={2} style={{ fontSize: FontSize.FS_12, color: Colors.black, fontFamily: ConstantKey.MONTS_REGULAR }}>{item?.training_desc}</Text>
-									<Text onPress={() => { Linking.openURL(item?.training_link) }} numberOfLines={1} style={{ fontSize: FontSize.FS_12, color: Colors.endeavour, fontFamily: ConstantKey.MONTS_REGULAR, marginTop: 4 }}>{item?.training_link}</Text>
+									<Text onPress={() => { Linking.openURL(item?.training_link) }} numberOfLines={1} style={{ fontSize: FontSize.FS_12, color: Colors.black, fontFamily: ConstantKey.MONTS_REGULAR, marginTop: 4 }}>{item?.training_link}</Text>
 
 
 								</View>
@@ -476,13 +518,13 @@ const EventsTab = () => {
 						)
 					}}
 				/> : null}
-
-			{index == 2 && MeetingData.length > 0  ?
+			{console.log("MeetingData.length :", MeetingData.length)}
+			{index == 2 ?
 				<FlatList
 					data={MeetingData}
 					keyExtractor={(item, index) => index}
 					ListFooterComponent={
-						(MeetingHidePagination == false && index == 2 && isLoading == false) &&
+						(MeetingHidePagination == false && index == 2 && isLoading == false && MeetingData.length >= 0) &&
 						<View>
 							<TouchableOpacity onPress={() => {
 								Api_Get_Meeting(true)
@@ -494,36 +536,52 @@ const EventsTab = () => {
 						</View>
 					}
 					ListEmptyComponent={
-						(isLoading == false) &&
-						<View style={{ justifyContent: "center", alignItems: "center", padding: 10, alignSelf: "center", borderRadius: 10, marginTop: 100 }}>
+						!isLoading && MeetingData.length <= 0 &&
+						<View style={{ justifyContent: "center", alignItems: "center", padding: 10, alignSelf: "center", borderRadius: 6, marginTop: 100 }}>
 							<Text style={{ fontSize: FontSize.FS_16, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM, }}>{"No Data Found"}</Text>
-						</View>}
+						</View>
+					}
 					renderItem={({ item, index }) => {
 						return (
+							<View style={{
+								marginHorizontal: 20,
+								marginVertical: 5,
+								backgroundColor: Colors.white,
+								borderBottomLeftRadius: 8,
+								borderBottomRightRadius: 8,
+								shadowColor: "#000",
+								shadowOffset: {
+									width: 0,
+									height: 1,
+								},
+								shadowOpacity: 0.20,
+								shadowRadius: 1.41,
+								elevation: 2,
+							}}>
 
-							<View style={{ marginHorizontal: 20, marginVertical: 5, backgroundColor: Colors.lightGrey01, borderRadius: 12, borderWidth: 1, borderColor: Colors.primary }}>
 								<View style={{ width: "100%", height: ConstantKey.SCREEN_HEIGHT / 4.5 }}>
-									<FastImage style={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0, flex: 1, borderRadius: 12 }}
+									<FastImage style={{ flex: 1, }}
 										source={{ uri: item?.meeting_image_url }}
 										resizeMode='cover'
 									/>
+									<View style={{ backgroundColor: Colors.white, position: "absolute", right: 0, paddingHorizontal: 12, paddingVertical: 6 }}>
+										<Text style={{ fontSize: FontSize.FS_10, color: Colors.black, fontFamily: ConstantKey.MONTS_SEMIBOLD }}>{moment(item?.meeting_start_date).format("DD-MM-YYYY")}</Text>
+									</View>
 								</View>
 								<View style={{
-									borderBottomLeftRadius: 12,
-									borderBottomRightRadius: 12,
 									padding: 8
 								}}>
 									<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-										<Text style={{ fontSize: FontSize.FS_16, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM }}>{item?.meeting_name}</Text>
-										<Text style={{ fontSize: FontSize.FS_10, color: Colors.black, fontFamily: ConstantKey.MONTS_REGULAR }}>{item?.meeting_start_date}</Text>
+										<Text style={{ fontSize: FontSize.FS_16, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM }}>{item?.meeting_name}</Text>
 									</View>
 									<Text numberOfLines={2} style={{ fontSize: FontSize.FS_12, color: Colors.black, fontFamily: ConstantKey.MONTS_REGULAR }}>{item?.meeting_desc}</Text>
-									<Text onPress={() => { Linking.openURL(item?.meeting_link) }} numberOfLines={1} style={{ fontSize: FontSize.FS_12, color: Colors.endeavour, fontFamily: ConstantKey.MONTS_REGULAR, marginTop: 4 }}>{item?.meeting_link}</Text>
+									<Text onPress={() => { Linking.openURL(item?.meeting_link) }} numberOfLines={1} style={{ fontSize: FontSize.FS_12, color: Colors.black, fontFamily: ConstantKey.MONTS_REGULAR, marginTop: 4 ,textDecorationLine:"underline"}}>{item?.meeting_link}</Text>
 
 									{Role == "school" &&
-										<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-end", marginVertical: 5 }}>
+
+										<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-end", marginBottom: 5 }}>
 											<TouchableOpacity onPress={() => {
-												Alert.alert("Alert", "Are you sure wan't to delete meeting?", [
+												Alert.alert("Alert", "Are you sure you want to delete meeting?", [
 													{
 														text: 'No',
 														onPress: () => {
@@ -537,13 +595,14 @@ const EventsTab = () => {
 													}
 												], { cancelable: true })
 											}}
-												style={{ borderColor: Colors.grey01, borderRadius: 25, paddingVertical: 2, paddingHorizontal: 20, alignItems: "center", borderWidth: 1, marginRight: 12 }}>
-												<Text style={{ fontSize: FontSize.FS_13, color: Colors.grey01, fontFamily: ConstantKey.MONTS_REGULAR, }}>{"Delete"}</Text>
+												style={{ paddingHorizontal: 20 }}>
+												<FastImage style={{ width: 20, height: 20 }} source={Images.ic_delete} />
 
 											</TouchableOpacity>
 											<TouchableOpacity onPress={() => { navigate("AddMeeting", { isEdit: true, meetingData: item }) }}
-												style={{ backgroundColor: Colors.primary, borderRadius: 25, paddingVertical: 2, paddingHorizontal: 26, alignItems: "center" }}>
-												<Text style={{ fontSize: FontSize.FS_13, color: Colors.white, fontFamily: ConstantKey.MONTS_REGULAR }}>{"Edit"}</Text>
+												style={{ paddingRight: 10 }}>
+												<FastImage style={{ width: 20, height: 20 }} source={Images.ic_edit} />
+
 											</TouchableOpacity>
 										</View>}
 								</View>

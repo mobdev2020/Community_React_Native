@@ -22,76 +22,18 @@ const Splash = ({navigation}) => {
 	useEffect(() => {
 		LogBox.ignoreLogs(['Warning: ...']);
 		getUserData()
-		// Api_VersionCheck(false)
 	},[])
-
-
-	const Api_VersionCheck = (isLoad) => {
-
-		// setIsLoading(isLoad)
-
-		Webservice.post(APIURL.versionCheck, {
-			version: versionNo,
-		})
-			.then(response => {
-				//   this.setState({spinner: false});
-				if (response == null) {
-					// this.setState({ isloading: false, isRefresh: false });
-					setIsLoading(false)
-					alert('error');
-				}
-				//   console.log(response);
-
-				console.log('Get Version Check Response : ' + JSON.stringify(response))
-
-				if (response.data.Status == '0') {
-
-					Alert.alert(
-						i18n.t('update'),
-						i18n.t('updateAppDesc'),
-						[
-							{
-								text: "OK", onPress: () => {
-
-									if (Platform.OS == 'android') {
-
-										Linking.openURL('market://details?id=com.webtual.magnusnetwork')
-									} else {
-										Linking.openURL('itms-apps://itunes.apple.com/us/app/1587460944?mt=8')
-									}
-
-								}
-							},
-						],
-						{ cancelable: false }
-					);
-
-				} else {
-					getUserData()
-				}
-			})
-			.catch((error) => {
-				console.log(error.message)
-
-			})
-	}
 
 	const getUserData = async () => {
 		try {
 			const value = await AsyncStorage.getItem(ConstantKey.USER_DATA)
 			if (value !== null && value !== "") {
-				// value previously stored
-
 				var data = JSON.parse(value)
 				console.log("User Data: " + value)
-
 				navigation.replace('Home')
-				// navigation.replace('QrCode')
 			}
 			else {
-
 				navigation.replace('Login')
-				// navigation.replace('BusinessProfile')
 			}
 		} catch (e) {
 			navigation.replace('Login')

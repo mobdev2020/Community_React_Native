@@ -16,7 +16,6 @@ import Webservice from '../Constants/API'
 import LoadingView from '../Constants/LoadingView'
 import { APIURL } from '../Constants/APIURL';
 import { version as versionNo } from '../../package.json'
-import ChangePasswordModal from './ChangePasswordModal';
 
 // Third Party
 import { StackActions } from '@react-navigation/native';
@@ -84,12 +83,12 @@ const AddAsk = (props) => {
 				if (response == null) {
 					setIsLoading(false)
 				}
-				console.log(JSON.stringify("Api_AddAsk Response : " + JSON.stringify(response)));
+				// console.log(JSON.stringify("Api_AddAsk Response : " + JSON.stringify(response)));
 				// setIsLoading(false)
 
 				if (response.data.Status == '1') {
 
-					Alert.alert("Sucess", "Message Added Sucessfully", [
+					Alert.alert("Success", "Message Added Successfully", [
 						{
 							text: 'Ok',
 							onPress: () => {
@@ -126,7 +125,7 @@ const AddAsk = (props) => {
 				if (response == null) {
 					setIsLoading(false)
 				}
-				console.log(JSON.stringify("Api_EditTraining Response : " + JSON.stringify(response)));
+				// console.log(JSON.stringify("Api_EditTraining Response : " + JSON.stringify(response)));
 				// setIsLoading(false)
 
 				if (response.data.Status == '1') {
@@ -223,7 +222,7 @@ const styles = StyleSheet.create({
 		backgroundColor: Colors.white,
 	},
 	mobileView: {
-		marginTop: 10, flexDirection: 'row', borderWidth: 1, borderColor: Colors.darkGrey, borderRadius: 10, backgroundColor: Colors.white,
+		marginTop: 10, flexDirection: 'row', borderWidth: 1, borderColor: Colors.darkGrey, borderRadius: 6, backgroundColor: Colors.white,
 		paddingVertical : 10, minHeight : 100
 	},
 	textInputMobile: {
@@ -232,7 +231,7 @@ const styles = StyleSheet.create({
 	},
 	btnSubmit: {
 		backgroundColor: Colors.primaryRed,
-		marginTop: 30, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
+		marginTop: 30, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',
 		shadowColor: Colors.primaryRed, marginBottom : 20,
 		shadowOffset: { width: 0, height: 2 },
 		shadowOpacity: 0.4, shadowRadius: 2, elevation: 2

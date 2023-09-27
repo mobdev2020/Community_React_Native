@@ -2,7 +2,7 @@
 import React, { Component, useLayoutEffect, useEffect, useState, useRef } from 'react';
 import {
     View, Text, StyleSheet, SafeAreaView, Dimensions, TouchableOpacity, FlatList, Platform, Modal, TextInput,
-    Linking, Alert, PermissionsAndroid, Image, Keyboard, Switch, Share, ScrollView, Animated
+    Linking, Alert, PermissionsAndroid, Image, Keyboard, Switch, Share, ScrollView, 
 } from 'react-native';
 
 // Constants
@@ -15,30 +15,16 @@ import Webservice from '../Constants/API'
 import LoadingView from '../Constants/LoadingView'
 import { APIURL } from '../Constants/APIURL';
 import { version as versionNo } from '../../package.json'
-import ViewProfile from './ViewProfile';
 
 //Third Party
-import MapView, { Marker, PROVIDER_GOOGLE, Callout, Circle, } from 'react-native-maps';
 import Toast from 'react-native-simple-toast';
 // import Icon from 'react-native-vector-icons/FontAwesome5';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { SliderBox } from "react-native-image-slider-box";
 import RBSheet from "react-native-raw-bottom-sheet";
-import { colors, SearchBar } from 'react-native-elements';
-import Geocoder from 'react-native-geocoding';
-import Geolocation from '@react-native-community/geolocation';
-import { WebView } from 'react-native-webview';
-import { Svg, Image as ImageSvg } from 'react-native-svg';
-import { Dropdown } from 'react-native-material-dropdown-v2';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackActions } from '@react-navigation/native';
-import PolicyModal from './PolicyModal';
-import EventDisplay from './EventDisplay';
-
-import LinearGradient from 'react-native-linear-gradient';
 import FastImage from 'react-native-fast-image';
 import { navigate } from '../Constants/NavigationService';
-import { ExpandingDot } from 'react-native-animated-pagination-dots';
 import Banner from '../commonComponents/BoxSlider/Banner';
 // create a component
 const ViewAllCategories = ({navigation}) => {
@@ -60,7 +46,7 @@ const ViewAllCategories = ({navigation}) => {
 			mobile_number: 9016089923
 		})
 			.then(response => {
-				console.log("Get Category Response : ", response.data)
+				// console.log("Get Category Response : ", response.data)
 
 				if (response.data.status == true) {
 					setCategoryData(response.data.data)
@@ -197,7 +183,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     mobileView: {
-        marginTop: 10, flexDirection: 'row', borderRadius: 10, backgroundColor: Colors.lightGrey01, borderWidth: 1, borderColor: Colors.primary,
+        marginTop: 10, flexDirection: 'row', borderRadius: 6, backgroundColor: Colors.lightGrey01, borderWidth: 1, borderColor: Colors.primary,
         height: 44, alignItems: 'center', backgroundColor: Colors.lightGrey01,
     },
 

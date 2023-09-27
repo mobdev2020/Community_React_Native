@@ -109,7 +109,7 @@ const Profile = ({ navigation }) => {
 
 
                             <TouchableOpacity onPress={() => {
-                                Alert.alert("Alert", "Are you sure wan't logout?", [
+                                Alert.alert("Alert", "Are you sure you want to logout?", [
                                     {
                                         text: 'Cancel',
                                         style: "cancel",
@@ -124,7 +124,7 @@ const Profile = ({ navigation }) => {
                                     }
                                 ], { cancelable: true })
                             }}
-                                style={{ backgroundColor: Colors.primary, padding: 5, borderRadius: 25, marginHorizontal: 10 }}>
+                                style={{ backgroundColor: Colors.primaryBlue, padding: 5, borderRadius: 25, marginHorizontal: 10 }}>
                                 <MaterialCommunityIcons name={"power-standby"} size={18} color={Colors.white} />
                             </TouchableOpacity>
 
@@ -146,8 +146,14 @@ const Profile = ({ navigation }) => {
                             borderRadius: 5,
                             marginHorizontal: 10,
                             padding: 10,
-                            borderWidth: 1,
-                            borderColor: Colors.primary
+                            shadowColor: "#000",
+								shadowOffset: {
+									width: 0,
+									height: 1,
+								},
+								shadowOpacity: 0.20,
+								shadowRadius: 1.41,
+								elevation: 2,
                         }}>
                             <TouchableOpacity onPress={() => {
                                 navigate("PersonalProfile")
@@ -170,7 +176,7 @@ const Profile = ({ navigation }) => {
                                 alignItems: "center",
                             }}  >
                                 <View style={{
-                                    backgroundColor: Colors.white, borderRadius: 10, marginLeft: 5, height: 90, width: 90, alignItems: 'center', justifyContent: 'center',
+                                    backgroundColor: Colors.white, borderRadius: 6, marginLeft: 5, height: 90, width: 90, alignItems: 'center', justifyContent: 'center',
                                 }}>
                                     <Image style={{ height: 80, width: 80, }}
                                         resizeMode='cover'
@@ -178,12 +184,12 @@ const Profile = ({ navigation }) => {
                                 </View>
                                 <View style={{ flex: 1, marginLeft: 20, backgroundColor: Colors.white }}>
                                     <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                        <MaterialCommunityIcons name={"account"} size={18} color={Colors.primary} style={{ marginRight: 5 }} />
-                                        <Text style={[styles.calloutTitle, { marginTop: 4 }]}>{UserData?.user?.first_name + " " + UserData?.user?.last_name}</Text>
+                                        <MaterialCommunityIcons name={"account"} size={18} color={Colors.black} style={{ marginRight: 5 }} />
+                                        <Text numberOfLines={1} adjustsFontSizeToFit={true} style={[styles.calloutTitle, { marginTop: 4 }]}>{UserData?.user?.first_name + " " + UserData?.user?.last_name}</Text>
                                     </View>
                                     <View style={{ flexDirection: "row", alignItems: "center" }}>
                                         <MaterialCommunityIcons name={"phone"} size={18} color={Colors.darkGrey} style={{ marginRight: 5 }} />
-                                        <Text style={styles.calloutDescription}>+91 {UserData?.user?.phone}</Text>
+                                        <Text numberOfLines={1} adjustsFontSizeToFit={true} style={styles.calloutDescription}>+91 {UserData?.user?.phone}</Text>
                                     </View>
                                     <View style={{ flexDirection: "row", alignItems: "center" }}>
                                         <MaterialCommunityIcons name={"email"} size={18} color={Colors.darkGrey} style={{ marginRight: 5 }} />
@@ -202,13 +208,21 @@ const Profile = ({ navigation }) => {
                                 {i18n.t('BusinessProfile')}
                             </Text>
                         </View>
+                        {console.log("UserData?.user?.is_business_profile :",UserData?.user?.is_business_profile)}
                         {UserData?.user?.is_business_profile == 1 ?
                             <View style={{
                                 borderRadius: 5,
                                 marginHorizontal: 10,
                                 padding: 10,
-                                borderWidth: 1,
-                                borderColor: Colors.primary
+                                shadowColor: "#000",
+								shadowOffset: {
+									width: 0,
+									height: 1,
+								},
+								shadowOpacity: 0.20,
+								shadowRadius: 1.41,
+								elevation: 2,
+
 
                             }}>
                                 {UserData?.user?.business ? <TouchableOpacity onPress={() => {
@@ -228,9 +242,9 @@ const Profile = ({ navigation }) => {
                                     }}>{"Edit"}</Text>
                                 </TouchableOpacity> : null}
 
-                                <View style={{ flex: 1, marginLeft: 20, backgroundColor: Colors.white }}>
+                                <View style={{ flex: 1, marginLeft: 8, backgroundColor: Colors.white }}>
                                     {UserData?.user?.business?.business_name && <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                        <MaterialCommunityIcons name={"domain"} size={18} color={Colors.primary} style={{ marginRight: 5 }} />
+                                        <MaterialCommunityIcons name={"domain"} size={18} color={Colors.black} style={{ marginRight: 5 }} />
                                         <Text style={[styles.calloutTitle, { marginTop: 4 }]}>{UserData?.user?.business?.business_name}</Text>
                                     </View>}
                                     {UserData?.user?.business?.subcategory_name &&
@@ -261,31 +275,35 @@ const Profile = ({ navigation }) => {
                                 borderRadius: 5,
                                 marginHorizontal: 10,
                                 padding: 10,
-                                borderWidth: 1,
-                                borderColor: Colors.primary,
+                                shadowColor: "#000",
+								shadowOffset: {
+									width: 0,
+									height: 1,
+								},
+								shadowOpacity: 0.20,
+								shadowRadius: 1.41,
+								elevation: 2,
                                 alignItems: "center"
 
                             }}>
                                 <Text style={{
                                     fontSize: FontSize.FS_22,
-                                    color: Colors.primary,
+                                    color: Colors.black,
                                     fontFamily: ConstantKey.MONTS_MEDIUM,
                                     textAlign: "center"
                                 }}>
                                     {"Want To Join \n Business Community ?"}
                                 </Text>
                                 <TouchableOpacity onPress={() => {
-                                    navigate("BusinessProfile", { isFromProfile: true })
+                                    navigate("BusinessProfile", { isFrom:"PROFILE" })
                                 }}
                                     style={{
                                         borderRadius: 50,
                                         margin: 10,
                                         paddingVertical: 6,
                                         paddingHorizontal: 30,
-                                        borderWidth: 1,
-                                        borderColor: Colors.primary,
                                         alignItems: "center",
-                                        backgroundColor: Colors.primary
+                                        backgroundColor: Colors.black
 
                                     }}>
                                     <Text style={{
@@ -317,13 +335,15 @@ const styles = StyleSheet.create({
     calloutTitle: {
         fontSize: FontSize.FS_16,
         fontFamily: ConstantKey.MONTS_SEMIBOLD,
-        color: Colors.primary
+        color: Colors.black,
+        flex:1
     },
     calloutDescription: {
         marginTop: 5,
         fontSize: FontSize.FS_14,
         fontFamily: ConstantKey.MONTS_REGULAR,
         color: Colors.darkGrey,
+        flex:1
 
     },
 });

@@ -18,27 +18,16 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator();
 
-// Third Party
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
 // Dashboard Flow Files
 import Home from '../DashboardFlow/Home';
 import Login from '../InitialFlow/Login';
 import Register from '../InitialFlow/Register';
 import Splash from '../InitialFlow/Splash';
 import Profile from '../DashboardFlow/Profile';
-import MembersProfile from '../DashboardFlow/MembersProfile';
-import EventsList from '../DashboardFlow/EventsList';
 import AddEvent from '../DashboardFlow/AddEvent';
-import UpdateProfile from '../DashboardFlow/UpdateProfile';
-import BirthdaysTab from '../DashboardFlow/BirthdaysTab';
 import TrainingTab from '../DashboardFlow/TrainingTab';
 import AddTraining from '../DashboardFlow/AddTraining';
 import AddAsk from '../DashboardFlow/AddAsk';
-import EventTab from '../DashboardFlow/EventTab';
-import ViewGainSheet from '../DashboardFlow/ViewGainSheet';
-import Help from '../DashboardFlow/Help';
 import EventsTab from '../DashboardFlow/EventsTab';
 import AddMeeting from '../DashboardFlow/AddMeeting';
 import Meetings from '../DashboardFlow/Meetings';
@@ -53,6 +42,7 @@ import SearchScreen from '../DashboardFlow/SearchScreen';
 import AddAds from '../DashboardFlow/AddAds';
 import AskBusinessProfile from '../InitialFlow/AskBusinessProfile';
 import QrCode from '../DashboardFlow/QrCode';
+import WelcomeScreen from '../InitialFlow/WelcomeScreen';
 
 
 // Initial Flow 
@@ -67,9 +57,9 @@ function InitialFlow() {
 			<Stack.Screen name="BusinessProfile" component={BusinessProfile} options={{ headerShown: false }} />
 			<Stack.Screen name="PersonalProfile" component={PersonalProfile} options={{ headerShown: false }} />
 			<Stack.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
-			<Stack.Screen name="UpdateProfile" component={UpdateProfile} options={{ headerShown: true }} />
 			<Stack.Screen name="AskBusinessProfile" component={AskBusinessProfile} options={{ headerShown: false }} />
 			<Stack.Screen name="QrCode" component={QrCode} options={{ headerShown: false }} />
+			<Stack.Screen name="WelcomeScreen" component={WelcomeScreen} options={{ headerShown: false }} />
 		</Stack.Navigator>
 	)
 }
@@ -80,7 +70,7 @@ function TabFlow() {
 
 		<Tab.Navigator screenOptions={{
 			// activeTintColor: Colors.black,
-			tabBarActiveTintColor: Colors.black,
+			tabBarActiveTintColor: Colors.primary,
 			inactiveTintColor: Colors.darkGrey,
 			// showLabel: false,
 			tabStyle: {
@@ -104,7 +94,7 @@ function TabFlow() {
 						<View style={{ alignItems: "center" }}>
 							<Image source={focused ? Images.ActiveDashboard : Images.InActiveDashboard}
 								style={{ height: size, width: size, resizeMode: 'contain', tintColor: color }} />
-							{focused ? <View style={{ width: 24, height: 3, backgroundColor: color, borderRadius: 10, marginTop: 4 }}></View> : null}
+							{focused ? <View style={{ width: 24, height: 3, backgroundColor: color, borderRadius: 6, marginTop: 4 }}></View> : null}
 						</View>
 
 					),
@@ -119,7 +109,7 @@ function TabFlow() {
 						<View style={{ alignItems: "center" }}>
 							<Image source={focused ? Images.ActiveCalender : Images.InActiveCalender}
 								style={{ height: size, width: size, resizeMode: 'contain', tintColor: color }} />
-							{focused ? <View style={{ width: 24, height: 3, backgroundColor: color, borderRadius: 10, marginTop: 4 }}></View> : null}
+							{focused ? <View style={{ width: 24, height: 3, backgroundColor: color, borderRadius: 6, marginTop: 4 }}></View> : null}
 						</View>
 
 					),
@@ -134,7 +124,7 @@ function TabFlow() {
 						<View style={{ alignItems: "center" }}>
 							<Image source={focused ? Images.ActiveAd : Images.InActiveAd}
 								style={{ height: size, width: size, resizeMode: 'contain', tintColor: color }} />
-							{focused ? <View style={{ width: 24, height: 3, backgroundColor: color, borderRadius: 10, marginTop: 4 }}></View> : null}
+							{focused ? <View style={{ width: 24, height: 3, backgroundColor: color, borderRadius: 6, marginTop: 4 }}></View> : null}
 						</View>
 
 					),
@@ -148,7 +138,7 @@ function TabFlow() {
 						<View style={{ alignItems: "center" }}>
 							<Image source={focused ? Images.ActiveCInfo : Images.InActiveInfo}
 								style={{ height: size, width: size, resizeMode: 'contain', tintColor: color }} />
-							{focused ? <View style={{ width: 24, height: 3, backgroundColor: color, borderRadius: 10, marginTop: 4 }}></View> : null}
+							{focused ? <View style={{ width: 24, height: 3, backgroundColor: color, borderRadius: 6, marginTop: 4 }}></View> : null}
 						</View>
 
 					),
@@ -162,17 +152,11 @@ function TabFlow() {
 function DashboardFlow() {
 	return (
 		<Stack.Navigator initialRouteName="Home">
-			{/* <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} /> */}
 			<Stack.Screen name="Home" component={TabFlow} options={{ headerShown: false }} />
 			<Stack.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
-			<Stack.Screen name="MembersProfile" component={MembersProfile} options={{ headerShown: true }} />
-			<Stack.Screen name="EventsList" component={EventsList} options={{ headerShown: true }} />
 			<Stack.Screen name="AddEvent" component={AddEvent} options={{ headerShown: false }} />
-			<Stack.Screen name="UpdateProfile" component={UpdateProfile} options={{ headerShown: true }} />
 			<Stack.Screen name="AddTraining" component={AddTraining} options={{ headerShown: false }} />
 			<Stack.Screen name="AddAsk" component={AddAsk} options={{ headerShown: true }} />
-			<Stack.Screen name="ViewGainSheet" component={ViewGainSheet} options={{ headerShown: true }} />
-			<Stack.Screen name="Help" component={Help} options={{ headerShown: true, orientation: 'all' }} />
 			<Stack.Screen name="AddMeeting" component={AddMeeting} options={{ headerShown: false }} />
 			<Stack.Screen name="Meetings" component={Meetings} options={{ headerShown: true }} />
 			<Stack.Screen name="Report" component={Report} options={{ headerShown: false }} />

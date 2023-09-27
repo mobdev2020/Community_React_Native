@@ -2,7 +2,7 @@ export const Colors = {
 
     white: '#FFFFFF',
     black: '#000000',
-    black03: 'rgba(0,0,0,0.3)',
+    black03: 'rgba(0,0,0,0.4)',
 
 	primaryRed : '#CF2030',
 	darkGrey : '#A9A9A9',
@@ -20,7 +20,9 @@ export const Colors = {
 
 
 
-	primary:"#233D62",
+	primaryBlue:"#233D62",
+	primary:"#FD5B00",
+	primaryLight:"#FEECD6",
 	grey:"#9A9A9A",
 	grey01:"#7B7B7B",
 	purple:"#7B43F1",

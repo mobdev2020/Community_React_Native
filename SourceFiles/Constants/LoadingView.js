@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
         height: '100%', width: '100%', backgroundColor: Colors.black03, alignItems: 'center', justifyContent: 'center', position: 'absolute'
     },
     indicatorView: {
-        borderRadius: 10, shadowColor: Colors.black03, backgroundColor: Colors.white,
+        borderRadius: 6, shadowColor: Colors.black03, backgroundColor: Colors.white,
         justifyContent: 'center', alignItems: 'center', padding: 25,
         shadowOffset: { width: 0, height: 2 }, maxWidth: 150, maxHeight: 150,
         shadowOpacity: 0.4,

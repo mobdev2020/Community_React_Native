@@ -13,7 +13,6 @@ import Webservice from '../Constants/API'
 import LoadingView from '../Constants/LoadingView'
 import { APIURL } from '../Constants/APIURL';
 import { version as versionNo } from '../../package.json'
-import ChangePasswordModal from './ChangePasswordModal';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 // Third Party
@@ -26,7 +25,6 @@ import ImagePicker from 'react-native-image-crop-picker';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import ImageView from "react-native-image-viewing";
 import RBSheet from "react-native-raw-bottom-sheet";
-import { SearchBar } from 'react-native-elements';
 
 
 const AddAds = (props) => {
@@ -48,7 +46,7 @@ const AddAds = (props) => {
 
     useEffect(() => {
         if (isEdit) {
-            console.log("Ads Data : " + JSON.stringify(AdsData))
+            // console.log("Ads Data : " + JSON.stringify(AdsData))
 
             setTxtTitle(AdsData.advertise_name)
             setTxtMeetingLink(AdsData.url != null ? AdsData.url : '')
@@ -87,10 +85,10 @@ const AddAds = (props) => {
         Webservice.post(APIURL.AddAds, body)
             .then(response => {
                 setIsLoading(false)
-                console.log(JSON.stringify("Api_AddAds Response : " + JSON.stringify(response)));
+                // console.log(JSON.stringify("Api_AddAds Response : " + JSON.stringify(response)));
 
                 if (response.data.status == true) {
-                    Alert.alert("Sucess", "Advertises Added Sucessfully", [
+                    Alert.alert("Success", "Advertise Added Successfully", [
                         {
                             text: 'Ok',
                             onPress: () => {
@@ -133,11 +131,11 @@ const AddAds = (props) => {
         Webservice.post(APIURL.EditAds, body)
             .then(response => {
                 setIsLoading(false)
-                console.log(JSON.stringify("Api_Edit_Ads Response : " + JSON.stringify(response)));
+                // console.log(JSON.stringify("Api_Edit_Ads Response : " + JSON.stringify(response)));
 
                 if (response.data.status == true) {
 
-                    Alert.alert("Sucess", "Advertises Updated Sucessfully", [
+                    Alert.alert("Success", "Advertise Updated Sucessfully", [
                         {
                             text: 'Ok',
                             onPress: () => {
@@ -239,12 +237,12 @@ const AddAds = (props) => {
 
 
             if (AdsImg == null) {
-                Toast.showWithGravity("Please upload advertises image", Toast.LONG, Toast.BOTTOM);
+                Toast.showWithGravity("Please upload Advertise image", Toast.LONG, Toast.BOTTOM);
             }
             else if (TxtTitle == "") {
-                Toast.showWithGravity(('Please enter advertises title'), Toast.LONG, Toast.BOTTOM);
+                Toast.showWithGravity(('Please enter Advertise title'), Toast.LONG, Toast.BOTTOM);
             } else if (txtMeetingLink == "") {
-                Toast.showWithGravity("Please enter advertises link", Toast.LONG, Toast.BOTTOM);
+                Toast.showWithGravity("Please enter Advertise link", Toast.LONG, Toast.BOTTOM);
             } else {
 
                 if (isEdit) {
@@ -276,12 +274,12 @@ const AddAds = (props) => {
                             color: Colors.black,
                             fontFamily: ConstantKey.MONTS_SEMIBOLD,
                         }}>
-                            {i18n.t('add_ads')}
+                              {isEdit ? "Edit" : i18n.t("add_ads")}
                         </Text>
 
                     </View>
                     <View style={{
-                        marginHorizontal: 20, marginVertical: 20, borderRadius: 10, borderWidth: 1, borderColor: Colors.primary,
+                        marginHorizontal: 20, marginVertical: 20, borderRadius: 6, borderWidth: 1, borderColor: Colors.black,
                         height: 200
                     }}>
                         {AdsImg == null ?
@@ -289,16 +287,16 @@ const AddAds = (props) => {
                                 btnSelectImage()
                             }}
                                 style={{ flex: 1, alignSelf: "center", justifyContent: "center", alignItems: "center" }}>
-                                <MaterialCommunityIcons name={"cloud-upload-outline"} size={40} color={Colors.primary} />
+                                <MaterialCommunityIcons name={"cloud-upload-outline"} size={40} color={Colors.black} />
                                 <Text style={{
                                     fontSize: FontSize.FS_16,
-                                    color: Colors.primary,
+                                    color: Colors.black,
                                     fontFamily: ConstantKey.MONTS_SEMIBOLD,
                                     textAlign: "center"
                                 }}>Upload Ads photo</Text>
                             </TouchableOpacity> :
                             <TouchableOpacity onPress={() => AdsImg != null ? setIsVisibleImg(true) : {}}>
-                                <Image style={{ height: '100%', width: '100%', resizeMode: AdsImg == null ? 'contain' : 'cover', borderRadius: 10, }}
+                                <Image style={{ height: '100%', width: '100%', resizeMode: AdsImg == null ? 'contain' : 'cover', borderRadius: 6, }}
                                     source={AdsImg == null ? Images.MagnusLogo : { uri: AdsImg.path }} />
                             </TouchableOpacity>
                         }
@@ -306,8 +304,8 @@ const AddAds = (props) => {
                         <View style={{ position: 'absolute', width: '100%' }}>
 
                             <TouchableOpacity style={{
-                                alignSelf: 'flex-end', backgroundColor: Colors.primary, padding: 10,
-                                borderBottomLeftRadius: 10, borderTopRightRadius: 10
+                                alignSelf: 'flex-end', backgroundColor: Colors.black, padding: 10,
+                                borderBottomLeftRadius: 5, borderTopRightRadius: 5
                             }}
                                 onPress={() => btnSelectImage()}>
 
@@ -317,7 +315,7 @@ const AddAds = (props) => {
                     </View>
 
                     <View style={{ marginHorizontal: 20, }}>
-                        <Text style={{ fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 5 }}>
+                        <Text style={{ fontSize: FontSize.FS_14, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 5 }}>
                             Title
                         </Text>
                         <View style={styles.mobileView}>
@@ -331,7 +329,7 @@ const AddAds = (props) => {
                             />
 
                         </View>
-                        <Text style={{ fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 5 }}>
+                        <Text style={{ fontSize: FontSize.FS_14, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 5 }}>
                             Link
                         </Text>
 
@@ -349,7 +347,7 @@ const AddAds = (props) => {
                         <TouchableOpacity style={styles.btnAddEdit}
                             onPress={() => btnAddEditTap()}>
                             <Text style={styles.AddEditText}>
-                                {isEdit ? i18n.t("edit_meeting") : i18n.t("add_ads")}
+                                {isEdit ? "Save Ads" : i18n.t("add_ads")}
                             </Text>
                         </TouchableOpacity>
                     </View>
@@ -379,7 +377,7 @@ const styles = StyleSheet.create({
     },
 
     mobileView: {
-        marginTop: 5, flexDirection: 'row', borderWidth: 1, borderColor: Colors.primary, borderRadius: 10, backgroundColor: Colors.white,
+        marginTop: 5, flexDirection: 'row', borderWidth: 1, borderColor: Colors.primary, borderRadius: 6, backgroundColor: Colors.white,
         paddingVertical: 10//alignItems: 'center'
     },
     textInputMobile: {
@@ -387,8 +385,8 @@ const styles = StyleSheet.create({
         color: Colors.black, paddingVertical: 0
     },
     btnAddEdit: {
-        backgroundColor: Colors.primary,
-        marginTop: 30, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
+        backgroundColor: Colors.black,
+        marginTop: 30, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',
         shadowColor: Colors.primary, marginBottom: 20,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.4, shadowRadius: 2, elevation: 2

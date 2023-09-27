@@ -28,16 +28,18 @@ const MyAds = ({ navigation }) => {
   const [AdsCurrentPage, setAdsCurrentPage] = useState(1)
   const [AdsPaginationHide, setAdsPaginationHide] = useState(false)
   const [AdsData, setAdsData] = useState([])
-
+  const [Role, setRole] = useState("")
 
   useFocusEffect(
     useCallback(() => {
       console.log("call")
       Api_Get_Ads(true)
+      Api_Get_Profile(true)
       return () => {
         console.log("1")
         setAdsCurrentPage(1)
         setAdsPaginationHide(false)
+        setAdsData([])
       }
     }, [])
   );
@@ -48,30 +50,49 @@ const MyAds = ({ navigation }) => {
 
 
 
-  const Api_Get_Ads = (isLoad) => {
+  // const Api_Get_Ads = (isLoad) => {
+  //   setIsLoading(isLoad)
+  //   Webservice.get(APIURL.GetAds + "?page=" + AdsCurrentPage)
+  //     .then(response => {
+  //       setIsLoading(false)
+  //       console.log(JSON.stringify("Api_Get_Ads Response  : " + JSON.stringify(response)));
+  //       if (response.data.status == true) {
+
+  //         if (response.data.data.next_page_url == null) {
+  //           setAdsPaginationHide(true)
+  //         }
+  //         else{
+  //           setAdsCurrentPage(AdsCurrentPage + 1)
+
+  //         }
+
+  //         var data = response.data.data?.data
+  //         const unique = [...new Map(data.map(m => [m.id,m])).values()];
+  //         console.log("unique :",unique)
+  //         console.log("AdsData :",AdsData)
+  //         setAdsData(unique,...AdsData)
+  //       } else {
+  //         // alert(response.data.message)
+  //         setAdsPaginationHide(true)
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       setIsLoading(false)
+  //       console.log(error)
+  //     })
+  // }
+
+  const Api_Get_Profile = (isLoad) => {
     setIsLoading(isLoad)
-    Webservice.get(APIURL.GetAds + "?page=" + AdsCurrentPage)
+    Webservice.get(APIURL.GetProfile)
       .then(response => {
         setIsLoading(false)
-        console.log(JSON.stringify("Api_Get_Ads Response  : " + JSON.stringify(response)));
+        // console.log(JSON.stringify("Api_Get_Profile Response : " + JSON.stringify(response)));
         if (response.data.status == true) {
-
-          if (response.data.data.next_page_url == null) {
-            setAdsPaginationHide(true)
-          }
-          else{
-            setAdsCurrentPage(AdsCurrentPage + 1)
-
-          }
-
-          var data = response.data.data?.data
-          const unique = [...new Map(data.map(m => [m.id,m])).values()];
-          console.log("unique :",unique)
-          console.log("AdsData :",AdsData)
-          setAdsData(unique,...AdsData)
+          var Role = response.data.data.role
+          setRole(Role)
         } else {
-          // alert(response.data.message)
-          setAdsPaginationHide(true)
+          alert(response.data.message)
         }
       })
       .catch((error) => {
@@ -79,42 +100,155 @@ const MyAds = ({ navigation }) => {
         console.log(error)
       })
   }
-  const Api_Delete_Ads =async (isLoad,items) => {
+
+  const Api_Get_Ads = async (isLoad) => {
     setIsLoading(isLoad)
 
+    try {
+      const response = await Webservice.get(APIURL.GetAds + "?page=" + AdsCurrentPage);
+      console.log("Api_Get_Ads Response: " + JSON.stringify(response.data.data));
+
+      if (response.data.status == true) {
+        var data = response.data.data?.data
+        const unique = [...new Map(data.map(m => [m.id, m])).values()];
+        const updatedAdsData = [...AdsData, ...unique];
+        await setAdsData(updatedAdsData);
+        setIsLoading(false);
+console.log("response.data.data.next_page_url",response.data.data.next_page_url)
+        if (response.data.data.next_page_url == null) {
+          setAdsPaginationHide(true)
+        } else {
+          console.log("else")
+          setAdsPaginationHide(false)
+          setAdsCurrentPage(AdsCurrentPage + 1)
+        }
+
+      } else {
+        // alert(response.data.message)
+        setIsLoading(false);
+        setAdsPaginationHide(true);
+      }
+    }
+    catch (error) {
+      setIsLoading(false)
+      setAdsPaginationHide(true);
+      console.log(error)
+    }
+  }
+  //   const Api_Delete_Ads =async (isLoad,items) => {
+  //     setIsLoading(isLoad)
+
+  //     let body = new FormData();
+  //     body.append('advertise_id', items?.id)
+  //     Webservice.post(APIURL.DeleteAds, body)
+  //         .then(response => {
+  //             setIsLoading(false)
+  //             console.log(JSON.stringify("Api_Delete_Ads Response : " + JSON.stringify(response)));
+
+  //             if (response.data.status == true) {
+  //               var data = AdsData.filter((item)=> item.id !== items.id)
+  //               setAdsData(data)
+  //               setAdsCurrentPage(1)
+  //               Api_Get_Ads(true)
+  //                 Alert.alert("Sucess", "Advertises Deleted Sucessfully", [
+  //                     {
+  //                         text: 'Ok',
+  //                         onPress: () => {
+  //                         }
+  //                     }
+  //                 ], { cancelable: true })
+  //             } else {
+  //                 alert(response.data.Msg)
+  //             }
+
+  //         })
+  //         .catch((error) => {
+
+  //             setIsLoading(false)
+  //             console.log(error)
+  //         })
+  // }
+
+
+  const Api_Delete_Ads = async (isLoad, items) => {
+    setIsLoading(isLoad)
     let body = new FormData();
     body.append('advertise_id', items?.id)
     Webservice.post(APIURL.DeleteAds, body)
-        .then(response => {
-            setIsLoading(false)
-            console.log(JSON.stringify("Api_Delete_Ads Response : " + JSON.stringify(response)));
+      .then(response => {
+        setIsLoading(false)
+        // console.log("Api_Delete_Meeting Response : " + JSON.stringify(response?.data));
+        if (response.data.status == true) {
+          var data = AdsData.filter((item) => item.id !== items.id)
+          setAdsData(data)
+          Alert.alert("Success", "Advertise Deleted Successfully", [
+            {
+              text: 'Ok',
+              onPress: () => {
 
-            if (response.data.status == true) {
-              var data = AdsData.filter((item)=> item.id !== items.id)
-              setAdsData(data)
-              setAdsCurrentPage(1)
-              Api_Get_Ads(true)
-                Alert.alert("Sucess", "Advertises Deleted Sucessfully", [
-                    {
-                        text: 'Ok',
-                        onPress: () => {
-                        }
-                    }
-                ], { cancelable: true })
-            } else {
-                alert(response.data.Msg)
+              }
             }
+          ], { cancelable: true })
+        } else {
+          alert(response.data.Msg)
+        }
 
-        })
-        .catch((error) => {
+      })
+      .catch((error) => {
 
-            setIsLoading(false)
-            console.log(error)
-        })
-}
+        setIsLoading(false)
+        console.log(error)
+      })
+  }
+
+  const RenderStatus = (val) => {
+    if (val == 0) {
+      return "In Review"
+    }
+    else if (val == 1) {
+      return "Live"
+    }
+    else {
+      return "Rejected"
+    }
+  }
 
 
+  const RenderColor = (val) => {
+    if (val == 0) {
+      return "#fff3cd"
+    }
+    else if (val == 1) {
+      return "#d4edda"
+    }
+    else {
+      return "#f8d7da"
+    }
+  }
 
+  const RenderTextColor = (val) => {
+    if (val == 0) {
+      return "#fa9f47"
+    }
+    else if (val == 1) {
+      return "#34c240"
+    }
+    else {
+      return "#d64242"
+    }
+  }
+
+  const RenderIcon = (val) => {
+    if (val == 0) {
+      return "alert"
+    }
+    else if (val == 1) {
+      return "check-circle"
+    }
+    else {
+      return "close-circle"
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -137,7 +271,7 @@ const MyAds = ({ navigation }) => {
                   height: 34,
                   alignItems: 'center',
                   justifyContent: 'center',
-                  borderRadius: 8,
+                  borderRadius: 6,
                   borderWidth: 1,
                   borderColor: Colors.primary
                 }}>
@@ -150,108 +284,136 @@ const MyAds = ({ navigation }) => {
                 </Text>
               </TouchableOpacity>
             </View>
-
+            {console.log("AdsData Length", AdsData.length)}
+            {console.log("AdsData Length", AdsPaginationHide)}
+            {console.log("AdsPaginationHide == false && !isLoading && AdsData.length <= 0 Length", AdsPaginationHide == false  )}
+            {(AdsData.length >= 0 && isLoading == false)&&
             <FlatList
               data={AdsData}
-              extraData={AdsData}
               style={{ marginVertical: 20 }}
               keyExtractor={(item, index) => index}
               ListEmptyComponent={
-                !isLoading &&
-                <View style={{ justifyContent: "center", alignItems: "center", padding: 10, alignSelf: "center", borderRadius: 10, marginTop: 100 }}>
-                    <Text style={{ fontSize: FontSize.FS_16, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM, }}>{"No Data Found"}</Text>
+                (!isLoading && AdsData.length >= 0) &&
+                <View style={{ justifyContent: "center", alignItems: "center", padding: 10, alignSelf: "center", borderRadius: 6, marginTop: 100 }}>
+                  <Text style={{ fontSize: FontSize.FS_16, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM, }}>{"No Data Found"}</Text>
 
                 </View>}
               // ListHeaderComponent={<View style={{height:20,}}></View>}
-              ListFooterComponent=
-              {
-
-                AdsPaginationHide == false && !isLoading ?
+              ListFooterComponent={ 
+                AdsPaginationHide == false ?
                   <TouchableOpacity onPress={() => {
                     Api_Get_Ads(true)
                   }}
                     style={{ marginVertical: 25, alignSelf: "center" }}>
                     <Text style={{ fontSize: FontSize.FS_18, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM }}>{"See More"}</Text>
 
-                  </TouchableOpacity> : <View style={{ height: 20 }}></View>
+                  </TouchableOpacity> : <View style={{ height: 20}}></View>
 
               }
               renderItem={({ item, index }) => {
                 return (
-                  <View style={{ marginHorizontal: 10, marginVertical: 5, backgroundColor: Colors.lightGrey01, borderRadius: 12, borderWidth: 1, borderColor: Colors.primary }}>
+                  <>
+                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 5,marginHorizontal:10 }}>
+                 <View style={{ backgroundColor: RenderColor(item?.status), paddingHorizontal: 8, margin: 5, borderRadius: 60, alignSelf: "flex-start", flexDirection: "row-reverse", alignItems: "center" }}>
+                          <Text style={{ fontSize: FontSize.FS_12, color: RenderTextColor(item?.status), fontFamily: ConstantKey.MONTS_REGULAR, marginTop: 3, marginLeft: 3 }}>{RenderStatus(item?.status)} </Text>
+                          <MaterialCommunityIcons name={RenderIcon(item?.status)} size={10} color={RenderTextColor(item?.status)} />
+                        </View>
+                        <View style={{flexDirection:"row",alignItems:"center"}}>
+                        <TouchableOpacity onPress={() => {
+												Alert.alert("Alert", "Are you sure you want to delete advertise?", [
+													{
+														text: 'No',
+														onPress: () => {
+														}
+													},
+													{
+														text: 'Yes',
+														onPress: () => {
+															Api_Delete_Ads(true, item)
+														}
+													}
+												], { cancelable: true })
+											}}
+												style={{ paddingHorizontal: 20 }}>
+												<FastImage style={{ width: 20, height: 20 }} source={Images.ic_delete} />
 
+											</TouchableOpacity>
+                      <TouchableOpacity onPress={() => { navigate("AddAds", { isEdit: true, AdsData: item }) }}>
+												<FastImage style={{ width: 20, height: 20 }} source={Images.ic_edit} />
+
+											</TouchableOpacity>
+                        </View>
+                   
+										</View>
+                  <View style={{
+                    marginHorizontal: 10,
+                    marginVertical: 5,
+                    backgroundColor: Colors.white,
+                    borderBottomLeftRadius: 8,
+                    borderBottomRightRadius: 8,
+                    shadowColor: "#000",
+                    shadowOffset: {
+                      width: 0,
+                      height: 1,
+                    },
+                    shadowOpacity: 0.20,
+                    shadowRadius: 1.41,
+                    elevation: 2,
+                  }}>
                     <View style={{ width: "100%", height: ConstantKey.SCREEN_HEIGHT / 4.5 }}>
 
-                      <ImageBackground style={{ flex: 1, borderRadius: 12, }}
+                      <ImageBackground style={{ flex: 1, borderRadius: 6, }}
                         source={{ uri: item?.image_url }}
-                        imageStyle={{ borderRadius: 12, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, }}
+                        imageStyle={{ }}
                         resizeMode='cover'
                       >
-                        {/* <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                          <TouchableOpacity style={{
-                            backgroundColor: Colors.primary, padding: 10, alignItems: "flex-end", alignSelf: "flex-end",
-                            borderTopLeftRadius: 10, borderBottomRightRadius: 10,
-                          }}
-                            onPress={() => { }}>
-
-                            <Icon name='trash' size={15} color={Colors.white} />
-                          </TouchableOpacity>
-                          <TouchableOpacity style={{
-                            backgroundColor: Colors.primary, padding: 10, alignItems: "flex-start", alignSelf: "flex-start",
-                            borderBottomLeftRadius: 10, borderTopRightRadius: 10,
-                          }}
-                            onPress={() => { }}>
-
-                            <Icon name='edit' size={15} color={Colors.white} />
-                          </TouchableOpacity>
-                        </View> */}
-
+                        
                       </ImageBackground>
                     </View>
                     <View style={{
-                      borderBottomLeftRadius: 12,
-                      borderBottomRightRadius: 12,
                       padding: 8
                     }}>
 
 
                       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                        <Text style={{ fontSize: FontSize.FS_16, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM }}>{item?.advertise_name}</Text>
+                        {item?.advertise_name && <Text style={{ fontSize: FontSize.FS_16, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM }}>{item?.advertise_name}</Text>}
+
                         <Text style={{ fontSize: FontSize.FS_10, color: Colors.black, fontFamily: ConstantKey.MONTS_REGULAR }}>{moment(item?.created_at).format("DD/MM/YY")} </Text>
                       </View>
-                      <Text onPress={() => { Linking.openURL(item?.url) }} numberOfLines={1} style={{ fontSize: FontSize.FS_12, color: Colors.endeavour, fontFamily: ConstantKey.MONTS_REGULAR, marginTop: 4 }}>{item?.url}</Text>
-                      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-end", marginVertical: 5 }}>
-                        <TouchableOpacity  onPress={() =>{
-                            Alert.alert("Alert", "Are you sure wan't to delete advertises?", [
-                              {
-                                  text: 'No',
-                                  onPress: () => {
-                                  }
-                              },
-                              {
-                                text: 'Yes',
-                                onPress: () => {
-                                  Api_Delete_Ads(true,item)
-                                }
+                      {item?.url && <Text onPress={() => { Linking.openURL(item?.url) }} numberOfLines={1} style={{ fontSize: FontSize.FS_12, color: Colors.endeavour, fontFamily: ConstantKey.MONTS_REGULAR, marginTop: 4 }}>{item?.url}</Text>}
+                      {/* <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-end", marginVertical: 5 }}>
+                        <TouchableOpacity onPress={() => {
+                          Alert.alert("Alert", "Are you sure you want to delete advertise?", [
+                            {
+                              text: 'No',
+                              onPress: () => {
+                              }
+                            },
+                            {
+                              text: 'Yes',
+                              onPress: () => {
+                                Api_Delete_Ads(true, item)
+                              }
                             }
                           ], { cancelable: true })
                         }}
-                        style={{ borderColor: Colors.grey01, borderRadius: 25, paddingVertical: 2, paddingHorizontal: 20, alignItems: "center", borderWidth: 1,marginRight:12 }}>
+                          style={{ borderColor: Colors.grey01, borderRadius: 25, paddingVertical: 2, paddingHorizontal: 20, alignItems: "center", borderWidth: 1, marginRight: 12 }}>
                           <Text style={{ fontSize: FontSize.FS_13, color: Colors.grey01, fontFamily: ConstantKey.MONTS_REGULAR, }}>{"Delete"}</Text>
 
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => { navigate("AddAds", { isEdit: true, AdsData:item }) }}
-                         style={{ backgroundColor: Colors.primary, borderRadius: 25,  paddingVertical: 2, paddingHorizontal: 26, alignItems: "center" }}>
+                        <TouchableOpacity onPress={() => { navigate("AddAds", { isEdit: true, AdsData: item }) }}
+                          style={{ backgroundColor: Colors.primary, borderRadius: 25, paddingVertical: 2, paddingHorizontal: 26, alignItems: "center" }}>
                           <Text style={{ fontSize: FontSize.FS_13, color: Colors.white, fontFamily: ConstantKey.MONTS_REGULAR }}>{"Edit"}</Text>
 
                         </TouchableOpacity>
-                      </View>
-
+                      </View> */}
                     </View>
                   </View>
+                  </>
+
                 )
               }}
-            />
+            /> }
           </SafeAreaView>
         </ScrollView>
       </View>

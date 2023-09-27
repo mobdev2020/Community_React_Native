@@ -20,7 +20,6 @@ import Toast from 'react-native-simple-toast';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
-import ForgotPasswordModal from '../DashboardFlow/ForgotPasswordModal';
 import { useFocusEffect } from '@react-navigation/native';
 import Pdf from 'react-native-pdf';
 
@@ -95,7 +94,7 @@ const SchoolInfo = (props) => {
                         renderActivityIndicator={() => (
                         	<>
                         		{LoadPercent > 0 && (
-                        			<Text style={{fontSize : FontSize.FS_16, color : Colors.primary, fontFamily : ConstantKey.MONTS_REGULAR}}>
+                        			<Text style={{fontSize : FontSize.FS_16, color : Colors.black, fontFamily : ConstantKey.MONTS_REGULAR}}>
                         				{`${(Math.round(LoadPercent * 10000) / 100).toFixed(2)} %`}
                         			</Text>
                         		)}

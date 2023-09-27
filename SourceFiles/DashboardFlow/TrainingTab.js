@@ -14,7 +14,6 @@ import Webservice from '../Constants/API'
 import LoadingView from '../Constants/LoadingView'
 import { APIURL } from '../Constants/APIURL';
 import { version as versionNo } from '../../package.json'
-import ChangePasswordModal from './ChangePasswordModal';
 
 // Third Party
 import { StackActions } from '@react-navigation/native';
@@ -91,7 +90,7 @@ const TrainingTab = (props) => {
 				// value previously stored
 
 				var data = JSON.parse(value)
-				console.log("User Data: " + value)
+				// console.log("User Data: " + value)
 
 				setUserData(data)
 
@@ -121,7 +120,7 @@ const TrainingTab = (props) => {
 				if (response == null) {
 					setIsLoading(false)
 				}
-				console.log(JSON.stringify("Api_TrainingList Response : " + JSON.stringify(response)));
+				// console.log(JSON.stringify("Api_TrainingList Response : " + JSON.stringify(response)));
 				// setIsLoading(false)
 
 				if (response.data.Status == '1') {
@@ -160,12 +159,12 @@ const TrainingTab = (props) => {
 				<ScrollView style={{ flex: 1 }}>
 
 					<View style={{
-						marginHorizontal: 20, marginVertical: 20, borderRadius: 10, borderWidth: 1, borderColor: Colors.primaryRed,
+						marginHorizontal: 20, marginVertical: 20, borderRadius: 6, borderWidth: 1, borderColor: Colors.primaryRed,
 						height: 200,
 					}}>
 
 						<TouchableOpacity onPress={() => setIsVisibleImg(true) }>
-							<Image style={{ height: '100%', width: '100%', borderRadius: 10, }}
+							<Image style={{ height: '100%', width: '100%', borderRadius: 6, }}
 								source={{uri : Trainings.training_image}} />
 						</TouchableOpacity>
 

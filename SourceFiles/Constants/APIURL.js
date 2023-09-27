@@ -4,10 +4,11 @@ export const APIURL = {
     // IMAGE_URL: 'https://ppe.thewebtual.com/magnus/public/storage/logos/',
 
 	// BASE_URL : "https://magnus.thewebtual.com/adminpanel/api/",
-	BASE_URL : "https://project.thewebtual.com/school-community/api/v1",
+	BASE_URL : "https://ppe81.thewebtual.com/school-community/api/v1",
+	// BASE_URL : "https://project.thewebtual.com/school-community/api/v1",
 	IMAGE_URL : 'https://project.thewebtual.com/school-community/public/storage/logos/',
 
-
+	
 
 	register : 'auth/register',
 	login : 'auth/login',
@@ -39,6 +40,9 @@ export const APIURL = {
 	EditAds:"edit-advertises",
 	DeleteAds:"delete-advertises",
 
+
+	GetCountry :"get-country",
+	GetState:"get-state",
 	
 	logout : "logout",
 	deactivate : "deactivate",

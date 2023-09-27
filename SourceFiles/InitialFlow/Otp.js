@@ -1,3 +1,4 @@
+// 
 //import liraries
 import React, { Component, useState, useEffect } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, Alert } from 'react-native';
@@ -20,7 +21,6 @@ import Toast from 'react-native-simple-toast';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
-import ForgotPasswordModal from '../DashboardFlow/ForgotPasswordModal';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 
 
@@ -88,7 +88,6 @@ const Otp = (props) => {
 
 
     const Api_Send_Otp = (isLoad, data) => {
-        // console.log("props.route.params.data :",props.route.params.data)
         setIsLoading(isLoad)
         Webservice.post(APIURL.otpSend, {
             mobile_number: props.route?.params?.data?.mobile_number,
@@ -118,7 +117,6 @@ const Otp = (props) => {
     const Api_Login = (isLoad) => {
 
         setIsLoading(isLoad)
-        console.log("1")
         Webservice.post(APIURL.login, {
 
             mobile_number: props.route?.params?.data?.mobile_number,
@@ -127,14 +125,20 @@ const Otp = (props) => {
 
         })
             .then(response => {
-                // console.log("Login response in OTP : ",JSON.stringify(response));
+                console.log("Login response in OTP : ",JSON.stringify(response));
                 setIsLoading(false)
-                console.log("2")
-
                 if (response.data.status == true) {
 
                     if (response.data.data.is_register == true && response.data.data.is_active == 1) {
-                        storeUserData(JSON.stringify(response.data.data))
+
+                        var userData = response.data?.data
+
+                        if(userData.user?.is_created_profile == 1){
+                            storeUserData(JSON.stringify(userData))
+                        }
+                        else{
+                            props.navigation.navigate("WelcomeScreen", { data: userData})
+                        }
 
                     }
 
@@ -151,11 +155,9 @@ const Otp = (props) => {
     }
 
     const storeUserData = async (value) => {
-        console.log("2.1")
         try {
             await AsyncStorage.setItem(ConstantKey.USER_DATA, value)
             props.navigation.replace('Home')
-            console.log("3")
         } catch (e) {
             console.log("Error :", e)
         }
@@ -175,12 +177,12 @@ const Otp = (props) => {
                 Toast.showWithGravity("Please enter valid otp", Toast.LONG, Toast.BOTTOM);
             }
             else {
-                if (props.route?.params?.data?.isFrom == "LOGIN") {
+                if (props.route?.params?.data?.mobile_number != "") {
                     Api_Login(true)
                 }
-                else {
-                    props.navigation.navigate("AskBusinessProfile",{body : props.route?.params?.data})
-                }
+                // else {
+                //     props.navigation.navigate("AskBusinessProfile",{body : props.route?.params?.data})
+                // }
 
             }
 
@@ -219,10 +221,11 @@ const Otp = (props) => {
 
                     <View style={styles.otpView}>
                         <OTPInputView
+
                             style={{ height: 50 }}
                             pinCount={6}
-                            code={otpCode} //You can supply this prop or not. The component will be used as a controlled / uncontrolled component respectively.
-                            onCodeChanged={code => { setOtpCode(code) }}
+                            // code={otpCode} //You can supply this prop or not. The component will be used as a controlled / uncontrolled component respectively.
+                            // onCodeChanged={code => { setOtpCode(code) }}
                             autoFocusOnLoad={false}
                             codeInputFieldStyle={styles.borderStyleBase}
                             codeInputHighlightStyle={styles.borderStyleHighLighted}
@@ -251,7 +254,7 @@ const Otp = (props) => {
                                     fontFamily: ConstantKey.MONTS_REGULAR
                                 }}
                                     onPress={() => Api_Send_Otp(true)}>
-                                    {i18n.t('haveNotReceived')}<Text style={{ color: Colors.purple, fontFamily: ConstantKey.MONTS_SEMIBOLD }}>{i18n.t('resend')}</Text>
+                                    {i18n.t('haveNotReceived')}<Text style={{ color: Colors.primary, fontFamily: ConstantKey.MONTS_SEMIBOLD }}>{i18n.t('resend')}</Text>
                                 </Text>
                             </TouchableOpacity>
                             : null}
@@ -273,7 +276,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.white,
     },
     mobileView: {
-        marginTop: 10, flexDirection: 'row', borderRadius: 10, backgroundColor: Colors.white,
+        marginTop: 10, flexDirection: 'row', borderRadius: 6, backgroundColor: Colors.white,
         height: 50, alignItems: 'center', backgroundColor: Colors.lightGrey01
     },
     countryCodeText: {
@@ -285,8 +288,8 @@ const styles = StyleSheet.create({
         color: Colors.black,
     },
     btnLogin: {
-        backgroundColor: Colors.primary,
-        marginTop: 10, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
+        backgroundColor: Colors.black,
+        marginTop: 10, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',
         // shadowColor: Colors.primaryRed,
         // shadowOffset: { width: 0, height: 2 },
         // shadowOpacity: 0.4, shadowRadius: 2, elevation: 2
@@ -301,10 +304,9 @@ const styles = StyleSheet.create({
         marginVertical: 40
     },
     borderStyleBase: {
-
-        height: 45, borderWidth: 2, borderColor: Colors.black,
-        borderRadius: 6, fontSize: FontSize.FS_15, fontFamily: ConstantKey.MONTS_MEDIUM,
-        color: Colors.black
+        height: 50, borderWidth: 1.5, borderColor: Colors.black,
+        borderRadius: 4, fontSize: FontSize.FS_16, fontFamily: ConstantKey.MONTS_MEDIUM,
+        color: Colors.black,alignItems:"center",justifyContent:"center",alignSelf:"center"
 
     },
     borderStyleHighLighted: {
@@ -316,3 +318,4 @@ const styles = StyleSheet.create({
 
 //make this component available to the app
 export default Otp;
+

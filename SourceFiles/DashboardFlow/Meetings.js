@@ -13,7 +13,6 @@ import Webservice from '../Constants/API'
 import LoadingView from '../Constants/LoadingView'
 import { APIURL } from '../Constants/APIURL';
 import { version as versionNo } from '../../package.json'
-import ChangePasswordModal from './ChangePasswordModal';
 
 // Third Party
 import { StackActions } from '@react-navigation/native';
@@ -164,7 +163,7 @@ const Meetings = (props) => {
 	}
 
 	const btnDeleteTap = (item) => {
-		Alert.alert("Alert","Are you sure you wan't to delete this meeting?",[
+		Alert.alert("Alert","Are you sure you want to delete this meeting?",[
 			{
 				text : 'Yes',
 				onPress : () => Api_DeleteMeeting(true, item),
@@ -211,7 +210,7 @@ const Meetings = (props) => {
 							return (
 								<View style={{
 									backgroundColor: Colors.white,
-									marginHorizontal: 20, borderRadius: 10, shadowColor: Colors.black, shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.4, shadowRadius: 4,
+									marginHorizontal: 20, borderRadius: 6, shadowColor: Colors.black, shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.4, shadowRadius: 4,
 									elevation: 3
 								}}>
 
@@ -242,7 +241,7 @@ const Meetings = (props) => {
 
 											}}>
 
-											<Image style={{ width: 60, height: 60, resizeMode: 'cover', borderRadius: 10 }}
+											<Image style={{ width: 60, height: 60, resizeMode: 'cover', borderRadius: 6 }}
 												source={item.meeting_image != null ? { uri: item.meeting_image } : Images.UserPlaceHolder} />
 
 										</TouchableOpacity>
@@ -374,7 +373,7 @@ const styles = StyleSheet.create({
 	},
 	btnNavigate: {
 		backgroundColor: Colors.primaryRed,
-		height: moderateScale(45), borderRadius: 10, alignItems: 'center', justifyContent: 'center',
+		height: moderateScale(45), borderRadius: 6, alignItems: 'center', justifyContent: 'center',
 		shadowColor: Colors.primaryRed,
 		shadowOffset: { width: 0, height: 2 }, width: '50%', alignSelf: 'center',
 		shadowOpacity: 0.4, shadowRadius: 2, elevation: 2, marginVertical: moderateScale(15)
