@@ -257,6 +257,7 @@ const BusinessProfile = (props) => {
 		body.append('business_pincode', Pincode)
 
 		body.append('business_state_id', StateId)
+		body.append('kids_information',props?.route?.params?.body?.kids_information )
 
 		body.append('device_type', Platform.OS == "android" ? 1 : 2)
 		body.append('device_token', FcmToken)

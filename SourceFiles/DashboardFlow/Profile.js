@@ -282,7 +282,7 @@ const Profile = ({ navigation }) => {
                             :
                             <View style={{
                                 borderRadius: 10,
-                                marginTop : 10,
+                                marginVertical : 10,
                                 marginHorizontal: 20,
                                 padding: 15,
                                 backgroundColor : Colors.white,

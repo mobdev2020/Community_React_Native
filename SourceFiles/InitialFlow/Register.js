@@ -191,6 +191,7 @@ const Register = (props) => {
 					dict.email_address = txtEmail
 					dict.mobile_number = txtMobile
 					dict.parent_id = SchoolId
+					dict.kids_information = description
 					props.navigation.navigate("BusinessProfile", { body: dict })
 				}
 				else {
@@ -314,6 +315,16 @@ const Register = (props) => {
 									onChangeText={(txtEmail) => setTxtEmail(txtEmail)}
 								/>
 							</View>
+
+							<Text style={{
+								fontSize: FontSize.FS_18,
+								color: Colors.black,
+								fontFamily: ConstantKey.MONTS_MEDIUM,
+								marginTop: 20,
+								lineHeight: FontSize.FS_20,
+							}}>
+								Kids Information
+							</Text>
 							<View style={{
 								marginTop: 10, backgroundColor: Colors.lightGrey01, borderRadius: 6,
 								height: 120,
