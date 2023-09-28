@@ -1,5 +1,5 @@
 import React, { Component, useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, ScrollView, Alert, FlatList, Modal } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, ScrollView, Alert, FlatList, Modal, StatusBar } from 'react-native';
 
 
 // Constants
@@ -164,7 +164,7 @@ const SearchScreen = ({ navigation, route }) => {
                     setCategoryData(response.data.data)
                     setIsLoading(false)
                 } else {
-                    Toast.showWithGravity(response.data.message, Toast.LONG, Toast.BOTTOM);
+                    Toast.showWithGravity(response.data.message, Toast.LONG, Toast.CENTER);
                     setIsLoading(false)
                 }
             })
@@ -198,6 +198,8 @@ const SearchScreen = ({ navigation, route }) => {
     };
     return (
         <SafeAreaView style={styles.container}>
+            <StatusBar backgroundColor={Colors.white} barStyle={'dark-content'}/>
+
         <View style={styles.container}>
 
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between",marginHorizontal : 10 }}>
@@ -323,7 +325,7 @@ const SearchScreen = ({ navigation, route }) => {
                                     Api_Get_Business(true)
                                 }}
                                     style={{ marginVertical: 25, alignSelf: "center" }}>
-                                    <Text style={{ fontSize: FontSize.FS_18, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM }}>{"See More"}</Text>
+                                    <Text style={{ fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM }}>{"See More"}</Text>
 
                                 </TouchableOpacity> : <View style={{ height: 20 }}></View>
 
@@ -356,10 +358,12 @@ const SearchScreen = ({ navigation, route }) => {
                                             <Text style={[styles.calloutSubTitle, { marginTop: 4 }]}>{"Category : "}</Text>
                                             <Text style={[styles.calloutDescription, { marginTop: 4, flex : 1 }]}>{item?.category?.name}</Text>
                                         </View>
+                                        {item?.subcategory_name ?
                                         <View style={{ flexDirection: "row", alignItems: "center", flex:1 }}>
                                             <Text style={[styles.calloutSubTitle, { marginTop: 4 }]}>{"Sub Category : "}</Text>
                                             <Text style={[styles.calloutDescription, { marginTop: 4,flex : 1 }]}>{item?.subcategory_name}</Text>
                                         </View>
+                                        : null}
 
                                     </View>
                                    
@@ -474,25 +478,25 @@ const styles = StyleSheet.create({
     },
     btnLogin: {
         backgroundColor: Colors.primary,
-        marginTop: 48, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',
+        marginTop: 48, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
     },
     loginText: {
-        fontSize: FontSize.FS_18, color: Colors.white,
+        fontSize: FontSize.FS_16, color: Colors.white,
         fontFamily: ConstantKey.MONTS_SEMIBOLD
     },
     calloutTitle: {
-        fontSize: FontSize.FS_12,
+        fontSize: FontSize.FS_14,
         fontFamily: ConstantKey.MONTS_SEMIBOLD,
         color: Colors.black
     },
     calloutSubTitle: {
-        fontSize: FontSize.FS_10,
+        fontSize: FontSize.FS_12,
         fontFamily: ConstantKey.MONTS_MEDIUM,
         color: Colors.black
     },
     calloutDescription: {
         marginTop: 5,
-        fontSize: FontSize.FS_10,
+        fontSize: FontSize.FS_12,
         fontFamily: ConstantKey.MONTS_REGULAR,
         color: Colors.black,
 

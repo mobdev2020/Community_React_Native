@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component, useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, ScrollView, FlatList } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, ScrollView, FlatList, StatusBar } from 'react-native';
 
 
 // Constants
@@ -19,6 +19,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import FastImage from 'react-native-fast-image';
 import { createNavigatorFactory } from '@react-navigation/native';
+import { SearchBar } from 'react-native-elements';
+
 
 const BusinessProfile = (props) => {
 
@@ -41,6 +43,13 @@ const BusinessProfile = (props) => {
 	const [StateId, setStateId] = useState("");
 	const [State, setState] = useState("");
 	const [StateData, setStateData] = useState(null);
+
+	const [txtSearchCountry, setTxtSearchCountry] = useState('')
+	const [filterCountry, setFilterCountry] = useState([])
+
+	const [txtSearchState, setTxtSearchState] = useState('')
+	const [filterState, setFilterState] = useState([])
+
 
 	const refRBSheet = useRef();
 	const CountrySheet = useRef();
@@ -66,6 +75,7 @@ const BusinessProfile = (props) => {
 				if (response.data.status == true) {
 					var coutryData = response?.data?.data
 					setCountryData(coutryData)
+					setFilterCountry(coutryData)
 				} else {
 					alert(response.data.message)
 				}
@@ -84,6 +94,7 @@ const BusinessProfile = (props) => {
 				if (response.data.status == true) {
 					var stateData = response?.data?.data
 					setStateData(stateData)
+					setFilterState(stateData)
 				} else {
 					alert(response.data.message)
 				}
@@ -107,7 +118,7 @@ const BusinessProfile = (props) => {
 						setSubCategory(business?.subcategory_name)
 						setBusinessPhone(business?.phone)
 						setBusinessEmail(business?.email)
-						setAddress(business?.address_line_one)
+						setAddress(business?.address)
 						setCity(business?.city)
 						setPincode(business?.pincode)
 
@@ -216,7 +227,7 @@ const BusinessProfile = (props) => {
 					setCategoryData(response.data.data)
 					setIsLoading(false)
 				} else {
-					Toast.showWithGravity(response.data.message, Toast.LONG, Toast.BOTTOM);
+					Toast.showWithGravity(response.data.message, Toast.LONG, Toast.CENTER);
 					setIsLoading(false)
 				}
 			})
@@ -261,7 +272,7 @@ const BusinessProfile = (props) => {
 				if (response.data.status == true) {
 					storeUserData(JSON.stringify(response.data.data))
 				} else {
-					Toast.showWithGravity(response.data.message, Toast.LONG, Toast.BOTTOM);
+					Toast.showWithGravity(response.data.message, Toast.LONG, Toast.CENTER);
 				}
 
 			})
@@ -286,30 +297,30 @@ const BusinessProfile = (props) => {
 			console.log(validateEmail(BusinessEmail))
 			Keyboard.dismiss()
 			if (BusinessName == '') {
-				Toast.showWithGravity("Please enter business name.", Toast.LONG, Toast.BOTTOM);
+				Toast.showWithGravity("Please enter business name.", Toast.LONG, Toast.CENTER);
 			}
 			else if (Category == null) {
-				Toast.showWithGravity("Please select category", Toast.LONG, Toast.BOTTOM);
+				Toast.showWithGravity("Please select category", Toast.LONG, Toast.CENTER);
 			}
 			// else if (SubCategory == '') {
-			// 	Toast.showWithGravity("Please enter sub category", Toast.LONG, Toast.BOTTOM);
+			// 	Toast.showWithGravity("Please enter sub category", Toast.LONG, Toast.CENTER);
 			// }
 			else if (BusinessPhone.length < 10) {
-				Toast.showWithGravity("Please enter valid phone number", Toast.LONG, Toast.BOTTOM);
+				Toast.showWithGravity("Please enter valid phone number", Toast.LONG, Toast.CENTER);
 			}
 			else if (!validateEmail(BusinessEmail)) {
-				Toast.showWithGravity(i18n.t('validEmail'), Toast.LONG, Toast.BOTTOM);
+				Toast.showWithGravity(i18n.t('validEmail'), Toast.LONG, Toast.CENTER);
 			} else if (Address == "") {
-				Toast.showWithGravity("Please enter business address", Toast.LONG, Toast.BOTTOM);
+				Toast.showWithGravity("Please enter business address", Toast.LONG, Toast.CENTER);
 			}
 			else if (createNavigatorFactory == "") {
-				Toast.showWithGravity("Please enter city", Toast.LONG, Toast.BOTTOM);
+				Toast.showWithGravity("Please enter city", Toast.LONG, Toast.CENTER);
 			} else if (Pincode == "") {
-				Toast.showWithGravity("Please enter pincode", Toast.LONG, Toast.BOTTOM);
+				Toast.showWithGravity("Please enter pincode", Toast.LONG, Toast.CENTER);
 			} else if (Country == "") {
-				Toast.showWithGravity("Please select country", Toast.LONG, Toast.BOTTOM);
+				Toast.showWithGravity("Please select country", Toast.LONG, Toast.CENTER);
 			} else if (State == "") {
-				Toast.showWithGravity("Please select state", Toast.LONG, Toast.BOTTOM);
+				Toast.showWithGravity("Please select state", Toast.LONG, Toast.CENTER);
 			}
 			else {
 				console.log("route?.params?.isFrom ::", props?.route?.params?.isFrom)
@@ -327,14 +338,85 @@ const BusinessProfile = (props) => {
 		})
 	}
 
+	const onSearchCountry = (search) => {
+
+		let text = search.toLowerCase()
+		let ServiceData = CountryData
+
+		let filteredName = ServiceData.filter((item) => {
+
+			let name = item.name != null ? String(item.name).toLowerCase().match(text) : ''
+			
+			return name
+		})
+
+		console.log(filteredName.length)
+		if (!text || text === '') {
+
+			console.log("Text empty")
+			setFilterCountry(CountryData)
+		} 
+		else if(filteredName.length == 0){
+			setFilterCountry([])
+		}
+		else if (!Array.isArray(filteredName) && filteredName.length) {
+			// set no data flag to true so as to render flatlist conditionally
+			setFilterCountry([])
+
+		} 
+		else if (Array.isArray(filteredName)) {
+
+			setFilterCountry(filteredName)
+		}
+
+		setTxtSearchCountry(search)
+	}
+
+
+	const onSearchState = (search) => {
+
+		let text = search.toLowerCase()
+		let ServiceData = StateData
+
+		let filteredName = ServiceData.filter((item) => {
+
+			let name = item.name != null ? String(item.name).toLowerCase().match(text) : ''
+			
+			return name
+		})
+
+		console.log(filteredName.length)
+		if (!text || text === '') {
+
+			console.log("Text empty")
+			setFilterState(StateData)
+		} 
+		else if(filteredName.length == 0){
+			setFilterState([])
+		}
+		else if (!Array.isArray(filteredName) && filteredName.length) {
+			// set no data flag to true so as to render flatlist conditionally
+			setFilterState([])
+
+		} 
+		else if (Array.isArray(filteredName)) {
+
+			setFilterState(filteredName)
+		}
+
+		setTxtSearchState(search)
+	}
+
 	return (
 		<SafeAreaView style={styles.container}>
+            <StatusBar backgroundColor={Colors.white} barStyle={'dark-content'}/>
+
 		<View style={styles.container}>
 			<View style={{ flex: 1, backgroundColor: Colors.white }}>
 
 			<View style={{ flexDirection: "row", alignItems: "center",marginHorizontal : 10 }}>
 							<TouchableOpacity onPress={() => { props.navigation.goBack() }}
-								style={{ marginRight: 10, marginBottom: 5, padding: 10 }}>
+								style={{ marginRight: 10, padding: 10 }}>
 								<Icon name={"chevron-left"} size={20} color={Colors.black} />
 
 							</TouchableOpacity>
@@ -507,12 +589,12 @@ const BusinessProfile = (props) => {
 								marginTop: 10,
 								lineHeight: FontSize.FS_20,
 							}}>
-								{"Pin code"}
+								{"Pincode"}
 							</Text>
 							<View style={styles.mobileView}>
 								<TextInput style={styles.textInputMobile}
 									value={Pincode}
-									placeholder={"Enter City"}
+									placeholder={"Enter Pincode"}
 									keyboardType={'number-pad'}
 									returnKeyType={'next'}
 									onChangeText={(txt) => setPincode(txt)}
@@ -649,17 +731,40 @@ const BusinessProfile = (props) => {
 					}
 				}}
 			>
+				<>
+				<SearchBar
+							lightTheme={true}
+							showCancel
+							// containerStyle={{
+							// 	backgroundColor: Colors.white, marginHorizontal : 10,
+							// 	borderRadius: 5, height: 50, marginTop: 20,
+							// }}
+							inputContainerStyle={{ backgroundColor: Colors.white,  padding: 0,}}
+							onClear={() => {
+
+								setFilterCountry(CountryData)
+							}}
+							value={txtSearchCountry}
+							inputStyle={{ 
+								fontFamily: ConstantKey.MONTS_REGULAR, fontSize: FontSize.FS_14, color: Colors.black, height: 50 }}
+							placeholder={'Search here...'}
+							onChangeText={onSearchCountry}
+						/>
+				
 				<ScrollView>
 					<FlatList
 						showsHorizontalScrollIndicator={false}
 						style={{ marginTop: 10 }}
-						data={CountryData}
+						data={filterCountry}
 						ItemSeparatorComponent={<View style={{ width: 20, }}></View>}
 						renderItem={({ item, index }) => (
 							<TouchableOpacity onPress={() => {
 								CountrySheet.current.close()
 								setCountry(item?.name)
 								setCountryId(item.id)
+
+								setStateId('')
+								setState('')
 								Api_Get_State(true, item)
 							}}
 								style={{
@@ -683,8 +788,10 @@ const BusinessProfile = (props) => {
 						)}
 					/>
 				</ScrollView>
+				</>
 			</RBSheet>
-			<RBSheet height={ConstantKey.SCREEN_WIDTH * 1.3}
+			<RBSheet 
+			height={ConstantKey.SCREEN_WIDTH * 1.3}
 				ref={StateSheet}
 				closeOnDragDown={true}
 				closeOnPressMask={true}
@@ -694,14 +801,35 @@ const BusinessProfile = (props) => {
 					},
 					draggableIcon: {
 						backgroundColor: Colors.primary
-					}
+					},
 				}}
 			>
+				<>
+				
+				<SearchBar
+							lightTheme={true}
+							showCancel
+							// containerStyle={{
+							// 	backgroundColor: Colors.white, marginHorizontal : 10,
+							// 	borderRadius: 5, height: 50, marginTop: 20,
+							// }}
+							inputContainerStyle={{ backgroundColor: Colors.white,  padding: 0,}}
+							onClear={() => {
+
+								setFilterState(StateData)
+							}}
+							value={txtSearchState}
+							inputStyle={{ 
+								fontFamily: ConstantKey.MONTS_REGULAR, fontSize: FontSize.FS_14, color: Colors.black, height: 50 }}
+							placeholder={'Search here...'}
+							onChangeText={onSearchState}
+						/>
+				
 				<ScrollView>
 					<FlatList
 						showsHorizontalScrollIndicator={false}
 						style={{ marginTop: 10 }}
-						data={StateData}
+						data={filterState}
 						ItemSeparatorComponent={<View style={{ width: 20, }}></View>}
 						renderItem={({ item, index }) => (
 							<TouchableOpacity onPress={() => {
@@ -727,6 +855,7 @@ const BusinessProfile = (props) => {
 						)}
 					/>
 				</ScrollView>
+				</>
 			</RBSheet>
 		</View>
 		</SafeAreaView>
@@ -747,7 +876,7 @@ const styles = StyleSheet.create({
 	},
 	btnLogin: {
 		backgroundColor: Colors.black,
-		marginTop: 48, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',
+		marginVertical: 48, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
 	},
 	loginText: {
 		fontSize: FontSize.FS_16, color: Colors.white,

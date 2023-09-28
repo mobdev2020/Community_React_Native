@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component, useLayoutEffect, useEffect, useState, useRef } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, Dimensions, TouchableOpacity, FlatList, Platform, Modal, TextInput, Linking, Alert, PermissionsAndroid, Image, Keyboard, Switch } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, ScrollView, Dimensions, TouchableOpacity, FlatList, Platform, Modal, TextInput, Linking, Alert, PermissionsAndroid, Image, Keyboard, Switch, StatusBar } from 'react-native';
 
 
 // Constants
@@ -191,6 +191,7 @@ const Meetings = (props) => {
 
 	return (
 		<SafeAreaView style={styles.container}>
+            <StatusBar backgroundColor={Colors.white} barStyle={'dark-content'}/>
 
 			<View style={styles.container}>
 
@@ -373,7 +374,7 @@ const styles = StyleSheet.create({
 	},
 	btnNavigate: {
 		backgroundColor: Colors.primaryRed,
-		height: moderateScale(45), borderRadius: 6, alignItems: 'center', justifyContent: 'center',
+		height: moderateScale(45), borderRadius: 10, alignItems: 'center', justifyContent: 'center',
 		shadowColor: Colors.primaryRed,
 		shadowOffset: { width: 0, height: 2 }, width: '50%', alignSelf: 'center',
 		shadowOpacity: 0.4, shadowRadius: 2, elevation: 2, marginVertical: moderateScale(15)

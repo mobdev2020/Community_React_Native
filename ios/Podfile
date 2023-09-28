@@ -36,6 +36,8 @@ target 'Community' do
   use_frameworks! :linkage => :static
   
   
+  pod 'IQKeyboardManager' #iOS8 and later
+
   use_react_native!(
     :path => config[:reactNativePath],
     # Hermes is now enabled by default. Disable by setting this flag to false.

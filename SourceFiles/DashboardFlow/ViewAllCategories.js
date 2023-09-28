@@ -2,7 +2,7 @@
 import React, { Component, useLayoutEffect, useEffect, useState, useRef } from 'react';
 import {
     View, Text, StyleSheet, SafeAreaView, Dimensions, TouchableOpacity, FlatList, Platform, Modal, TextInput,
-    Linking, Alert, PermissionsAndroid, Image, Keyboard, Switch, Share, ScrollView, 
+    Linking, Alert, PermissionsAndroid, Image, Keyboard, Switch, Share, ScrollView, StatusBar, 
 } from 'react-native';
 
 // Constants
@@ -52,7 +52,7 @@ const ViewAllCategories = ({navigation}) => {
 					setCategoryData(response.data.data)
 					setIsLoading(false)
 				} else {
-					Toast.showWithGravity(response.data.message, Toast.LONG, Toast.BOTTOM);
+					Toast.showWithGravity(response.data.message, Toast.LONG, Toast.CENTER);
 					setIsLoading(false)
 				}
 			})
@@ -65,6 +65,7 @@ const ViewAllCategories = ({navigation}) => {
     return (
         <SafeAreaView style={styles.container}>
           
+          <StatusBar backgroundColor={Colors.white} barStyle={'dark-content'}/>
 
 
                 <View style={{ flexDirection: "row", alignItems: "center",marginHorizontal:10}}>
@@ -191,7 +192,7 @@ const styles = StyleSheet.create({
     },
 
     textInputMobile: {
-        marginLeft: 10, marginRight: 10, height: 50, flex: 1, fontSize: FontSize.FS_16, fontFamily: ConstantKey.MONTS_REGULAR,
+        marginLeft: 10, marginRight: 10, height: 50, flex: 1, fontSize: FontSize.FS_14, fontFamily: ConstantKey.MONTS_REGULAR,
         color: Colors.black,
     },
 });

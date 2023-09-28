@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, Alert, Platform, PermissionsAndroid } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, Alert, Platform, PermissionsAndroid, StatusBar } from 'react-native';
 
 
 // Constants
@@ -67,7 +67,7 @@ const WelcomeScreen = (props) => {
                     // storeUserData(JSON.stringify(response.data.Data[0]))
 
                 } else {
-                    Toast.showWithGravity(response.data.message, Toast.LONG, Toast.BOTTOM);
+                    Toast.showWithGravity(response.data.message, Toast.LONG, Toast.CENTER);
                     // var dict = {};
                     // dict.mobile_number = txtMobile
                     // props.navigation.navigate("Register",{data : dict})
@@ -92,11 +92,12 @@ const WelcomeScreen = (props) => {
         }
     }
 
-
-
-
     return (
+        <SafeAreaView style={{flex : 1, backgroundColor : Colors.white}}>
+            <StatusBar backgroundColor={Colors.white} barStyle={'dark-content'}/>
+
         <View style={styles.container}>
+
             <View style={{ alignItems: "center" }}>
                 <Text style={{
                     fontSize: FontSize.FS_26,
@@ -106,17 +107,14 @@ const WelcomeScreen = (props) => {
                 }}>
                     {"Welcome!"}
                 </Text>
-                <FastImage style={{ width: 100, height: 100 }} source={{uri : props?.route?.params?.data?.user?.school_data?.logo_url}} />
+                <FastImage style={{ width: 100, height: 100 }} 
+                    source={props?.route?.params?.data?.user?.school_data?.logo_url ? {uri : props?.route?.params?.data?.user?.school_data?.logo_url}: Images.School_logo} />
                 <Text style={{
                     fontSize: FontSize.FS_20,
                     color: Colors.black,
                     fontFamily: ConstantKey.MONTS_MEDIUM,
                     marginTop: 26
                 }}>{props?.route?.params?.data?.user?.school_data?.title}</Text>
-
-
-
-
 
             </View>
             <TouchableOpacity style={styles.btnLogin}
@@ -134,6 +132,7 @@ const WelcomeScreen = (props) => {
                 <LoadingView />
                 : null}
         </View>
+        </SafeAreaView>
     );
 };
 
@@ -155,14 +154,14 @@ const styles = StyleSheet.create({
         color: Colors.black
     },
     textInputMobile: {
-        marginLeft: 10, marginRight: 10, height: 50, flex: 1, fontSize: FontSize.FS_16, fontFamily: ConstantKey.MONTS_REGULAR,
+        marginLeft: 10, marginRight: 10, height: 50, flex: 1, fontSize: FontSize.FS_14, fontFamily: ConstantKey.MONTS_REGULAR,
         color: Colors.black,
     },
     btnLogin: {
         backgroundColor: Colors.black,
         marginTop: 48,
         height: 50,
-        borderRadius: 6,
+        borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center',
         marginHorizontal: 25
@@ -171,7 +170,7 @@ const styles = StyleSheet.create({
         // shadowOpacity: 0.4, shadowRadius: 2, elevation: 2
     },
     loginText: {
-        fontSize: FontSize.FS_18, color: Colors.white,
+        fontSize: FontSize.FS_16, color: Colors.white,
         fontFamily: ConstantKey.MONTS_SEMIBOLD
     },
 });

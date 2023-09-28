@@ -86,7 +86,7 @@ const AskBusinessProfile = (props) => {
                 if (response.data.status == true) {
                     storeUserData(JSON.stringify(response.data.data))
                 } else {
-                    Toast.showWithGravity(response.data.message, Toast.LONG, Toast.BOTTOM);
+                    Toast.showWithGravity(response.data.message, Toast.LONG, Toast.CENTER);
                 }
 
             })
@@ -199,10 +199,10 @@ const styles = StyleSheet.create({
     },
     btnLogin: {
         backgroundColor: Colors.primary,
-        marginTop: 48, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',
+        marginTop: 48, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
     },
     loginText: {
-        fontSize: FontSize.FS_18, color: Colors.white,
+        fontSize: FontSize.FS_16, color: Colors.white,
         fontFamily: ConstantKey.MONTS_SEMIBOLD
     },
 });

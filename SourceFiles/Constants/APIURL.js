@@ -47,6 +47,8 @@ export const APIURL = {
 	logout : "logout",
 	deactivate : "deactivate",
 	
+	getHomeData : "get-home-data",
+
 	GetProfile : "get-profile",
 	UpdateProfile : "update-profile",
 	

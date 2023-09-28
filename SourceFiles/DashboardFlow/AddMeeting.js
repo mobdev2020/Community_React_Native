@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component, useLayoutEffect, useEffect, useState, useRef } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, Dimensions, TouchableOpacity, FlatList, Platform, Modal, TextInput, Linking, Alert, PermissionsAndroid, Image, Keyboard, Switch } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, ScrollView, Dimensions, TouchableOpacity, FlatList, Platform, Modal, TextInput, Linking, Alert, PermissionsAndroid, Image, Keyboard, Switch, StatusBar } from 'react-native';
 
 
 // Constants
@@ -289,14 +289,14 @@ const AddMeeting = (props) => {
 	const btnAddEditTap = () => {
 		requestAnimationFrame(() => {
 			if (MeetingImg == null) {
-				Toast.showWithGravity(i18n.t('select_event_image'), Toast.LONG, Toast.BOTTOM);
+				Toast.showWithGravity(i18n.t('select_event_image'), Toast.LONG, Toast.CENTER);
 			}
 			else if (txtMeetingTitle == '') {
-				Toast.showWithGravity(i18n.t('enter_meeting_name'), Toast.LONG, Toast.BOTTOM);
+				Toast.showWithGravity(i18n.t('enter_meeting_name'), Toast.LONG, Toast.CENTER);
 			} else if (txtMeetingDesc == '') {
-				Toast.showWithGravity(i18n.t('enter_event_desc'), Toast.LONG, Toast.BOTTOM);
+				Toast.showWithGravity(i18n.t('enter_event_desc'), Toast.LONG, Toast.CENTER);
 			} else if (StartDate == null) {
-				Toast.showWithGravity(i18n.t('enter_event_date'), Toast.LONG, Toast.BOTTOM);
+				Toast.showWithGravity(i18n.t('enter_event_date'), Toast.LONG, Toast.CENTER);
 			} else {
 
 				if (isEdit) {
@@ -312,19 +312,19 @@ const AddMeeting = (props) => {
 
 	return (
 		<SafeAreaView style={styles.container}>
+            <StatusBar backgroundColor={Colors.white} barStyle={'dark-content'}/>
 
 			<View style={styles.container}>
 
-				<ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps='always'>
-					<View style={{ flexDirection: "row", alignItems: "center", marginHorizontal: 10 }}>
+			<View style={{ flexDirection: "row", alignItems: "center", marginHorizontal: 10 }}>
 						<TouchableOpacity onPress={() => { props.navigation.goBack() }}
-							style={{ marginRight: 10, marginBottom: 5, padding: 10 }}>
+							style={{ marginRight: 10, padding: 10 }}>
 							<Icon name={"chevron-left"} size={18} color={Colors.black} />
 
 						</TouchableOpacity>
 
 						<Text style={{
-							fontSize: FontSize.FS_22,
+							fontSize: FontSize.FS_18,
 							color: Colors.black,
 							fontFamily: ConstantKey.MONTS_SEMIBOLD,
 						}}>
@@ -332,6 +332,9 @@ const AddMeeting = (props) => {
 						</Text>
 
 					</View>
+
+				<ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps='always'>
+					
 					<View style={{
 						marginHorizontal: 20, marginVertical: 20, borderRadius: 6, borderWidth: 1, borderColor: Colors.black,
 						height: 200
@@ -350,7 +353,7 @@ const AddMeeting = (props) => {
 								style={{ flex: 1, alignSelf: "center", justifyContent: "center", alignItems: "center" }}>
 								<MaterialCommunityIcons name={"cloud-upload-outline"} size={40} color={Colors.black} />
 								<Text style={{
-									fontSize: FontSize.FS_16,
+									fontSize: FontSize.FS_14,
 									color: Colors.black,
 									fontFamily: ConstantKey.MONTS_SEMIBOLD,
 									textAlign: "center"
@@ -464,10 +467,10 @@ const AddMeeting = (props) => {
 							<View style={{ flexDirection: 'row', marginTop: 10, alignItems: 'center' }}>
 
 								<TouchableOpacity onPress={() => setIsPushNow(isPushNow == 0 ? 1 : 0)}>
-									<Icon name={isPushNow == 1 ? 'check-square' : 'square'} size={25} color={Colors.primary} />
+									<Icon name={isPushNow == 1 ? 'check-square' : 'square'} size={20} color={Colors.primary} />
 								</TouchableOpacity>
 
-								<Text style={{ fontFamily: ConstantKey.MONTS_REGULAR, color: Colors.black, fontSize: FontSize.FS_16, marginLeft: 10 }}>
+								<Text style={{ fontFamily: ConstantKey.MONTS_REGULAR, color: Colors.black, fontSize: FontSize.FS_14, marginLeft: 10 }}>
 									{i18n.t('push_now')}?
 								</Text>
 
@@ -533,18 +536,18 @@ const styles = StyleSheet.create({
 		paddingVertical: 10//alignItems: 'center'
 	},
 	textInputMobile: {
-		marginLeft: 10, marginRight: 10, flex: 1, fontSize: FontSize.FS_16, fontFamily: ConstantKey.MONTS_REGULAR,
+		marginLeft: 10, marginRight: 10, flex: 1, fontSize: FontSize.FS_14, fontFamily: ConstantKey.MONTS_REGULAR,
 		color: Colors.black, paddingVertical: 0
 	},
 	btnAddEdit: {
 		backgroundColor: Colors.black,
-		marginTop: 30, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',
-		shadowColor: Colors.primary, marginBottom: 20,
-		shadowOffset: { width: 0, height: 2 },
-		shadowOpacity: 0.4, shadowRadius: 2, elevation: 2
+		marginTop: 30, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',marginBottom: 20,
+		// shadowColor: Colors.primary, 
+		// shadowOffset: { width: 0, height: 2 },
+		// shadowOpacity: 0.4, shadowRadius: 2, elevation: 2
 	},
 	AddEditText: {
-		fontSize: FontSize.FS_20, color: Colors.white,
+		fontSize: FontSize.FS_16, color: Colors.white,
 		fontFamily: ConstantKey.MONTS_SEMIBOLD
 	},
 });

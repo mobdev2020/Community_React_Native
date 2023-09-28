@@ -85,7 +85,7 @@ const Register = (props) => {
 
 				if (response.data.status == true) {
 
-					Toast.showWithGravity("This mobile number has been registered. Please Login.", Toast.LONG, Toast.BOTTOM);
+					Toast.showWithGravity("This mobile number has been registered. Please Login.", Toast.LONG, Toast.CENTER);
 					var dict = {};
 					dict.mobile_number = txtMobile
 					props.navigation.navigate("Login", { data: dict })
@@ -145,7 +145,7 @@ const Register = (props) => {
 				if (response.data.status == true) {
 					storeUserData(JSON.stringify(response.data.data))
 				} else {
-					Toast.showWithGravity(response.data.message, Toast.LONG, Toast.BOTTOM);
+					Toast.showWithGravity(response.data.message, Toast.LONG, Toast.CENTER);
 				}
 
 			})
@@ -164,22 +164,22 @@ const Register = (props) => {
 			Keyboard.dismiss()
 			let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
 			if (txtFirstName == '') {
-				Toast.showWithGravity(i18n.t('enterFName'), Toast.LONG, Toast.BOTTOM);
+				Toast.showWithGravity(i18n.t('enterFName'), Toast.LONG, Toast.CENTER);
 			}
 			else if (txtLastName == '') {
-				Toast.showWithGravity(i18n.t('enterLName'), Toast.LONG, Toast.BOTTOM);
+				Toast.showWithGravity(i18n.t('enterLName'), Toast.LONG, Toast.CENTER);
 			}
 			else if (txtMobile == '') {
-				Toast.showWithGravity(i18n.t('enterMobileNumber'), Toast.LONG, Toast.BOTTOM);
+				Toast.showWithGravity(i18n.t('enterMobileNumber'), Toast.LONG, Toast.CENTER);
 			}
 			else if (txtMobile.length < 10) {
-				Toast.showWithGravity(i18n.t('validMobile'), Toast.LONG, Toast.BOTTOM);
+				Toast.showWithGravity(i18n.t('validMobile'), Toast.LONG, Toast.CENTER);
 			}
 			// else if (!validateEmail(txtEmail)) {
-			// 	Toast.showWithGravity(i18n.t('validEmail'), Toast.LONG, Toast.BOTTOM);
+			// 	Toast.showWithGravity(i18n.t('validEmail'), Toast.LONG, Toast.CENTER);
 			// }
 			// else if (description == "") {
-			// 	Toast.showWithGravity("Please enter your kids information", Toast.LONG, Toast.BOTTOM);
+			// 	Toast.showWithGravity("Please enter your kids information", Toast.LONG, Toast.CENTER);
 			// }
 
 			else {
@@ -213,22 +213,19 @@ const Register = (props) => {
 
 
 	return (
-		// <SafeAreaView style={styles.container}>
+		<SafeAreaView style={styles.container}>
 		<View style={styles.container}>
 			<View style={{ flex: 1, backgroundColor: Colors.white }}>
 
-
-				<ScrollView style={{}}>
-					<SafeAreaView style={{ flex: 1, marginVertical: 10, marginHorizontal: 10 }}>
-						<View style={{ flexDirection: "row", alignItems: "center", }}>
+			<View style={{ flexDirection: "row", alignItems: "center", }}>
 							<TouchableOpacity onPress={() => { props.navigation.goBack() }}
-								style={{ marginBottom: 5, padding: 10 }}>
+								style={{ padding: 10 }}>
 								<Icon name={"chevron-left"} size={20} color={Colors.black} />
 
 							</TouchableOpacity>
 
 							<Text style={{
-								fontSize: FontSize.FS_26,
+								fontSize: FontSize.FS_18,
 								color: Colors.black,
 								fontFamily: ConstantKey.MONTS_SEMIBOLD,
 							}}>
@@ -236,6 +233,10 @@ const Register = (props) => {
 							</Text>
 
 						</View>
+
+				<ScrollView style={{}}>
+					<View style={{ flex: 1, marginVertical: 10, marginHorizontal: 10 }}>
+						
 						<View style={{ marginHorizontal: 10 }}>
 							<Text style={{
 								fontSize: FontSize.FS_18,
@@ -374,7 +375,7 @@ const Register = (props) => {
 
 
 
-					</SafeAreaView>
+					</View>
 					{/* </ScrollView> */}
 				</ScrollView>
 			</View>
@@ -383,7 +384,7 @@ const Register = (props) => {
 				<LoadingView />
 				: null}
 		</View>
-		// </SafeAreaView>
+		 </SafeAreaView>
 	);
 };
 
@@ -407,10 +408,10 @@ const styles = StyleSheet.create({
 	},
 	btnLogin: {
 		backgroundColor: Colors.black,
-		marginTop: 48, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',
+		marginTop: 48, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
 	},
 	loginText: {
-		fontSize: FontSize.FS_18, color: Colors.white,
+		fontSize: FontSize.FS_16, color: Colors.white,
 		fontFamily: ConstantKey.MONTS_SEMIBOLD
 	},
 });

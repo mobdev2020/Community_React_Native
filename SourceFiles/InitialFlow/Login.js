@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, Alert, Platform, PermissionsAndroid } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, Alert, Platform, PermissionsAndroid, StatusBar } from 'react-native';
 
 
 // Constants
@@ -131,7 +131,7 @@ const Login = (props) => {
 					dict.mobile_number = txtMobile
 					dict.isFrom = "LOGIN"
 					props.navigation.navigate("WelcomeScreen", { data: dict })
-					// Toast.showWithGravity(response.data.message, Toast.LONG, Toast.BOTTOM);
+					// Toast.showWithGravity(response.data.message, Toast.LONG, Toast.CENTER);
 					// var dict = {};
 					// dict.mobile_number = txtMobile
 					// props.navigation.navigate("Register",{data : dict})
@@ -163,10 +163,10 @@ const Login = (props) => {
 		requestAnimationFrame(() => {
 			Keyboard.dismiss()
 			if (txtMobile == '') {
-				Toast.showWithGravity(i18n.t('enterMobileNumber'), Toast.LONG, Toast.BOTTOM);
+				Toast.showWithGravity(i18n.t('enterMobileNumber'), Toast.LONG, Toast.CENTER);
 			}
 			else if (txtMobile.length < 10) {
-				Toast.showWithGravity(i18n.t('validMobile'), Toast.LONG, Toast.BOTTOM);
+				Toast.showWithGravity(i18n.t('validMobile'), Toast.LONG, Toast.CENTER);
 			}
 			else {
 				var dict = {};
@@ -188,6 +188,8 @@ const Login = (props) => {
 
 	return (
 		<SafeAreaView style={styles.container}>
+            <StatusBar backgroundColor={Colors.white} barStyle={'dark-content'}/>
+
 		<View style={styles.container}>
 			<View style={{ flex: 1, backgroundColor: Colors.white }}>
 				<View style={{ justifyContent: 'center', marginHorizontal: 25, marginVertical: 40 }}>
@@ -273,7 +275,7 @@ const styles = StyleSheet.create({
 		color: Colors.black
 	},
 	textInputMobile: {
-		marginLeft: 10, marginRight: 10, height: 50, flex: 1, fontSize: FontSize.FS_16, fontFamily: ConstantKey.MONTS_REGULAR,
+		marginLeft: 10, marginRight: 10, height: 50, flex: 1, fontSize: FontSize.FS_14, fontFamily: ConstantKey.MONTS_REGULAR,
 		color: Colors.black,
 	},
 	btnLogin: {
@@ -284,7 +286,7 @@ const styles = StyleSheet.create({
 		// shadowOpacity: 0.4, shadowRadius: 2, elevation: 2
 	},
 	loginText: {
-		fontSize: FontSize.FS_18, color: Colors.white,
+		fontSize: FontSize.FS_16, color: Colors.white,
 		fontFamily: ConstantKey.MONTS_SEMIBOLD
 	},
 });

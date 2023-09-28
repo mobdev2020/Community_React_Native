@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component, useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, Alert, Dimensions, BackHandler } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, Alert, Dimensions, BackHandler, StatusBar } from 'react-native';
 
 
 // Constants
@@ -73,6 +73,8 @@ const QrCode = (props) => {
 
     return (
         <View style={{ flex: 1, flexDirection: 'column', backgroundColor: 'transparent' }}>
+            <StatusBar backgroundColor={Colors.white} barStyle={'dark-content'}/>
+
             {/* <Text style={{
                     fontSize: FontSize.FS_22,
                     color: Colors.black,

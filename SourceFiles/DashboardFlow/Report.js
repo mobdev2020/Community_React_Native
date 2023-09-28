@@ -1,7 +1,7 @@
 //import liraries
 import React, { Component, useLayoutEffect, useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, ScrollView, Dimensions, 
-		TouchableOpacity, FlatList, Platform, Modal, TextInput, Linking, Alert, PermissionsAndroid, Image, Keyboard, Switch, ImageBackground } from 'react-native';
+		TouchableOpacity, FlatList, Platform, Modal, TextInput, Linking, Alert, PermissionsAndroid, Image, Keyboard, Switch, ImageBackground, StatusBar } from 'react-native';
 
 
 // Constants
@@ -44,10 +44,10 @@ const Report = (props) => {
 					console.log("Api_Add_Suggetions",JSON.stringify(response));
 					setIsLoading(false)
 					if (response.data.status == true) {
-						Toast.showWithGravity(response.data.message, Toast.LONG, Toast.BOTTOM);
+						Toast.showWithGravity(response.data.message, Toast.LONG, Toast.CENTER);
 						setTxtDescription('')
 					} else {
-						Toast.showWithGravity(response.data.message, Toast.LONG, Toast.BOTTOM);
+						Toast.showWithGravity(response.data.message, Toast.LONG, Toast.CENTER);
 					}
 				})
 				.catch((error) => {
@@ -64,7 +64,7 @@ const Report = (props) => {
 		requestAnimationFrame(() => {
 
 			if(txtDescription == ''){
-				alert("Please add message")
+				Toast.showWithGravity("Please add message", Toast.LONG, Toast.CENTER);
 			}else{
 				Keyboard.dismiss()
 				Api_Add_Suggetions(true)
@@ -74,11 +74,13 @@ const Report = (props) => {
 
 	return (
 		<SafeAreaView style={styles.container}>
+            <StatusBar backgroundColor={Colors.white} barStyle={'dark-content'}/>
+
 			<View style={styles.container}>
 
 			<View style={{ flexDirection: "row", alignItems: "center",marginVertical:5 , marginHorizontal : 10 }}>
 						<TouchableOpacity onPress={() => { props.navigation.goBack() }}
-							style={{ marginRight: 10, marginBottom: 5, padding: 10 }}>
+							style={{ marginRight: 10, padding: 10 }}>
 							<Icon name={"chevron-left"} size={18} color={Colors.black} />
 
 						</TouchableOpacity>
@@ -151,7 +153,7 @@ const styles = StyleSheet.create({
 	},
 	btnSubmit: {
 		backgroundColor: Colors.black,
-		marginTop: 30, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',marginBottom : 20,
+		marginTop: 30, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',marginBottom : 20,
 		// shadowColor: Colors.primaryRed, 
 		// shadowOffset: { width: 0, height: 2 },
 		// shadowOpacity: 0.4, shadowRadius: 2, elevation: 2

@@ -1,7 +1,7 @@
 //import liraries
 import React, { Component, useLayoutEffect, useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, ScrollView, Dimensions, 
-		TouchableOpacity, FlatList, Platform, Modal, TextInput, Linking, Alert, PermissionsAndroid, Image, Keyboard, Switch, ImageBackground } from 'react-native';
+		TouchableOpacity, FlatList, Platform, Modal, TextInput, Linking, Alert, PermissionsAndroid, Image, Keyboard, Switch, ImageBackground, StatusBar } from 'react-native';
 
 
 // Constants
@@ -153,6 +153,8 @@ const TrainingTab = (props) => {
 
 	return (
 		<SafeAreaView style={styles.container}>
+            <StatusBar backgroundColor={Colors.white} barStyle={'dark-content'}/>
+
 			<View style={styles.container}>
 
 				{Trainings != null ?

@@ -14,6 +14,7 @@ import {
   Alert,
   Linking,
   FlatList,
+  StatusBar,
 } from 'react-native';
 
 // Constants
@@ -258,6 +259,8 @@ const MyAds = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
+            <StatusBar backgroundColor={Colors.white} barStyle={'dark-content'}/>
+
       <View style={styles.container}>
         <View style={{flex: 1, backgroundColor: Colors.white}}>
           <View
@@ -349,7 +352,7 @@ const MyAds = ({navigation}) => {
                       style={{marginVertical: 25, alignSelf: 'center'}}>
                       <Text
                         style={{
-                          fontSize: FontSize.FS_18,
+                          fontSize: FontSize.FS_14,
                           color: Colors.primary,
                           fontFamily: ConstantKey.MONTS_MEDIUM,
                         }}>
@@ -384,7 +387,7 @@ const MyAds = ({navigation}) => {
                           }}>
                           <Text
                             style={{
-                              fontSize: FontSize.FS_10,
+                              fontSize: FontSize.FS_12,
                               color: RenderTextColor(item?.status),
                               fontFamily: ConstantKey.MONTS_MEDIUM,
                               marginTop: 3,
@@ -481,7 +484,7 @@ const MyAds = ({navigation}) => {
                             {item?.advertise_name && (
                               <Text
                                 style={{
-                                  fontSize: FontSize.FS_12,
+                                  fontSize: FontSize.FS_14,
                                   color: Colors.black,
                                   fontFamily: ConstantKey.MONTS_SEMIBOLD,
                                 }}>
@@ -491,7 +494,7 @@ const MyAds = ({navigation}) => {
 
                             <Text
                               style={{
-                                fontSize: FontSize.FS_8,
+                                fontSize: FontSize.FS_12,
                                 color: Colors.black,
                                 fontFamily: ConstantKey.MONTS_REGULAR,
                               }}>

@@ -1,7 +1,7 @@
 // 
 //import liraries
 import React, { Component, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, Alert } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, Alert, StatusBar } from 'react-native';
 
 
 // Constants
@@ -106,7 +106,7 @@ const Otp = (props) => {
                     console.log("OTP : ", response.data.data?.otp)
                     setverifyOtpCode(response.data.data?.otp)
                 } else {
-                    Toast.showWithGravity(response.data.message, Toast.LONG, Toast.BOTTOM);
+                    Toast.showWithGravity(response.data.message, Toast.LONG, Toast.CENTER);
                 }
 
             })
@@ -145,7 +145,7 @@ const Otp = (props) => {
                     }
 
                 } else {
-                    Toast.showWithGravity(response.data.message, Toast.LONG, Toast.BOTTOM);
+                    Toast.showWithGravity(response.data.message, Toast.LONG, Toast.CENTER);
                 }
 
             })
@@ -173,10 +173,10 @@ const Otp = (props) => {
             Keyboard.dismiss()
 
             if (otpCode == '') {
-                Toast.showWithGravity("Please enter otp", Toast.LONG, Toast.BOTTOM);
+                Toast.showWithGravity("Please enter otp", Toast.LONG, Toast.CENTER);
             }
             else if (otpCode != verifyOtpCode) {
-                Toast.showWithGravity("Please enter valid otp", Toast.LONG, Toast.BOTTOM);
+                Toast.showWithGravity("Please enter valid otp", Toast.LONG, Toast.CENTER);
             }
             else {
                 if (props.route?.params?.data?.mobile_number != "") {
@@ -210,6 +210,8 @@ const Otp = (props) => {
 
     return (
         <SafeAreaView style={styles.container}>
+            <StatusBar backgroundColor={Colors.white} barStyle={'dark-content'}/>
+
         <View style={styles.container}>
             <View style={{ flex: 1, backgroundColor: Colors.white }}>
                 <View style={{ justifyContent: 'center', marginHorizontal: 20, marginVertical: 10, }}>
@@ -300,13 +302,13 @@ const styles = StyleSheet.create({
     },
     btnLogin: {
         backgroundColor: Colors.black,
-        marginTop: 10, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',
+        marginTop: 10, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
         // shadowColor: Colors.primaryRed,
         // shadowOffset: { width: 0, height: 2 },
         // shadowOpacity: 0.4, shadowRadius: 2, elevation: 2
     },
     loginText: {
-        fontSize: FontSize.FS_18, color: Colors.white,
+        fontSize: FontSize.FS_16, color: Colors.white,
         fontFamily: ConstantKey.MONTS_SEMIBOLD
     },
     otpView: {

@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component, useLayoutEffect, useEffect, useState, useRef } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, Dimensions, TouchableOpacity, FlatList, Platform, Modal, TextInput, Linking, Alert, PermissionsAndroid, Image, Keyboard, Switch } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, ScrollView, Dimensions, TouchableOpacity, FlatList, Platform, Modal, TextInput, Linking, Alert, PermissionsAndroid, Image, Keyboard, Switch, StatusBar } from 'react-native';
 
 
 // Constants
@@ -237,12 +237,12 @@ const AddAds = (props) => {
 
 
             if (AdsImg == null) {
-                Toast.showWithGravity("Please upload Advertise image", Toast.LONG, Toast.BOTTOM);
+                Toast.showWithGravity("Please upload Advertise image", Toast.LONG, Toast.CENTER);
             }
             else if (TxtTitle == "") {
-                Toast.showWithGravity(('Please enter Advertise title'), Toast.LONG, Toast.BOTTOM);
+                Toast.showWithGravity(('Please enter Advertise title'), Toast.LONG, Toast.CENTER);
             } else if (txtMeetingLink == "") {
-                Toast.showWithGravity("Please enter Advertise link", Toast.LONG, Toast.BOTTOM);
+                Toast.showWithGravity("Please enter Advertise link", Toast.LONG, Toast.CENTER);
             } else {
 
                 if (isEdit) {
@@ -258,7 +258,7 @@ const AddAds = (props) => {
 
     return (
         <SafeAreaView style={styles.container}>
-
+            <StatusBar backgroundColor={Colors.white} barStyle={'dark-content'}/>
             <View style={styles.container}>
 
                     <View style={{ flexDirection: "row", alignItems: "center", marginHorizontal: 10 }}>
@@ -290,7 +290,7 @@ const AddAds = (props) => {
                                 style={{ flex: 1, alignSelf: "center", justifyContent: "center", alignItems: "center" }}>
                                 <MaterialCommunityIcons name={"cloud-upload-outline"} size={40} color={Colors.black} />
                                 <Text style={{
-                                    fontSize: FontSize.FS_16,
+                                    fontSize: FontSize.FS_14,
                                     color: Colors.black,
                                     fontFamily: ConstantKey.MONTS_SEMIBOLD,
                                     textAlign: "center"
@@ -325,7 +325,7 @@ const AddAds = (props) => {
 
                             <TextInput style={styles.textInputMobile}
                                 value={TxtTitle}
-                                placeholder={'Enter Event Title'}
+                                placeholder={'Enter Title'}
                                 onChangeText={(link) => setTxtTitle(link)}
                             />
 

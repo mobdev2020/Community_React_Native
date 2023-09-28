@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component, useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, ScrollView, Alert, StatusBar } from 'react-native';
 
 
 // Constants
@@ -85,13 +85,15 @@ const Profile = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.container}>
+            <StatusBar backgroundColor={Colors.white} barStyle={'dark-content'}/>
+
         <View style={styles.container}>
             <View style={{ flex: 1, backgroundColor: Colors.white }}>
 
             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" , marginHorizontal : 10}}>
                             <View style={{ flexDirection: "row", alignItems: "center", }}>
                                 <TouchableOpacity onPress={() => { navigation.goBack() }}
-                                    style={{ marginRight: 10, marginBottom: 5, padding: 10 }}>
+                                    style={{ marginRight: 10, padding: 10 }}>
                                     <Icon name={"chevron-left"} size={20} color={Colors.black} />
 
                                 </TouchableOpacity>
@@ -133,7 +135,7 @@ const Profile = ({ navigation }) => {
                         {isLoading == false &&  <>
                         <View style={{ marginHorizontal: 20, marginTop: 10, marginBottom: 5 }}>
                             <Text style={{
-                                fontSize: FontSize.FS_18,
+                                fontSize: FontSize.FS_16,
                                 color: Colors.black,
                                 fontFamily: ConstantKey.MONTS_SEMIBOLD,
 
@@ -168,7 +170,7 @@ const Profile = ({ navigation }) => {
                                     borderRadius: 15,
                                 }}>
                                 <Text style={{
-                                    fontSize: FontSize.FS_10,
+                                    fontSize: FontSize.FS_12,
                                     fontFamily: ConstantKey.MONTS_REGULAR,
                                     color: Colors.white
                                 }}>{"Edit"}</Text>
@@ -185,17 +187,17 @@ const Profile = ({ navigation }) => {
                                         source={{ uri: UserData?.user?.avatar_url }} />
                                 </View>
                                 <View style={{ flex: 1, marginLeft: 20, backgroundColor: Colors.white }}>
-                                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 4 }}>
-                                        <MaterialCommunityIcons name={"account"} size={18} color={Colors.black} style={{ marginRight: 5 }} />
-                                        <Text numberOfLines={1} adjustsFontSizeToFit={true} style={[styles.calloutTitle,]}>{UserData?.user?.first_name + " " + UserData?.user?.last_name}</Text>
+                                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 5 }}>
+                                        <MaterialCommunityIcons name={"account"} size={18} color={Colors.black} style={{ marginRight: 10 }} />
+                                        <Text numberOfLines={1} adjustsFontSizeToFit={true} style={[styles.calloutTitle,{marginTop : 0}]}>{UserData?.user?.first_name + " " + UserData?.user?.last_name}</Text>
                                     </View>
-                                    <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                        <MaterialCommunityIcons name={"phone"} size={18} color={Colors.darkGrey} style={{ marginRight: 5 }} />
-                                        <Text numberOfLines={1} adjustsFontSizeToFit={true} style={styles.calloutDescription}>+91 {UserData?.user?.phone}</Text>
+                                    <View style={{ flexDirection: "row", alignItems: "center",  marginTop: 5  }}>
+                                        <MaterialCommunityIcons name={"phone"} size={18} color={Colors.darkGrey} style={{ marginRight: 10 }} />
+                                        <Text numberOfLines={1} adjustsFontSizeToFit={true} style={[styles.calloutDescription,{marginTop : 0}]}>+91 {UserData?.user?.phone}</Text>
                                     </View>
-                                    <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                        <MaterialCommunityIcons name={"email"} size={18} color={Colors.darkGrey} style={{ marginRight: 5 }} />
-                                        <Text style={styles.calloutDescription}>{UserData?.user?.email}</Text>
+                                    <View style={{ flexDirection: "row", alignItems: "center" ,  marginTop: 5 }}>
+                                        <MaterialCommunityIcons name={"email"} size={18} color={Colors.darkGrey} style={{ marginRight: 10 }} />
+                                        <Text style={[styles.calloutDescription,{marginTop : 0}]}>{UserData?.user?.email}</Text>
                                     </View>
                                 </View>
                             </View>
@@ -203,7 +205,7 @@ const Profile = ({ navigation }) => {
                      
                         <View style={{ marginHorizontal: 20, marginTop: 20, marginBottom: 5 }}>
                             <Text style={{
-                                fontSize: FontSize.FS_18,
+                                fontSize: FontSize.FS_16,
                                 color: Colors.black,
                                 fontFamily: ConstantKey.MONTS_SEMIBOLD,
                             }}>
@@ -214,8 +216,8 @@ const Profile = ({ navigation }) => {
                             <View style={{
                                 borderRadius: 10,
                                 marginHorizontal: 20,
-                                padding: 10,
-                                marginTop : 10,
+                                padding: 15,
+                                marginVertical : 10,
                                 backgroundColor : Colors.white,
                                 shadowColor: "#000",
 								shadowOffset: {
@@ -237,36 +239,42 @@ const Profile = ({ navigation }) => {
                                         borderRadius: 15,
                                     }}>
                                     <Text style={{
-                                        fontSize: FontSize.FS_10,
+                                        fontSize: FontSize.FS_12,
                                         fontFamily: ConstantKey.MONTS_REGULAR,
                                         color: Colors.white
                                     }}>{"Edit"}</Text>
                                 </TouchableOpacity> : null}
 
-                                <View style={{ flex: 1, marginLeft: 8, backgroundColor: Colors.white }}>
+                                <View style={{ flex: 1, backgroundColor: Colors.white }}>
                                     {UserData?.user?.business?.business_name && <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                        <MaterialCommunityIcons name={"domain"} size={18} color={Colors.black} style={{ marginRight: 5 }} />
-                                        <Text style={[styles.calloutTitle, { marginTop: 4 }]}>{UserData?.user?.business?.business_name}</Text>
+                                        <MaterialCommunityIcons name={"domain"} size={18} color={Colors.black} style={{ marginRight: 10 }} />
+                                        <Text style={[styles.calloutTitle, { marginTop: 0 }]}>{UserData?.user?.business?.business_name}</Text>
                                     </View>}
+
+                                    {UserData?.user?.business?.category &&
+                                        <View style={{ flexDirection: "row", alignItems: "center",  marginTop: 5  }}>
+                                            <MaterialCommunityIcons name={"tag"} size={18} color={Colors.darkGrey} style={{ marginRight: 10 }} />
+                                            <Text style={[styles.calloutDescription, { marginTop: 0 }]}>{UserData?.user?.business?.category?.name}</Text>
+                                        </View>}
                                     {UserData?.user?.business?.subcategory_name &&
-                                        <View style={{ flexDirection: "row", alignItems: "center",  marginTop: 4  }}>
-                                            <MaterialCommunityIcons name={"format-list-checkbox"} size={18} color={Colors.darkGrey} style={{ marginRight: 5 }} />
-                                            <Text style={[styles.calloutDescription, {}]}>{UserData?.user?.business?.subcategory_name}</Text>
+                                        <View style={{ flexDirection: "row", alignItems: "center",  marginTop: 5  }}>
+                                            <MaterialCommunityIcons name={"format-list-checkbox"} size={18} color={Colors.darkGrey} style={{ marginRight: 10 }} />
+                                            <Text style={[styles.calloutDescription, { marginTop: 0 }]}>{UserData?.user?.business?.subcategory_name}</Text>
                                         </View>}
                                     {UserData?.user?.business?.phone &&
-                                        <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                            <MaterialCommunityIcons name={"phone"} size={18} color={Colors.darkGrey} style={{ marginRight: 5 }} />
-                                            <Text style={styles.calloutDescription}>+91 {UserData?.user?.business?.phone}</Text>
+                                        <View style={{ flexDirection: "row", alignItems: "center",  marginTop: 5 }}>
+                                            <MaterialCommunityIcons name={"phone"} size={18} color={Colors.darkGrey} style={{ marginRight: 10 }} />
+                                            <Text style={[styles.calloutDescription,{ marginTop: 0 }]}>+91 {UserData?.user?.business?.phone}</Text>
                                         </View>}
                                     {UserData?.user?.business?.email &&
-                                        <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                            <MaterialCommunityIcons name={"email"} size={18} color={Colors.darkGrey} style={{ marginRight: 5 }} />
-                                            <Text style={styles.calloutDescription}>{UserData?.user?.business?.email}</Text>
+                                        <View style={{ flexDirection: "row", alignItems: "center",  marginTop: 5 }}>
+                                            <MaterialCommunityIcons name={"email"} size={18} color={Colors.darkGrey} style={{ marginRight: 10 }} />
+                                            <Text style={[styles.calloutDescription,{ marginTop: 0 }]}>{UserData?.user?.business?.email}</Text>
                                         </View>}
                                     {UserData?.user?.business?.address_line_one &&
-                                        <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                            <MaterialCommunityIcons name={"map-marker-outline"} size={18} color={Colors.darkGrey} style={{ marginRight: 5 }} />
-                                            <Text style={styles.calloutDescription}>{UserData?.user?.business?.address_line_one}</Text>
+                                        <View style={{ flexDirection: "row", alignItems: "center",  marginTop: 5 }}>
+                                            <MaterialCommunityIcons name={"map-marker-outline"} size={18} color={Colors.darkGrey} style={{ marginRight: 10 }} />
+                                            <Text style={[styles.calloutDescription,{ marginTop: 0 }]}>{UserData?.user?.business?.address_line_one}</Text>
                                         </View>}
                                 </View>
                                 {/* </View> */}

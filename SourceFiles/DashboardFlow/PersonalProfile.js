@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, ScrollView, Alert, StatusBar } from 'react-native';
 
 
 // Constants
@@ -33,6 +33,9 @@ const PersonalProfile = ({ navigation }) => {
     const [isUpdateImage, setIsUpdateImage] = useState(false)
     const [UserData, setUserData] = useState(null);
 
+	const [description, setDescription] = useState('')
+
+
     useEffect(() => {
         Api_Get_Profile(true)
         return () => {
@@ -46,7 +49,7 @@ const PersonalProfile = ({ navigation }) => {
         Webservice.get(APIURL.GetProfile)
             .then(response => {
                 setIsLoading(false)
-                console.log(JSON.stringify("Api_Get_Profile Response : " + JSON.stringify(response)));
+                console.log("Api_Get_Profile Response : " + JSON.stringify(response))
                 if (response.data.status == true) {
                     var data = response.data.data
                     setUserData(response.data.data)
@@ -54,6 +57,7 @@ const PersonalProfile = ({ navigation }) => {
                     setFirstName(response.data.data.user.first_name)
                     setLastName(response.data.data.user.last_name)
                     setPhoneNumber(response.data.data.user.phone)
+                    setDescription(response.data.data.user.kids_information)
                     setUserData(response.data.data)
                 } else {
                     alert(response.data.message)
@@ -70,6 +74,7 @@ const PersonalProfile = ({ navigation }) => {
         body.append('first_name', FirstName)
         body.append('last_name', LastName)
         body.append('email', Email)
+        body.append('kids_information', description)
         if (ProfileImg != null && ProfileImg.data != null) {
             body.append('avatar',
                 {
@@ -103,8 +108,23 @@ const PersonalProfile = ({ navigation }) => {
     }
 
     const btnBusinessProfile = (params) => {
-        Api_Update_Profile(true)
 
+            Keyboard.dismiss()
+			if (FirstName == '') {
+				Toast.showWithGravity(i18n.t('enterFName'), Toast.LONG, Toast.CENTER);
+			}
+			else if (LastName == '') {
+				Toast.showWithGravity(i18n.t('enterLName'), Toast.LONG, Toast.CENTER);
+			}
+			else if (PhoneNumber == '') {
+				Toast.showWithGravity(i18n.t('enterMobileNumber'), Toast.LONG, Toast.CENTER);
+			}
+			else if (PhoneNumber.length < 10) {
+				Toast.showWithGravity(i18n.t('validMobile'), Toast.LONG, Toast.CENTER);
+			}else{
+                Api_Update_Profile(true)
+
+            }
     }
     const btnSelectImage = () => {
 
@@ -184,12 +204,14 @@ const PersonalProfile = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.container}>
+            <StatusBar backgroundColor={Colors.white} barStyle={'dark-content'}/>
+
         <View style={styles.container}>
             <View style={{ flex: 1, backgroundColor: Colors.white }}>
 
             <View style={{ flexDirection: "row", alignItems: "center", marginHorizontal : 10 }}>
                             <TouchableOpacity onPress={() => { navigation.goBack() }}
-                                style={{ marginRight: 10, marginBottom: 5, padding: 10 }}>
+                                style={{ marginRight: 10, padding: 10 }}>
                                 <Icon name={"chevron-left"} size={20} color={Colors.black} />
 
                             </TouchableOpacity>
@@ -296,6 +318,34 @@ const PersonalProfile = ({ navigation }) => {
                                 />
                             </View>
 
+                            <Text style={{
+                                fontSize: FontSize.FS_14,
+                                color: Colors.black,
+                                fontFamily: ConstantKey.MONTS_MEDIUM,
+                                marginTop: 20,
+                                lineHeight: FontSize.FS_20,
+                            }}>
+                                Kids Information
+                            </Text>
+                            <View style={{
+								marginTop: 10, backgroundColor: Colors.lightGrey01, borderRadius: 6,
+								height: 120,
+							}}>
+								{/* <Icon name={"at"} size={18} color={Colors.primary} style={{ marginLeft: 10 }} /> */}
+								<TextInput style={{
+									marginLeft: 10, marginRight: 10, height: 120, flex: 1, fontSize: FontSize.FS_14, fontFamily: ConstantKey.MONTS_REGULAR,
+									color: Colors.dimGray, alignContent: "flex-start"
+								}}
+									multiline={true}
+									value={description}
+									autoCapitalize={'none'}
+									placeholder={"Description of your kids"}
+									returnKeyType={'done'}
+									onChangeText={(dec) => setDescription(dec)}
+								/>
+							</View>
+
+
                             <TouchableOpacity style={styles.btnLogin}
                                 onPress={() => btnBusinessProfile()}>
                                 <Text style={styles.loginText}>
@@ -328,7 +378,7 @@ const styles = StyleSheet.create({
     },
     btnLogin: {
         backgroundColor: Colors.black,
-        marginTop: 48, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',
+        marginVertical: 48, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
     },
     loginText: {
         fontSize: FontSize.FS_16, color: Colors.white,

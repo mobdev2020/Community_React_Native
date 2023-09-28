@@ -43,6 +43,7 @@ import AddAds from '../DashboardFlow/AddAds';
 import AskBusinessProfile from '../InitialFlow/AskBusinessProfile';
 import QrCode from '../DashboardFlow/QrCode';
 import WelcomeScreen from '../InitialFlow/WelcomeScreen';
+import Details from '../DashboardFlow/Details';
 
 
 // Initial Flow 
@@ -167,6 +168,7 @@ function DashboardFlow() {
 			<Stack.Screen name="AddAds" component={AddAds} options={{ headerShown: false }} />
 			<Stack.Screen name="AskBusinessProfile" component={AskBusinessProfile} options={{ headerShown: false }} />
 
+			<Stack.Screen name="Details" component={Details} options={{ headerShown: false }} />
 
 
 		</Stack.Navigator>

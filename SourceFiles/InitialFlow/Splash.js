@@ -14,6 +14,7 @@ import i18n from '../Localize/i18n'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../Constants/Colors';
 import { APIURL } from '../Constants/APIURL';
+import { StatusBar } from 'react-native';
 
 
 // create a component
@@ -44,6 +45,7 @@ const Splash = ({navigation}) => {
 
 	return (
 		<View style={styles.container}>
+            <StatusBar backgroundColor={Colors.white} barStyle={'dark-content'}/>
 			
 			<Image 
 				style={{ width:"100%",height:"100%"}}

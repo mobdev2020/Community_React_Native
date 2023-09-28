@@ -14,6 +14,7 @@ import {
   ScrollView,
   BackHandler,
   LogBox,
+  StatusBar,
 } from 'react-native';
 // Constants
 import i18n from '../Localize/i18n';
@@ -42,6 +43,10 @@ const Home = props => {
   const [UserData, setUserData] = useState(null);
   const [AdsData, setAdsData] = useState([]);
   const [NoticeData, setNoticeData] = useState([]);
+  const [EventData, setEventData] = useState([]);
+  const [BottomBannerData, setBottomBannerData] = useState([]);
+
+  const [HomeData, setHomeData] = useState(null);
 
   const handleLoading = value => {
     setIsLoading(value);
@@ -50,9 +55,10 @@ const Home = props => {
   useEffect(() => {
     const apiCalls = [
       Api_Get_Profile,
-      Api_Get_Ads,
-      Api_Get_Banner,
-      Api_Get_Category,
+      // Api_Get_Ads,
+      // Api_Get_Banner,
+      // Api_Get_Category,
+      Api_Get_Home_data,
     ];
     Promise.all(apiCalls.map(apiCall => apiCall(handleLoading)))
       .then(results => {
@@ -72,9 +78,10 @@ const Home = props => {
   useFocusEffect(
     useCallback(() => {
       Api_Get_Profile(handleLoading);
-      Api_Get_Ads(handleLoading);
-      Api_Get_Banner(handleLoading);
-      Api_Get_Category(handleLoading);
+      // Api_Get_Ads(handleLoading);
+      // Api_Get_Banner(handleLoading);
+      // Api_Get_Category(handleLoading);
+      Api_Get_Home_data(handleLoading);
       const backAction = () => {
         Alert.alert(
           i18n.t('appName'),
@@ -109,11 +116,54 @@ const Home = props => {
     handleLoading(true); // Set loading to true when starting the API call
     Webservice.get(APIURL.GetProfile)
       .then(response => {
-        // console.log(JSON.stringify("Api_Get_Profile Response : " + JSON.stringify(response)));
+        console.log("Api_Get_Profile Response : " + JSON.stringify(response))
         if (response.data.status == true) {
           var data = response.data.data;
           storeData(JSON.stringify(data));
           setUserData(response.data.data);
+        } else {
+          alert(response.data.message);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      })
+      .finally(() => {
+        handleLoading(false); // Set loading to false when the API call is completed (success or failure)
+      });
+  };
+
+  const Api_Get_Home_data = handleLoading => {
+    handleLoading(true); // Set loading to true when starting the API call
+    Webservice.get(APIURL.getHomeData)
+      .then(response => {
+        console.log('Api_Get_Home_data Response : ' + JSON.stringify(response));
+        if (response.data.status == true) {
+          var data = response.data.data;
+
+          setHomeData(data);
+
+          var newArray = data?.top_sliders?.map(item => {
+            return {
+              ...item,
+              image: item.image_url,
+            };
+          });
+          // console.log("newArray", newArray)
+          newArray.length && setAdsData(newArray);
+
+          data?.events.length && setEventData(data?.events);
+          data?.categories.length && setCategoryData(data?.categories);
+          data?.notice.length && setNoticeData(data?.notice);
+
+          var bottomArray = data?.bottom_banner?.map(item => {
+            return {
+              ...item,
+              image: item.image_url,
+            };
+          });
+
+          bottomArray.length && setBottomBannerData(bottomArray);
         } else {
           alert(response.data.message);
         }
@@ -185,7 +235,7 @@ const Home = props => {
           Toast.showWithGravity(
             response.data.message,
             Toast.LONG,
-            Toast.BOTTOM,
+            Toast.CENTER,
           );
         }
       })
@@ -217,8 +267,26 @@ const Home = props => {
     });
   };
 
+  const btnSelectEventTap = item => {
+    console.log(item);
+    var dict = {
+      ...item,
+      description: item?.event_desc,
+      end_date: item?.event_end_date,
+      image: item?.event_image,
+      image_url: item?.event_image_url,
+      link: item?.event_link,
+      name: item?.event_name,
+      start_date: item?.event_start_date,
+    };
+
+    navigate('Details', {data: dict});
+  };
+
   return (
     <SafeAreaView style={styles.container}>
+            <StatusBar backgroundColor={Colors.white} barStyle={'dark-content'}/>
+
       <View
         style={{
           flexDirection: 'row',
@@ -230,7 +298,7 @@ const Home = props => {
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <FastImage
               style={{width: 24, height: 24}}
-              source={Images.School_logo}
+              source={UserData?.user?.school_data?.logo_url ? {uri : UserData?.user?.school_data?.logo_url} : Images.School_logo}
             />
             <Text
               numberOfLines={1}
@@ -450,25 +518,27 @@ const Home = props => {
                 marginLeft: 1,
               }}></View>
           </View>
-          <TouchableOpacity
-            onPress={() => {
-              navigate('Events');
-            }}
-            style={{
-              paddingHorizontal: 10,
-              paddingVertical: 5,
-              borderRadius: 50,
-              backgroundColor: Colors.primaryLight,
-            }}>
-            <Text
+          {EventData.length ? (
+            <TouchableOpacity
+              onPress={() => {
+                navigate('Events');
+              }}
               style={{
-                fontSize: FontSize.FS_10,
-                color: Colors.primary,
-                fontFamily: ConstantKey.MONTS_MEDIUM,
+                paddingHorizontal: 10,
+                paddingVertical: 5,
+                borderRadius: 50,
+                backgroundColor: Colors.primaryLight,
               }}>
-              {'View All'}
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={{
+                  fontSize: FontSize.FS_10,
+                  color: Colors.primary,
+                  fontFamily: ConstantKey.MONTS_MEDIUM,
+                }}>
+                {'View All'}
+              </Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
 
         <View style={{}}>
@@ -481,9 +551,7 @@ const Home = props => {
                 marginHorizontal: 20,
                 marginTop: 5,
               }}>
-              {
-                "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's."
-              }
+              Never miss out an event that matches your interest!
             </Text>
           </View>
           <FlatList
@@ -491,14 +559,12 @@ const Home = props => {
             contentContainerStyle={{paddingHorizontal: 20}}
             showsHorizontalScrollIndicator={false}
             style={{marginTop: 10}}
-            data={CategoryData}
+            data={EventData}
             ItemSeparatorComponent={<View style={{width: 14}}></View>}
             renderItem={({item, index}) => (
               <View style={{alignItems: 'center'}}>
                 <TouchableOpacity
-                  onPress={() => {
-                    navigate('SearchScreen', {isSearch: false, category: item});
-                  }}
+                  onPress={() => btnSelectEventTap(item)}
                   style={{
                     backgroundColor: Colors.white,
                     width: 170,
@@ -525,29 +591,28 @@ const Home = props => {
                       height: 100,
                     }}
                     source={{
-                      uri: 'https://www.visionvivaah.com/blog/wp-content/uploads/2019/10/Best-Event-Management-Company-In-Mumbai.jpg',
+                      uri: item?.event_image_url,
                     }}
                   />
                   <View style={{paddingHorizontal: 10, marginVertical: 6}}>
                     <Text
                       style={{
-                        fontSize: FontSize.FS_12,
+                        fontSize: FontSize.FS_14,
                         color: Colors.black,
                         fontFamily: ConstantKey.MONTS_MEDIUM,
-                      }}>
-                      {item?.name}
+                      }}
+                      numberOfLines={1}>
+                      {item?.event_name}
                     </Text>
                     <Text
                       numberOfLines={3}
                       style={{
                         marginTop: 5,
-                        fontSize: FontSize.FS_10,
+                        fontSize: FontSize.FS_12,
                         color: Colors.dimGray,
                         fontFamily: ConstantKey.MONTS_REGULAR,
                       }}>
-                      {
-                        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."
-                      }
+                      {item?.event_desc}
                     </Text>
                   </View>
                 </TouchableOpacity>
@@ -577,9 +642,10 @@ const Home = props => {
         </View>
         <CustomSlider data={NoticeData} />
         <View style={{marginTop: 20}}>
-          <Banner data={AdsData} />
+          <Banner data={BottomBannerData} />
         </View>
       </ScrollView>
+
       {isLoading ? <LoadingView /> : null}
     </SafeAreaView>
   );

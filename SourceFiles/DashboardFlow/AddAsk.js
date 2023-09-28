@@ -2,7 +2,7 @@
 import React, { Component, useLayoutEffect, useEffect, useState, useRef } from 'react';
 import {
 	View, Text, StyleSheet, SafeAreaView, ScrollView, Dimensions,
-	TouchableOpacity, FlatList, Platform, Modal, TextInput, Linking, Alert, PermissionsAndroid, Image, Keyboard, Switch, ImageBackground
+	TouchableOpacity, FlatList, Platform, Modal, TextInput, Linking, Alert, PermissionsAndroid, Image, Keyboard, Switch, ImageBackground, StatusBar
 } from 'react-native';
 
 
@@ -156,7 +156,7 @@ const AddAsk = (props) => {
 	const btnAddEditTap = () => {
 		requestAnimationFrame(() => {
 			if(txtDescription == ''){
-				Toast.showWithGravity(i18n.t('enter_event_desc'),Toast.SHORT, Toast.BOTTOM)
+				Toast.showWithGravity(i18n.t('enter_event_desc'),Toast.SHORT, Toast.CENTER)
 			}else{
 				if(AskData == null){
 
@@ -170,6 +170,8 @@ const AddAsk = (props) => {
 
 	return (
 		<SafeAreaView style={styles.container}>
+            <StatusBar backgroundColor={Colors.white} barStyle={'dark-content'}/>
+
 			<View style={styles.container}>
 
 				<ScrollView style={styles.container}>
@@ -231,7 +233,7 @@ const styles = StyleSheet.create({
 	},
 	btnSubmit: {
 		backgroundColor: Colors.primaryRed,
-		marginTop: 30, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',
+		marginTop: 30, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
 		shadowColor: Colors.primaryRed, marginBottom : 20,
 		shadowOffset: { width: 0, height: 2 },
 		shadowOpacity: 0.4, shadowRadius: 2, elevation: 2

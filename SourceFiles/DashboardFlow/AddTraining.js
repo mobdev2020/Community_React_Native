@@ -2,7 +2,7 @@
 import React, { Component, useLayoutEffect, useEffect, useState, useRef } from 'react';
 import {
 	View, Text, StyleSheet, SafeAreaView, ScrollView, Dimensions,
-	TouchableOpacity, FlatList, Platform, Modal, TextInput, Linking, Alert, PermissionsAndroid, Image, Keyboard, Switch, ImageBackground
+	TouchableOpacity, FlatList, Platform, Modal, TextInput, Linking, Alert, PermissionsAndroid, Image, Keyboard, Switch, ImageBackground, StatusBar
 } from 'react-native';
 
 
@@ -344,15 +344,15 @@ const AddTraining = ({navigation}) => {
 	// 	requestAnimationFrame(() => {
 
 	// 		if(txtTitle == ''){
-	// 			Toast.showWithGravity(i18n.t('enter_title'), Toast.LONG, Toast.BOTTOM);
+	// 			Toast.showWithGravity(i18n.t('enter_title'), Toast.LONG, Toast.CENTER);
 	// 		}else if(txtDescription == ''){
-	// 			Toast.showWithGravity(i18n.t('enter_event_desc'), Toast.LONG, Toast.BOTTOM);
+	// 			Toast.showWithGravity(i18n.t('enter_event_desc'), Toast.LONG, Toast.CENTER);
 	// 		}else if(StartDate == null){
-	// 			Toast.showWithGravity(i18n.t('enter_event_date'), Toast.LONG, Toast.BOTTOM);
+	// 			Toast.showWithGravity(i18n.t('enter_event_date'), Toast.LONG, Toast.CENTER);
 	// 		}else if(EndDate == null){
-	// 			Toast.showWithGravity(i18n.t('enter_event_date'), Toast.LONG, Toast.BOTTOM);
+	// 			Toast.showWithGravity(i18n.t('enter_event_date'), Toast.LONG, Toast.CENTER);
 	// 		}else if(ImgTraining == null){
-	// 			Toast.showWithGravity(i18n.t('select_event_image'), Toast.LONG, Toast.BOTTOM);
+	// 			Toast.showWithGravity(i18n.t('select_event_image'), Toast.LONG, Toast.CENTER);
 	// 		}else{
 
 	// 			if(TrainingData != null){
@@ -368,6 +368,7 @@ const AddTraining = ({navigation}) => {
 
 	return (
 		<SafeAreaView style={styles.container}>
+            <StatusBar backgroundColor={Colors.white} barStyle={'dark-content'}/>
 
 			<View style={styles.container}>
 
@@ -375,7 +376,7 @@ const AddTraining = ({navigation}) => {
 				<ScrollView style={{ flex: 1 }}>
 				<View style={{ flexDirection: "row", alignItems: "center", marginHorizontal: 10 }}>
 						<TouchableOpacity onPress={() => { navigation.goBack() }}
-							style={{ marginRight: 10, marginBottom: 5, padding: 10 }}>
+							style={{ marginRight: 10, padding: 10 }}>
 							<Icon name={"chevron-left"} size={18} color={Colors.black} />
 
 						</TouchableOpacity>
@@ -564,7 +565,7 @@ const styles = StyleSheet.create({
 	},
 	btnSubmit: {
 		backgroundColor: Colors.primary,
-		marginTop: 30, height: 45, borderRadius: 6, alignItems: 'center', justifyContent: 'center',
+		marginTop: 30, height: 45, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
 		shadowColor: Colors.primary, marginBottom : 20,
 		shadowOffset: { width: 0, height: 2 },
 		shadowOpacity: 0.4, shadowRadius: 2, elevation: 2
