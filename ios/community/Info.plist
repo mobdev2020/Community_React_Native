@@ -35,8 +35,14 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>$(PRODUCT_NAME) need to access camera for upload profile picture.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<string></string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>$(PRODUCT_NAME) need to access microsphone</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>$(PRODUCT_NAME) need to access photo library for upload profile picture.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
@@ -77,25 +83,27 @@
 		<string>Poppins-Thin.ttf</string>
 		<string>Poppins-ThinItalic.ttf</string>
 	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
-	<key>NSCameraUsageDescription</key>
-	<string>$(PRODUCT_NAME) need to access camera for upload profile picture.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>$(PRODUCT_NAME) need to access microsphone</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>$(PRODUCT_NAME) need to access photo library for upload profile picture.</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>UIStatusBarStyle</key>
+	<string></string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
+		<string>UIInterfaceOrientationPortrait</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>

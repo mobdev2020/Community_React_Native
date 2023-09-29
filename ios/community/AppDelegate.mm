@@ -10,6 +10,9 @@
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
   [FIRApp configure];
+
+  [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+  
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
   
 }
