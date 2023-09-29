@@ -44,6 +44,7 @@ import AskBusinessProfile from '../InitialFlow/AskBusinessProfile';
 import QrCode from '../DashboardFlow/QrCode';
 import WelcomeScreen from '../InitialFlow/WelcomeScreen';
 import Details from '../DashboardFlow/Details';
+import FlashMessage from 'react-native-flash-message';
 
 
 // Initial Flow 
@@ -184,6 +185,8 @@ const Navigation = () => {
 				isReadyRef.current = true;
 			}}>
 			<InitialFlow />
+
+			<FlashMessage position="top" />
 		</NavigationContainer>
 	)
 }

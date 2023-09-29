@@ -84,8 +84,8 @@ const Home = props => {
       Api_Get_Home_data(handleLoading);
       const backAction = () => {
         Alert.alert(
-          i18n.t('appName'),
-          'Are you sure you want to exit app?',
+          "",
+          'Are you sure you want to exit?',
           [
             {
               text: 'No',

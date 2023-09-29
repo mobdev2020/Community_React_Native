@@ -315,7 +315,6 @@ const Profile = ({ navigation }) => {
                                         paddingHorizontal: 30,
                                         alignItems: "center",
                                         backgroundColor: Colors.black
-
                                     }}>
                                     <Text style={{
                                         fontSize: FontSize.FS_14,

@@ -20,6 +20,7 @@ import Toast from 'react-native-simple-toast';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
+import { DisplayMessage } from '../commonComponents/AlertManager';
 
 
 // create a component
@@ -169,6 +170,7 @@ const Login = (props) => {
 				Toast.showWithGravity(i18n.t('validMobile'), Toast.LONG, Toast.CENTER);
 			}
 			else {
+
 				var dict = {};
 						dict.mobile_number = txtMobile
 						// dict.isFrom = "LOGIN"

@@ -147,6 +147,7 @@ import i18n from './SourceFiles/Localize/i18n';
 import { Colors } from './SourceFiles/Constants/Colors';
 import { moderateScale } from 'react-native-size-matters';
 import { FontSize } from './SourceFiles/Constants/FontSize';
+import { DisplayMessage } from './SourceFiles/commonComponents/AlertManager';
 
 
 const App = () => {
@@ -236,42 +237,54 @@ const App = () => {
 
 			let notification = remoteMessage.data
 
-			console.log("NotiF Data" + JSON.stringify(notification));
+			console.log("NotiF Data" + JSON.stringify(remoteMessage.notification));
 
 			// For Display Notification Banner when app is in Forground State
 
 
-			if (notification.click_action == 'member' || notification.click_action == 'birthday') {
+			DisplayMessage({
+				title: remoteMessage.notification.title,
+				description: remoteMessage.notification.body,
+				type: 'success',
+				onPress: () => {
+		
+				  let data = remoteMessage.data
+				//   NavigationService.navigate("Notification")
+				}
+			  })
 
-				Alert.alert(remoteMessage.notification.title, remoteMessage.notification.body, [
-					{
-						text: "View profile",
-						onPress: () => NavigationService.navigate('MembersProfile', { member_data: String(notification.member_id) }),
-						style: "cancel"
-					},
-					{ text: "Close", onPress: () => {} }
-				])
+
+			// if (notification.click_action == 'member' || notification.click_action == 'birthday') {
+
+			// 	Alert.alert(remoteMessage.notification.title, remoteMessage.notification.body, [
+			// 		{
+			// 			text: "View profile",
+			// 			onPress: () => NavigationService.navigate('MembersProfile', { member_data: String(notification.member_id) }),
+			// 			style: "cancel"
+			// 		},
+			// 		{ text: "Close", onPress: () => {} }
+			// 	])
 
 
-			}else if(notification.click_action == 'meeting'){
-				Alert.alert(remoteMessage.notification.title, remoteMessage.notification.body, [
-					{
-						text: "View",
-						onPress: () => {
+			// }else if(notification.click_action == 'meeting'){
+			// 	Alert.alert(remoteMessage.notification.title, remoteMessage.notification.body, [
+			// 		{
+			// 			text: "View",
+			// 			onPress: () => {
 
-							setSelectedImg(notification)
-							setIsVisibleImg(true)
-							NavigationService.navigate('Meetings')
-						},
-						style: "cancel"
-					},
-					{ text: "Close", onPress: () => console.log("OK Pressed") }
-				])
-			}
-			 else {
+			// 				setSelectedImg(notification)
+			// 				setIsVisibleImg(true)
+			// 				NavigationService.navigate('Meetings')
+			// 			},
+			// 			style: "cancel"
+			// 		},
+			// 		{ text: "Close", onPress: () => console.log("OK Pressed") }
+			// 	])
+			// }
+			//  else {
 
-				// NavigationService.navigate('MembersProfile',{ member_data :  String(69)})
-			}
+			// 	// NavigationService.navigate('MembersProfile',{ member_data :  String(69)})
+			// }
 
 
 		});
@@ -330,9 +343,9 @@ const App = () => {
 		  await messaging().registerForRemoteNotifications();
 		  const token = await firebase.messaging().getToken();
 		 
-		  firebase.messaging().onMessage(async (remoteMessage) => {
+		//   firebase.messaging().onMessage(async (remoteMessage) => {
 	   
-		  });
+		//   });
 		} catch (e) {
 		  console.log(e)
 	
