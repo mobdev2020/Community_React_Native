@@ -116,9 +116,10 @@ const ViewAllCategories = ({navigation}) => {
                                     fontSize: FontSize.FS_14,
                                     color: Colors.black,
                                     fontFamily: ConstantKey.MONTS_MEDIUM,
-                                    marginTop : 4
+                                    marginTop : 4,
+                                    textAlign : 'center'
                                 }}>
-                                   {item?.name}
+                                   {item?.name} ({item?.business_count})
                                 </Text>
                             </View>
 

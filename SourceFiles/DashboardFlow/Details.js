@@ -12,15 +12,68 @@ import {
 import React, { useState } from 'react';
 import {Colors} from '../Constants/Colors';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import {FontSize} from '../Constants/FontSize';
 import {ConstantKey} from '../Constants/ConstantKey';
 import ImageView from "react-native-image-viewing";
 import moment from 'moment';
+import Share from 'react-native-share';
+import ReactNativeBlobUtil from 'react-native-blob-util'
+
+const fs = ReactNativeBlobUtil.fs;
+
 
 const Details = props => {
   const {data} = props?.route?.params;
   const [visibleImg, setIsVisibleImg] = useState(false);
   console.log(data);
+
+
+  const btnShareTap = item => {
+    console.log(item);
+
+    ReactNativeBlobUtil.config({
+		fileCache: true,
+	  })
+		.fetch('GET', item.image_url)
+		// the image is now dowloaded to device's storage
+		.then((resp) => {
+		  // the image path you can use it directly with Image component
+		  imagePath = resp.path();
+		  return resp.readFile('base64');
+		})
+		.then((base64Data) => {
+		  // here's base64 encoded image
+		  var imageUrl = 'data:image/png;base64,' + base64Data;
+		  let shareImage = {
+        title: item?.name, //string
+        subject :  item?.name +"\n\n"+
+          item.description +"\n\n"+
+          item.link, //string
+        message:
+          item?.name +"\n\n"+
+          item.description +"\n\n"+
+          item.link, //string
+        
+        url: imageUrl,
+			// urls: [item.link], // eg.'http://img.gemejo.com/product/8c/099/cf53b3a6008136ef0882197d5f5.jpg',
+		  };
+
+		  console.log("shareImage : ",shareImage)
+		  Share.open(shareImage)
+			.then((res) => {
+			  console.log(res);
+			})
+			.catch((err) => {
+			  err && console.log(err);
+			});
+		  // remove the file from storage
+		  return fs.unlink(imagePath);
+		});
+
+  };
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -45,9 +98,30 @@ const Details = props => {
             fontSize: FontSize.FS_18,
             color: Colors.black,
             fontFamily: ConstantKey.MONTS_SEMIBOLD,
+            flex : 1
           }}>
           {'Details'}
         </Text>
+
+        <TouchableOpacity
+                          style={{paddingRight: 10}}
+                          onPress={() => {
+                            var dict = {
+                              name: data.name,
+                              image_url: data.image_url,
+                              description: data.description,
+                              link: data.link,
+                            };
+                            btnShareTap(dict);
+                          }}
+                          >
+                          {/* <FastImage style={{ width: 20, height: 20 }} source={Images} /> */}
+                          <MaterialCommunityIcons
+                            name="share-variant"
+                            color={Colors.primary}
+                            size={20}
+                          />
+                        </TouchableOpacity>
       </View>
 
       <ScrollView style={{}}>
@@ -107,9 +181,9 @@ const Details = props => {
                     
                     <Text style={[styles.descText,{textDecorationLine : 'underline', marginTop : 10}]}
                     onPress={() => {
-                        if(data?.event_link){
+                        if(data?.link){
 
-                        Linking.openURL(data?.event_link) 
+                        Linking.openURL(data?.link) 
                     }
                     }}>
                             {data?.link}

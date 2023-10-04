@@ -421,7 +421,7 @@ const AddEvent = (props) => {
 				<ScrollView style={{ flex: 1, marginVertical: 10, }} keyboardShouldPersistTaps='always'>
 					
 					<View style={{
-						marginHorizontal: 20, marginVertical: 20, borderRadius: 6, borderWidth: 1, borderColor: Colors.black,
+						marginHorizontal: 20, marginTop: 20, borderRadius: 6, borderWidth: 1, borderColor: Colors.black,
 						height: 200,
 					}}>
 						{EventImg == null ?
@@ -455,6 +455,11 @@ const AddEvent = (props) => {
 							</TouchableOpacity>
 						</View>
 					</View>
+
+					<Text style={{marginTop : 5,
+						marginHorizontal: 20,fontSize: FontSize.FS_10, color: Colors.grey, fontFamily: ConstantKey.MONTS_REGULAR, }}>
+							Prefered image size is 500px * 290px
+						</Text>
 
 					<View style={{ marginHorizontal: 20, }}>
 						<Text style={{ fontSize: FontSize.FS_14, color: Colors.black, fontFamily: ConstantKey.MONTS_MEDIUM, marginTop: 15 }}>

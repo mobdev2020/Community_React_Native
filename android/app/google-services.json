@@ -29,6 +29,13 @@
             {
               "client_id": "645599933113-ruqefrqdlcicqie695sder9op3ghp58i.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "645599933113-hc2n5nq6l8832uu9kqlcnda1fvmne9uk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.webtual.community"
+              }
             }
           ]
         }

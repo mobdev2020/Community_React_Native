@@ -233,7 +233,8 @@ const PersonalProfile = ({ navigation }) => {
                                 borderWidth: 1, borderRadius: (ConstantKey.SCREEN_WIDTH / 3) / 2, borderColor: Colors.primaryRed, alignSelf: 'center'
                             }}> */}
 
-                            <View style={{ width: 100, height: 100, borderRadius: 60, alignItems: "center", justifyContent: "center", marginVertical: 20 }}>
+                            <View style={{ width: 100, height: 100, borderRadius: 60, alignItems: "center", justifyContent: "center", 
+                                marginTop: 20 }}>
                                 <FastImage style={{ width: 96, height: 96, borderRadius: 60, }}
                                     source={{ uri: ProfileImg == null ? UserData?.user?.avatar_url :ProfileImg.path }}
                                 // resizeMode='contain'
@@ -242,12 +243,16 @@ const PersonalProfile = ({ navigation }) => {
                                     <MaterialCommunityIcons name={"pencil"} size={18} color={Colors.white} />
                                 </TouchableOpacity>
                             </View>
+                            <Text style={{marginTop : 5,
+						fontSize: FontSize.FS_10, color: Colors.grey, fontFamily: ConstantKey.MONTS_REGULAR, }}>
+							Prefered image size is 250px * 250px
+						</Text>
 
                             <Text style={{
                                 fontSize: FontSize.FS_14,
                                 color: Colors.black,
                                 fontFamily: ConstantKey.MONTS_MEDIUM,
-                                marginTop: 10,
+                                marginTop: 20,
                                 lineHeight: FontSize.FS_20,
                             }}>
                                 {"First Name"}

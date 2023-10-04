@@ -487,7 +487,7 @@ const Home = props => {
                     fontFamily: ConstantKey.MONTS_MEDIUM,
                     marginTop: 10,
                   }}>
-                  {item?.name}
+                  {item?.name} ({item?.business_count})
                 </Text>
               </View>
             )}

@@ -1,5 +1,5 @@
 import React, { Component, useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, ScrollView, Alert, FlatList, Modal, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, ScrollView, Alert, FlatList, Modal, StatusBar, Linking } from 'react-native';
 
 
 // Constants
@@ -38,6 +38,11 @@ const SearchScreen = ({ navigation, route }) => {
 
     const refRBSheet = useRef();
 
+        
+    const eventype = {
+        phone : 'phone',
+        email : 'email',
+    }
 
     useEffect(() => {
         console.log("route.params.isSearch ::", route.params.isSearch)
@@ -196,6 +201,18 @@ const SearchScreen = ({ navigation, route }) => {
             })
         }
     };
+
+
+    const btnPrimaryEventTap = (item, type) => {
+        if(type == eventype.phone){
+            Linking.openURL("tel://" + item.phone)
+        }else if(type == eventype?.email){
+            Linking.openURL("mailto:" + item?.email)
+        }else{
+
+        }
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar backgroundColor={Colors.white} barStyle={'dark-content'}/>
@@ -367,14 +384,16 @@ const SearchScreen = ({ navigation, route }) => {
 
                                     </View>
                                    
-                                    <View style={{ flexDirection: "row", alignItems: "center", marginTop : 10 }}>
+                                    <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", marginTop : 10 }}
+                                        onPress={() => btnPrimaryEventTap(item, eventype.phone)}>
                                         <MaterialCommunityIcons name={"phone"} size={18} color={Colors.black} style={{ marginRight: 5 }} />
                                         <Text style={[styles.calloutDescription,{marginTop : 0}]}>{item?.phone}</Text>
-                                    </View>
-                                    <View style={{ flexDirection: "row", alignItems: "center" ,marginTop : 10}}>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={{ flexDirection: "row", alignItems: "center" ,marginTop : 10}}
+                                        onPress={() => btnPrimaryEventTap(item, eventype.email)}>
                                         <MaterialCommunityIcons name={"email"} size={18} color={Colors.black} style={{ marginRight: 5 }} />
                                         <Text style={[styles.calloutDescription,{marginTop : 0}]}>{item?.email}</Text>
-                                    </View>
+                                    </TouchableOpacity>
                                     <View style={{ flexDirection: "row", alignItems: "center" ,marginTop : 10}}>
                                         {/* <MaterialCommunityIcons name={"map-marker-outline"} size={18} color={Colors.black} style={{ marginRight: 5 }} /> */}
                                         <Text style={[styles.calloutDescription,{marginTop : 0}]}>{item?.address}</Text>
