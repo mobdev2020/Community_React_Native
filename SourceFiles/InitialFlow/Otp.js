@@ -1,7 +1,7 @@
 // 
 //import liraries
 import React, { Component, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, Alert, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, Alert, StatusBar, Platform } from 'react-native';
 
 
 // Constants
@@ -159,7 +159,8 @@ const Otp = (props) => {
     const storeUserData = async (value) => {
         try {
             await AsyncStorage.setItem(ConstantKey.USER_DATA, value)
-            props.navigation.replace('Home')
+            // props.navigation.replace('Home')
+            props.navigation.replace('SelectSchool')
         } catch (e) {
             console.log("Error :", e)
         }

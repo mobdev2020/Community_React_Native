@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, ScrollView, Alert, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, ScrollView, Alert, StatusBar, Platform } from 'react-native';
 
 
 // Constants
@@ -19,6 +19,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import FastImage from 'react-native-fast-image';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ImagePicker from 'react-native-image-crop-picker';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedSchool } from '../Redux/reducers/userReducer';
+import { storeData } from '../commonComponents/AsyncManager';
 const PersonalProfile = ({ navigation }) => {
 
     const [isLoading, setIsLoading] = useState(false)
@@ -35,6 +38,9 @@ const PersonalProfile = ({ navigation }) => {
 
 	const [description, setDescription] = useState('')
 
+	const selectedSchoolData = useSelector(state => state.userRedux.school_data)
+
+    const dispatch = useDispatch()
 
     useEffect(() => {
         Api_Get_Profile(true)
@@ -46,12 +52,24 @@ const PersonalProfile = ({ navigation }) => {
 
     const Api_Get_Profile = (isLoad) => {
         setIsLoading(isLoad)
-        Webservice.get(APIURL.GetProfile)
+        Webservice.get(APIURL.GetProfile+"?school_user_id="+selectedSchoolData?.school_user_id)
             .then(response => {
                 setIsLoading(false)
-                console.log("Api_Get_Profile Response : " + JSON.stringify(response))
+                // console.log("Api_Get_Profile Response : " + JSON.stringify(response))
                 if (response.data.status == true) {
+
                     var data = response.data.data
+
+                console.log("Api_Get_Profile Response  personal profile : " + JSON.stringify(data))
+
+                    var selected_school = data?.user?.school_data
+
+					storeData(ConstantKey.SELECTED_SCHOOL_DATA,selected_school,() => {
+						dispatch(setSelectedSchool(selected_school))
+					})
+
+
+                   
                     setUserData(response.data.data)
                     setEmail(response.data.data.user.email)
                     setFirstName(response.data.data.user.first_name)
@@ -59,6 +77,9 @@ const PersonalProfile = ({ navigation }) => {
                     setPhoneNumber(response.data.data.user.phone)
                     setDescription(response.data.data.user.kids_information)
                     setUserData(response.data.data)
+
+
+					storeUserData(JSON.stringify(data))
                 } else {
                     alert(response.data.message)
                 }
@@ -83,6 +104,7 @@ const PersonalProfile = ({ navigation }) => {
                     type: ProfileImg.mime
                 });
         }
+        body.append('school_user_id', selectedSchoolData?.school_user_id)
         Webservice.post(APIURL.UpdateProfile,body)
             .then(response => {
                 setIsLoading(false)
@@ -99,7 +121,7 @@ const PersonalProfile = ({ navigation }) => {
                 console.log(error)
             })
     }
-    const storeData = async (value) => {
+    const storeUserData = async (value) => {
         try {
             await AsyncStorage.setItem(ConstantKey.USER_DATA, value)
         } catch (e) {

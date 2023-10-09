@@ -25,6 +25,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import ImageView from "react-native-image-viewing";
 import RBSheet from "react-native-raw-bottom-sheet";
+import { useSelector } from 'react-redux';
 
 
 const AddAds = (props) => {
@@ -42,6 +43,8 @@ const AddAds = (props) => {
 
     const [AdsImg, setAdsImg] = useState(null)
     const [visibleImg, setIsVisibleImg] = useState(false);
+
+  const selectedSchoolData = useSelector(state => state.userRedux.school_data)
 
 
     useEffect(() => {
@@ -80,8 +83,9 @@ const AddAds = (props) => {
                     type: AdsImg.mime
                 });
         }
+        body.append('school_user_id', selectedSchoolData?.school_user_id)
 
-
+        
         Webservice.post(APIURL.AddAds, body)
             .then(response => {
                 setIsLoading(false)

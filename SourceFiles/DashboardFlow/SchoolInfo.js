@@ -22,6 +22,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import { useFocusEffect } from '@react-navigation/native';
 import Pdf from 'react-native-pdf';
+import { useSelector } from 'react-redux';
 
 
 // create a component
@@ -31,6 +32,7 @@ const SchoolInfo = (props) => {
     const [SchoolInfo, setSchoolInfo] = useState(null)
     const [LoadPercent, setLoadPercent] = useState(0)
 
+	const selectedSchoolData = useSelector(state => state.userRedux.school_data)
 
 
     useFocusEffect(
@@ -44,7 +46,7 @@ const SchoolInfo = (props) => {
 
     const Api_Get_School_Info = (isLoad) => {
         setIsLoading(isLoad)
-        Webservice.get(APIURL.SchoolInfo)
+        Webservice.get(APIURL.SchoolInfo+"?school_user_id="+selectedSchoolData?.school_user_id)
             .then(response => {
                 setIsLoading(false)
                 // console.log(JSON.stringify("Api_Get_School_Info Response : " + JSON.stringify(response)));

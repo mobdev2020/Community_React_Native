@@ -24,6 +24,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import Pdf from 'react-native-pdf';
 import { CameraScreen, Camera } from 'react-native-camera-kit';
 import { navigate } from '../Constants/NavigationService';
+import { useSelector } from 'react-redux';
 
 // create a component
 const QrCode = (props) => {
@@ -31,6 +32,7 @@ const QrCode = (props) => {
     const [isLoading, setIsLoading] = useState(false)
     const [SchoolInfo, setSchoolInfo] = useState(null)
     const [opneScanner, setOpneScanner] = useState(false)
+	const selectedSchoolData = useSelector(state => state.userRedux.school_data)
 
 
     useEffect(() => {
@@ -52,7 +54,7 @@ const QrCode = (props) => {
 
     const Api_Get_School_Info = (isLoad) => {
         setIsLoading(isLoad)
-        Webservice.get(APIURL.SchoolInfo)
+        Webservice.get(APIURL.SchoolInfo+"?school_user_id="+selectedSchoolData?.school_user_id)
             .then(response => {
                 setIsLoading(false)
                 // console.log(JSON.stringify("Api_Get_School_Info Response : " + JSON.stringify(response)));

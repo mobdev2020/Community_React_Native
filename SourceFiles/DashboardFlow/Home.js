@@ -35,9 +35,15 @@ import FastImage from 'react-native-fast-image';
 import {navigate} from '../Constants/NavigationService';
 import Banner from '../commonComponents/BoxSlider/Banner';
 import CustomSlider from '../commonComponents/CustomSlider';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedSchool } from '../Redux/reducers/userReducer';
+import { storeData } from '../commonComponents/AsyncManager';
 
 // create a component
 const Home = props => {
+
+  const dispatch = useDispatch()
+
   const [isLoading, setIsLoading] = useState(false);
   const [CategoryData, setCategoryData] = useState(null);
   const [UserData, setUserData] = useState(null);
@@ -47,6 +53,8 @@ const Home = props => {
   const [BottomBannerData, setBottomBannerData] = useState([]);
 
   const [HomeData, setHomeData] = useState(null);
+
+  const selectedSchoolData = useSelector(state => state.userRedux.school_data)
 
   const handleLoading = value => {
     setIsLoading(value);
@@ -114,12 +122,23 @@ const Home = props => {
 
   const Api_Get_Profile = handleLoading => {
     handleLoading(true); // Set loading to true when starting the API call
-    Webservice.get(APIURL.GetProfile)
+    console.log("selectedSchoolData : ",selectedSchoolData)
+    Webservice.get(APIURL.GetProfile+"?school_user_id="+selectedSchoolData?.school_user_id)
       .then(response => {
         console.log("Api_Get_Profile Response : " + JSON.stringify(response))
         if (response.data.status == true) {
           var data = response.data.data;
-          storeData(JSON.stringify(data));
+
+          var selected_school = response?.data?.data?.user?.school_data
+
+					storeData(ConstantKey.SELECTED_SCHOOL_DATA,selected_school ,() => {
+						dispatch(setSelectedSchool(selected_school))
+					})
+
+
+          console.log("User Data : ",JSON.stringify(data))
+
+          storeUserData(JSON.stringify(data));
           setUserData(response.data.data);
         } else {
           alert(response.data.message);
@@ -135,7 +154,8 @@ const Home = props => {
 
   const Api_Get_Home_data = handleLoading => {
     handleLoading(true); // Set loading to true when starting the API call
-    Webservice.get(APIURL.getHomeData)
+    console.log("selectedSchoolData :=> ",JSON.stringify(selectedSchoolData))
+    Webservice.get(APIURL.getHomeData+"?school_user_id="+selectedSchoolData?.school_user_id)
       .then(response => {
         console.log('Api_Get_Home_data Response : ' + JSON.stringify(response));
         if (response.data.status == true) {
@@ -178,7 +198,7 @@ const Home = props => {
 
   const Api_Get_Ads = isLoad => {
     handleLoading(true); // Set loading to true when starting the API call
-    Webservice.get(APIURL.GetAds + '?page=1&home_slider=1')
+    Webservice.get(APIURL.GetAds + '?page=1&home_slider=1&school_user_id='+selectedSchoolData?.school_user_id)
       .then(response => {
         // console.log(JSON.stringify("Api_Get_Ads Response  : " + JSON.stringify(response)));
         if (response.data.status == true) {
@@ -204,7 +224,7 @@ const Home = props => {
   };
   const Api_Get_Banner = isLoad => {
     handleLoading(true);
-    Webservice.get(APIURL.GetNotice + '?page=1')
+    Webservice.get(APIURL.GetNotice + '?page=1&school_user_id='+selectedSchoolData?.school_user_id)
       .then(response => {
         // console.log(JSON.stringify("Api_Get_Banner Response : " + JSON.stringify(response)));
         if (response.data.status == true) {
@@ -223,7 +243,7 @@ const Home = props => {
   };
   const Api_Get_Category = isLoad => {
     handleLoading(true);
-    Webservice.get(APIURL.GetCategory, {
+    Webservice.get(APIURL.GetCategory+"?school_user_id="+selectedSchoolData?.school_user_id, {
       mobile_number: 9016089923,
     })
       .then(response => {
@@ -246,7 +266,7 @@ const Home = props => {
         handleLoading(false); // Set loading to false when the API call is completed (success or failure)
       });
   };
-  const storeData = async value => {
+  const storeUserData = async value => {
     try {
       await AsyncStorage.setItem(ConstantKey.USER_DATA, value);
     } catch (e) {
@@ -298,7 +318,7 @@ const Home = props => {
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <FastImage
               style={{width: 24, height: 24}}
-              source={UserData?.user?.school_data?.logo_url ? {uri : UserData?.user?.school_data?.logo_url} : Images.School_logo}
+              source={selectedSchoolData?.logo_url ? {uri : selectedSchoolData?.logo_url} : Images.School_logo}
             />
             <Text
               numberOfLines={1}
@@ -309,7 +329,7 @@ const Home = props => {
                 fontFamily: ConstantKey.MONTS_SEMIBOLD,
                 marginLeft: 5,
               }}>
-              {UserData?.user?.school_title}
+              {selectedSchoolData?.title}
             </Text>
           </View>
           <Text

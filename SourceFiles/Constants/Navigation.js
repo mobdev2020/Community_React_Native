@@ -45,6 +45,7 @@ import QrCode from '../DashboardFlow/QrCode';
 import WelcomeScreen from '../InitialFlow/WelcomeScreen';
 import Details from '../DashboardFlow/Details';
 import FlashMessage from 'react-native-flash-message';
+import SelectSchool from '../InitialFlow/SelectSchool';
 
 
 // Initial Flow 
@@ -62,6 +63,9 @@ function InitialFlow() {
 			<Stack.Screen name="AskBusinessProfile" component={AskBusinessProfile} options={{ headerShown: false }} />
 			<Stack.Screen name="QrCode" component={QrCode} options={{ headerShown: false }} />
 			<Stack.Screen name="WelcomeScreen" component={WelcomeScreen} options={{ headerShown: false }} />
+			<Stack.Screen name="SelectSchool" component={SelectSchool} options={{ headerShown: false }} />
+
+			
 		</Stack.Navigator>
 	)
 }

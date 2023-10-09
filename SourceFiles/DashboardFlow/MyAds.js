@@ -36,12 +36,19 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {navigate} from '../Constants/NavigationService';
 import moment from 'moment';
 import {useFocusEffect} from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedSchool } from '../Redux/reducers/userReducer';
+import { storeData } from '../commonComponents/AsyncManager';
 const MyAds = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [AdsCurrentPage, setAdsCurrentPage] = useState(1);
   const [AdsPaginationHide, setAdsPaginationHide] = useState(false);
   const [AdsData, setAdsData] = useState([]);
   const [Role, setRole] = useState('');
+
+	const selectedSchoolData = useSelector(state => state.userRedux.school_data)
+
+  const dispatch = useDispatch()
 
   useFocusEffect(
     useCallback(() => {
@@ -95,11 +102,22 @@ const MyAds = ({navigation}) => {
 
   const Api_Get_Profile = isLoad => {
     setIsLoading(isLoad);
-    Webservice.get(APIURL.GetProfile)
+    Webservice.get(APIURL.GetProfile+"?school_user_id="+selectedSchoolData?.school_user_id)
       .then(response => {
         setIsLoading(false);
         // console.log(JSON.stringify("Api_Get_Profile Response : " + JSON.stringify(response)));
         if (response.data.status == true) {
+
+          var selected_school = response?.data?.data?.user?.school_data
+
+					storeData(ConstantKey.SELECTED_SCHOOL_DATA,selected_school,() => {
+						dispatch(setSelectedSchool(selected_school))
+					})
+
+          var data = response.data.data;
+
+					storeData(ConstantKey.USER_DATA, data)
+
           var Role = response.data.data.role;
           setRole(Role);
         } else {
@@ -117,7 +135,7 @@ const MyAds = ({navigation}) => {
 
     try {
       const response = await Webservice.get(
-        APIURL.GetAds + '?page=' + AdsCurrentPage,
+        APIURL.GetAds + '?page=' + AdsCurrentPage+"&school_user_id="+selectedSchoolData?.school_user_id,
       );
       console.log(
         'Api_Get_Ads Response: ' + JSON.stringify(response.data.data),

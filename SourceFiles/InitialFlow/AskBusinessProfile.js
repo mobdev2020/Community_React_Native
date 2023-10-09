@@ -20,6 +20,7 @@ import messaging from '@react-native-firebase/messaging';
 import Toast from 'react-native-simple-toast';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector } from 'react-redux';
 
 
 // create a component
@@ -30,6 +31,10 @@ const AskBusinessProfile = (props) => {
     const [acceptTerms, setAcceptTerms] = useState(true)
     const [openPrivacy, setOpenPrivacy] = useState(false)
     const [FcmToken, setFcmToken] = useState("")
+
+	const selectedSchoolData = useSelector(state => state.userRedux.school_data)
+
+
     useEffect(() => {
         // console.log("props?.route?.params?.body?.parent_id",props?.route?.params?.body?.parent_id)
         getFCMToken()
@@ -75,6 +80,7 @@ const AskBusinessProfile = (props) => {
             device_type: Platform.OS == "android" ? 1 : 2,
             device_token: FcmToken,
             parent_id: props?.route?.params?.body?.parent_id,
+            school_user_id : selectedSchoolData?.school_user_id
         })
             .then(response => {
                 console.log("Register Response : ", response.data)

@@ -15,10 +15,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../Constants/Colors';
 import { APIURL } from '../Constants/APIURL';
 import { StatusBar } from 'react-native';
+import { storeData } from '../commonComponents/AsyncManager';
+import { setSelectedSchool } from '../Redux/reducers/userReducer';
+import { useDispatch } from 'react-redux';
 
 
 // create a component
 const Splash = ({navigation}) => {
+
+	const dispatch = useDispatch()
 
 	useEffect(() => {
 		LogBox.ignoreLogs(['Warning: ...']);
@@ -31,7 +36,17 @@ const Splash = ({navigation}) => {
 			if (value !== null && value !== "") {
 				var data = JSON.parse(value)
 				console.log("User Data: " + value)
-				navigation.replace('Home')
+
+				var selected_school = data?.user?.school_data
+
+				storeData(ConstantKey.SELECTED_SCHOOL_DATA,selected_school,() => {
+					dispatch(setSelectedSchool(selected_school))
+					navigation.replace('Home')
+				})
+
+				// return
+				// navigation.replace('Home')
+
 			}
 			else {
 				navigation.replace('Login')

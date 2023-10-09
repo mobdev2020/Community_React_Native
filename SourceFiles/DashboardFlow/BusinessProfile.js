@@ -20,6 +20,9 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import FastImage from 'react-native-fast-image';
 import { createNavigatorFactory } from '@react-navigation/native';
 import { SearchBar } from 'react-native-elements';
+import { useDispatch, useSelector } from 'react-redux';
+import { storeData } from '../commonComponents/AsyncManager';
+import { setSelectedSchool } from '../Redux/reducers/userReducer';
 
 
 const BusinessProfile = (props) => {
@@ -50,6 +53,9 @@ const BusinessProfile = (props) => {
 	const [txtSearchState, setTxtSearchState] = useState('')
 	const [filterState, setFilterState] = useState([])
 
+	const selectedSchoolData = useSelector(state => state.userRedux.school_data)
+
+	const dispatch = useDispatch()
 
 	const refRBSheet = useRef();
 	const CountrySheet = useRef();
@@ -106,11 +112,22 @@ const BusinessProfile = (props) => {
 	}
 	const Api_Get_Profile = (isLoad) => {
 		setIsLoading(isLoad)
-		Webservice.get(APIURL.GetProfile)
+		Webservice.get(APIURL.GetProfile+"?school_user_id="+selectedSchoolData?.school_user_id)
 			.then(response => {
 				setIsLoading(false)
 				console.log("Api_Get_Profile Response : " + JSON.stringify(response));
 				if (response.data.status == true) {
+
+					var data = response.data.data;
+
+					storeData(ConstantKey.USER_DATA, data)
+
+					var selected_school = response?.data?.data?.user?.school_data
+
+					storeData(ConstantKey.SELECTED_SCHOOL_DATA,selected_school,() => {
+						dispatch(setSelectedSchool(selected_school))
+					})
+
 					var business = response?.data?.data?.user?.business
 					if (business != null) {
 						setBusinessName(business?.business_name)
@@ -217,7 +234,7 @@ const BusinessProfile = (props) => {
 
 	const Api_Get_Category = (isLoad) => {
 		setIsLoading(isLoad)
-		Webservice.get(APIURL.GetCategory, {
+		Webservice.get(APIURL.GetCategory+"?school_user_id="+selectedSchoolData?.school_user_id, {
 			mobile_number: 9016089923
 		})
 			.then(response => {
@@ -262,6 +279,8 @@ const BusinessProfile = (props) => {
 		body.append('device_type', Platform.OS == "android" ? 1 : 2)
 		body.append('device_token', FcmToken)
 		body.append('parent_id', props?.route?.params?.body?.parent_id)
+		body.append('school_user_id', selectedSchoolData?.school_user_id)
+
 		Webservice.post(APIURL.register, body)
 			.then(response => {
 				console.log("Register Response : ", response.data)

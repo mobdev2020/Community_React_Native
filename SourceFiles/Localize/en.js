@@ -56,7 +56,7 @@ export default {
 	EnterAddress: "Enter Address",
 	PersonalProfile: "Personal Profile",
 	Search: "Search",
-
+	SelectSchool : "Select School",
 
 
 

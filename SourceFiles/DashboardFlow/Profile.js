@@ -21,6 +21,9 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import ImagePicker from 'react-native-image-crop-picker';
 import { navigate } from '../Constants/NavigationService';
 import { useFocusEffect } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedSchool } from '../Redux/reducers/userReducer';
+import { storeData } from '../commonComponents/AsyncManager';
 const Profile = ({ navigation }) => {
 
     const [isLoading, setIsLoading] = useState(false)
@@ -33,6 +36,9 @@ const Profile = ({ navigation }) => {
     const [Address, setAddress] = useState('')
     const [UserData, setUserData] = useState(null);
 
+	const selectedSchoolData = useSelector(state => state.userRedux.school_data)
+
+    const dispatch = useDispatch()
 
     useFocusEffect(
         useCallback(() => {
@@ -44,14 +50,25 @@ const Profile = ({ navigation }) => {
 
     const Api_Get_Profile = (isLoad) => {
         setIsLoading(isLoad)
-        Webservice.get(APIURL.GetProfile)
+        Webservice.get(APIURL.GetProfile+"?school_user_id="+selectedSchoolData?.school_user_id)
             .then(response => {
                 setIsLoading(false)
-                console.log(JSON.stringify("Api_Get_Profile Response : " + JSON.stringify(response)));
+                // console.log(JSON.stringify("Api_Get_Profile Response : " + JSON.stringify(response)));
                 if (response.data.status == true) {
+
                     var data = response.data.data
+
+                console.log(JSON.stringify("Api_Get_Profile Response profile : " + JSON.stringify(data)));
+
+                    var selected_school = data?.user?.school_data
+
+					storeData(ConstantKey.SELECTED_SCHOOL_DATA,selected_school,() => {
+						dispatch(setSelectedSchool(selected_school))
+					})
+
+                    
                     setUserData(response.data.data)
-                    storeData(data)
+                    storeUserData(data)
                 } else {
                     alert(response.data.message)
                 }
@@ -62,7 +79,7 @@ const Profile = ({ navigation }) => {
             })
     }
 
-    const storeData = async (value) => {
+    const storeUserData = async (value) => {
         try {
             await AsyncStorage.setItem(ConstantKey.USER_DATA,JSON.stringify(value))
         } catch (e) {

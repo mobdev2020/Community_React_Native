@@ -20,6 +20,7 @@ import messaging from '@react-native-firebase/messaging';
 import Toast from 'react-native-simple-toast';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector } from 'react-redux';
 
 
 // create a component
@@ -33,6 +34,10 @@ const Register = (props) => {
 	const [SchoolId, setSchoolId] = useState(props?.route?.params?.data?.user?.parent_id || '')
 	const [isEnabled, setIsEnabled] = useState(false);
 	const [FcmToken, setFcmToken] = useState("")
+
+	const selectedSchoolData = useSelector(state => state.userRedux.school_data)
+
+
 	useEffect(() => {
 		console.log("UserData from login :", props?.route?.params?.data)
 		getFCMToken()
@@ -133,7 +138,8 @@ const Register = (props) => {
 			device_type: Platform.OS == "android" ? 1 : 2,
 			device_token: FcmToken,
 			parent_id: SchoolId,
-			kids_information : description
+			kids_information : description,
+			school_user_id : selectedSchoolData?.school_user_id
 		})
 			.then(response => {
 				console.log("Register Response : ", response.data)

@@ -17,6 +17,7 @@ export const ConstantKey = {
 
     IS_SKIP_WELCOME : 'IS_SKIP_WELCOME',
     USER_DATA : 'USER_DATA',
+    SELECTED_SCHOOL_DATA : 'SELECTED_SCHOOL_DATA',
 
     MILKSHAKE : 'Milkshake',
     MONTS_BLACK: 'Poppins-Black',

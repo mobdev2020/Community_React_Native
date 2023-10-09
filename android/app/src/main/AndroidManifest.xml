@@ -15,7 +15,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
 
 
- <queries>
+    <queries>
         <!--for example, to share via instagram -->
         <package android:name="com.instagram.android" />
     </queries>

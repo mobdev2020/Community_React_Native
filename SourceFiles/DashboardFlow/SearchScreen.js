@@ -19,6 +19,7 @@ import FastImage from 'react-native-fast-image';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ImagePicker from 'react-native-image-crop-picker';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import { useSelector } from 'react-redux';
 
 
 let SearchEnable = false;
@@ -35,6 +36,9 @@ const SearchScreen = ({ navigation, route }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [clear, setClear] = useState(false);
     const [SelectedBusinessData, setSelectedBusinessData] = useState([])
+
+	const selectedSchoolData = useSelector(state => state.userRedux.school_data)
+
 
     const refRBSheet = useRef();
 
@@ -105,6 +109,7 @@ const SearchScreen = ({ navigation, route }) => {
 
         }
         body.append('page', CurrentPage)
+        body.append('school_user_id',selectedSchoolData?.school_user_id)
 
         console.log("Final Body :", body)
 
@@ -159,7 +164,7 @@ const SearchScreen = ({ navigation, route }) => {
     }
     const Api_Get_Category = (isLoad) => {
         setIsLoading(isLoad)
-        Webservice.get(APIURL.GetCategory, {
+        Webservice.get(APIURL.GetCategory+"?school_user_id="+selectedSchoolData?.school_user_id, {
             mobile_number: 9016089923
         })
             .then(response => {

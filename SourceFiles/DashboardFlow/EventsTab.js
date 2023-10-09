@@ -26,10 +26,12 @@ import {useFocusEffect} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import moment from 'moment';
 import Share from 'react-native-share';
-import ReactNativeBlobUtil from 'react-native-blob-util'
+import ReactNativeBlobUtil from 'react-native-blob-util';
+import { useDispatch, useSelector } from 'react-redux';
+import { storeData } from '../commonComponents/AsyncManager';
+import { setSelectedSchool } from '../Redux/reducers/userReducer';
 
 const fs = ReactNativeBlobUtil.fs;
-
 
 const EventsTab = props => {
   const [isLoading, setIsLoading] = useState(false);
@@ -44,6 +46,10 @@ const EventsTab = props => {
   const [TrainingCurrentPage, setTrainingCurrentPage] = useState(1);
   const [MeetingCurrentPage, setMeetingCurrentPage] = useState(1);
   const [Role, setRole] = useState('');
+
+	const selectedSchoolData = useSelector(state => state.userRedux.school_data)
+
+  const dispatch = useDispatch()
 
   useFocusEffect(
     useCallback(() => {
@@ -74,7 +80,7 @@ const EventsTab = props => {
 
     try {
       const response = await Webservice.get(
-        APIURL.GetEvents + '?page=' + EventCurrentPage,
+        APIURL.GetEvents + '?page=' + EventCurrentPage+"&school_user_id="+selectedSchoolData?.school_user_id,
       );
       console.log('Api_Get_Events Response: ' + JSON.stringify(response));
 
@@ -143,7 +149,7 @@ const EventsTab = props => {
 
     try {
       const response = await Webservice.get(
-        APIURL.GetTrainings + '?page=' + TrainingCurrentPage,
+        APIURL.GetTrainings + '?page=' + TrainingCurrentPage+"&school_user_id="+selectedSchoolData?.school_user_id,
       );
       console.log(
         'Api_Get_Training Response :',
@@ -177,7 +183,7 @@ const EventsTab = props => {
 
     try {
       const response = await Webservice.get(
-        APIURL.GetMeetings + '?page=' + MeetingCurrentPage,
+        APIURL.GetMeetings + '?page=' + MeetingCurrentPage+"&school_user_id="+selectedSchoolData?.school_user_id,
       );
       console.log(
         'Api_Get_Meeting Response: ' + JSON.stringify(response.data.data),
@@ -239,12 +245,24 @@ const EventsTab = props => {
   };
   const Api_Get_Profile = isLoad => {
     setIsLoading(isLoad);
-    Webservice.get(APIURL.GetProfile)
+    Webservice.get(APIURL.GetProfile+"?school_user_id="+selectedSchoolData?.school_user_id)
       .then(response => {
         setIsLoading(false);
         // console.log(JSON.stringify("Api_Get_Profile Response : " + JSON.stringify(response)));
         if (response.data.status == true) {
+
+          var data = response.data.data;
+
+					storeData(ConstantKey.USER_DATA, data)
+
           var Role = response.data.data.role;
+
+          var selected_school = response?.data?.data?.user?.school_data
+
+					storeData(ConstantKey.SELECTED_SCHOOL_DATA,selected_school,() => {
+						dispatch(setSelectedSchool(selected_school))
+					})
+
           setRole(Role);
         } else {
           alert(response.data.message);
@@ -309,44 +327,37 @@ const EventsTab = props => {
   const btnShareTap = item => {
     console.log(item);
 
-	ReactNativeBlobUtil.config({
-		fileCache: true,
-	  })
-		.fetch('GET', item.image_url)
-		// the image is now dowloaded to device's storage
-		.then((resp) => {
-		  // the image path you can use it directly with Image component
-		  imagePath = resp.path();
-		  return resp.readFile('base64');
-		})
-		.then((base64Data) => {
-		  // here's base64 encoded image
-		  var imageUrl = 'data:image/png;base64,' + base64Data;
-		  let shareImage = {
-			title: item?.name, //string
-			subject :  item?.name +"\n\n"+
-				item.description +"\n\n"+
-				item.link, //string
-			message:
-			  item?.name +"\n\n"+
-			  item.description +"\n\n"+
-			  item.link, //string
-			url: imageUrl,
-			// urls: [item.link], // eg.'http://img.gemejo.com/product/8c/099/cf53b3a6008136ef0882197d5f5.jpg',
-		  };
+    ReactNativeBlobUtil.config({
+      fileCache: true,
+    })
+      .fetch('GET', item.image_url)
+      // the image is now dowloaded to device's storage
+      .then(resp => {
+        // the image path you can use it directly with Image component
+        imagePath = resp.path();
+        return resp.readFile('base64');
+      })
+      .then(base64Data => {
+        // here's base64 encoded image
+        var imageUrl = 'data:image/png;base64,' + base64Data;
+        let shareImage = {
+          title: item?.name, //string
+          subject: item?.name + '\n\n' + item.description + '\n\n' + item.link, //string
+          message: item?.name + '\n\n' + item.description + '\n\n' + item.link, //string
+          url: imageUrl,
+        };
 
-		  console.log("shareImage : ",shareImage)
-		  Share.open(shareImage)
-			.then((res) => {
-			  console.log(res);
-			})
-			.catch((err) => {
-			  err && console.log(err);
-			});
-		  // remove the file from storage
-		  return fs.unlink(imagePath);
-		});
-
+        console.log('shareImage : ', shareImage);
+        Share.open(shareImage)
+          .then(res => {
+            console.log(res);
+          })
+          .catch(err => {
+            err && console.log(err);
+          });
+        // remove the file from storage
+        return fs.unlink(imagePath);
+      });
   };
 
   return (
@@ -724,8 +735,7 @@ const EventsTab = props => {
                               link: item.event_link,
                             };
                             btnShareTap(dict);
-                          }}
-                          >
+                          }}>
                           {/* <FastImage style={{ width: 20, height: 20 }} source={Images} /> */}
                           <Icon
                             name="share-variant"
@@ -915,33 +925,33 @@ const EventsTab = props => {
                       {item?.training_link}
                     </Text>
 
-					<View
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          justifyContent: 'flex-end',
-                          marginBottom: 5,
-                          marginVertical: 10,
-                        }}>
-                        <TouchableOpacity
-                          onPress={() => {
-                            var dict = {
-                              name: item.training_name,
-                              image_url: item.training_image_url,
-                              description: item.training_desc,
-                              link: item.training_link,
-                            };
-                            btnShareTap(dict);
-                          }}
-                          style={{paddingRight: 10}}>
-                          {/* <FastImage style={{ width: 20, height: 20 }} source={Images} /> */}
-                          <Icon
-                            name="share-variant"
-                            color={Colors.primary}
-                            size={20}
-                          />
-                        </TouchableOpacity>
-                      </View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'flex-end',
+                        marginBottom: 5,
+                        marginVertical: 10,
+                      }}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          var dict = {
+                            name: item.training_name,
+                            image_url: item.training_image_url,
+                            description: item.training_desc,
+                            link: item.training_link,
+                          };
+                          btnShareTap(dict);
+                        }}
+                        style={{paddingRight: 10}}>
+                        {/* <FastImage style={{ width: 20, height: 20 }} source={Images} /> */}
+                        <Icon
+                          name="share-variant"
+                          color={Colors.primary}
+                          size={20}
+                        />
+                      </TouchableOpacity>
+                    </View>
                   </View>
                 </TouchableOpacity>
               );
@@ -1143,7 +1153,7 @@ const EventsTab = props => {
                           />
                         </TouchableOpacity>
 
-						<TouchableOpacity
+                        <TouchableOpacity
                           style={{paddingRight: 10}}
                           onPress={() => {
                             var dict = {
@@ -1153,8 +1163,7 @@ const EventsTab = props => {
                               link: item.meeting_link,
                             };
                             btnShareTap(dict);
-                          }}
-                          >
+                          }}>
                           {/* <FastImage style={{ width: 20, height: 20 }} source={Images} /> */}
                           <Icon
                             name="share-variant"
@@ -1163,8 +1172,8 @@ const EventsTab = props => {
                           />
                         </TouchableOpacity>
                       </View>
-                    ) : 
-					<View
+                    ) : (
+                      <View
                         style={{
                           flexDirection: 'row',
                           alignItems: 'center',
@@ -1175,10 +1184,10 @@ const EventsTab = props => {
                         <TouchableOpacity
                           onPress={() => {
                             var dict = {
-								name: item.meeting_name,
-								image_url: item.meeting_image_url,
-								description: item.meeting_desc,
-								link: item.meeting_link,
+                              name: item.meeting_name,
+                              image_url: item.meeting_image_url,
+                              description: item.meeting_desc,
+                              link: item.meeting_link,
                             };
                             btnShareTap(dict);
                           }}
@@ -1191,7 +1200,7 @@ const EventsTab = props => {
                           />
                         </TouchableOpacity>
                       </View>
-					}
+                    )}
                   </View>
                 </TouchableOpacity>
               );

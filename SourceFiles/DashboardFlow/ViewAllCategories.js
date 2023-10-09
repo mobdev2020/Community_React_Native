@@ -26,12 +26,14 @@ import { StackActions } from '@react-navigation/native';
 import FastImage from 'react-native-fast-image';
 import { navigate } from '../Constants/NavigationService';
 import Banner from '../commonComponents/BoxSlider/Banner';
+import { useSelector } from 'react-redux';
 // create a component
 const ViewAllCategories = ({navigation}) => {
 
 
     const [isLoading, setIsLoading] = useState(true)
     const [CategoryData, setCategoryData] = useState(null)
+	const selectedSchoolData = useSelector(state => state.userRedux.school_data)
 
 
 	useEffect(() => {
@@ -42,7 +44,7 @@ const ViewAllCategories = ({navigation}) => {
 	}, [])
     const Api_Get_Category = (isLoad) => {
 		setIsLoading(isLoad)
-		Webservice.get(APIURL.GetCategory, {
+		Webservice.get(APIURL.GetCategory+"?school_user_id="+selectedSchoolData?.school_user_id, {
 			mobile_number: 9016089923
 		})
 			.then(response => {

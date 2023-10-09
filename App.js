@@ -148,6 +148,8 @@ import { Colors } from './SourceFiles/Constants/Colors';
 import { moderateScale } from 'react-native-size-matters';
 import { FontSize } from './SourceFiles/Constants/FontSize';
 import { DisplayMessage } from './SourceFiles/commonComponents/AlertManager';
+import { Provider } from 'react-redux';
+import store from './SourceFiles/Redux/store';
 
 
 const App = () => {
@@ -156,6 +158,8 @@ const App = () => {
 
 	const [SelectedImg, setSelectedImg] = useState(null)
 
+	LogBox.ignoreLogs(['Warning: ...']);
+	console.disableYellowBox = true;
 
 	useEffect(() => {
 		LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
@@ -388,6 +392,8 @@ const App = () => {
 
 	return (
 		<>
+		    <Provider store={store}>
+
 			<Navigation />
 			{SelectedImg != null ?
 				<ImageView
@@ -412,6 +418,7 @@ const App = () => {
 					}}
 				/>
 				: null}
+				</Provider>
 		</>
 
 	);
