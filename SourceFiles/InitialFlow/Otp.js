@@ -22,10 +22,15 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
+import { setSelectedSchool } from '../Redux/reducers/userReducer';
+import { useDispatch } from 'react-redux';
+import { storeData } from '../commonComponents/AsyncManager';
 
 
 // create a component
 const Otp = (props) => {
+
+    const dispatch = useDispatch()
 
     const [isLoading, setIsLoading] = useState(false)
     const [fcmToken, setFcmToken] = useState('')
@@ -136,7 +141,7 @@ const Otp = (props) => {
                         var userData = response.data?.data
 
                         if(userData.user?.is_created_profile == 1){
-                            storeUserData(JSON.stringify(userData))
+                            storeUserData(userData)
                         }
                         else{
                             props.navigation.navigate("WelcomeScreen", { data: userData})
@@ -158,9 +163,21 @@ const Otp = (props) => {
 
     const storeUserData = async (value) => {
         try {
-            await AsyncStorage.setItem(ConstantKey.USER_DATA, value)
-            // props.navigation.replace('Home')
-            props.navigation.replace('SelectSchool')
+            await AsyncStorage.setItem(ConstantKey.USER_DATA, JSON.stringify(value))
+            if(value?.role == 'member'){
+
+                props.navigation.replace('SelectSchool')
+
+              
+
+            }else{
+                var selected_school = value?.user?.school_data
+
+				storeData(ConstantKey.SELECTED_SCHOOL_DATA,selected_school,() => {
+					dispatch(setSelectedSchool(selected_school))
+                    props.navigation.replace('Home')
+				})
+            }
         } catch (e) {
             console.log("Error :", e)
         }

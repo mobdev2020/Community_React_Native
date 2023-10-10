@@ -176,7 +176,7 @@ const Home = props => {
           data?.categories.length && setCategoryData(data?.categories);
           data?.notice.length && setNoticeData(data?.notice);
 
-          var bottomArray = data?.bottom_banner?.map(item => {
+          var bottomArray = data?.bottom_sliders?.map(item => {
             return {
               ...item,
               image: item.image_url,
@@ -413,6 +413,7 @@ const Home = props => {
               />
             </TouchableOpacity>
 
+              {UserData?.role == 'school' ? 
             <TouchableOpacity
               onPress={() => {
                 props.navigation.navigate('Report');
@@ -422,6 +423,7 @@ const Home = props => {
                 source={Images.Suggestion}
               />
             </TouchableOpacity>
+            : null}
           </View>
         </View>
         <View style={{marginTop: 20}}>

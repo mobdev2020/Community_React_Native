@@ -127,6 +127,9 @@ const Register = (props) => {
 		const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 		return (regex.test(email))
 	}
+
+	console.log("selectedSchoolData : ",selectedSchoolData)
+
 	const Api_Register = (isLoad) => {
 		setIsLoading(isLoad)
 		Webservice.post(APIURL.register, {
@@ -139,7 +142,7 @@ const Register = (props) => {
 			device_token: FcmToken,
 			parent_id: SchoolId,
 			kids_information : description,
-			school_user_id : selectedSchoolData?.school_user_id
+			school_user_id : selectedSchoolData?.school_user_id ? selectedSchoolData?.school_user_id : ""
 		})
 			.then(response => {
 				console.log("Register Response : ", response.data)
