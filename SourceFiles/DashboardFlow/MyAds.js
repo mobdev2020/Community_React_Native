@@ -516,7 +516,7 @@ const MyAds = ({navigation}) => {
                                 color: Colors.black,
                                 fontFamily: ConstantKey.MONTS_REGULAR,
                               }}>
-                              {moment(item?.created_at).format('DD/MM/YY')}{' '}
+                              {moment(item?.created_at).format('DD-MM-YYYY')}{' '}
                             </Text>
                           </View>
                           {item?.url && (

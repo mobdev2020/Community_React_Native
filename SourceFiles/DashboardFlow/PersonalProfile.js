@@ -95,7 +95,10 @@ const PersonalProfile = ({ navigation }) => {
         body.append('first_name', FirstName)
         body.append('last_name', LastName)
         body.append('email', Email)
-        body.append('kids_information', description)
+        if(UserData?.role != 'school') {
+            body.append('kids_information', description)
+
+        }
         if (ProfileImg != null && ProfileImg.data != null) {
             body.append('avatar',
                 {
@@ -345,6 +348,8 @@ const PersonalProfile = ({ navigation }) => {
                                 />
                             </View>
 
+                            {UserData?.role == 'school' ? null :
+                            <>
                             <Text style={{
                                 fontSize: FontSize.FS_14,
                                 color: Colors.black,
@@ -371,6 +376,7 @@ const PersonalProfile = ({ navigation }) => {
 									onChangeText={(dec) => setDescription(dec)}
 								/>
 							</View>
+                            </>}
 
 
                             <TouchableOpacity style={styles.btnLogin}
