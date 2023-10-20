@@ -15,6 +15,7 @@ import {
   BackHandler,
   LogBox,
   StatusBar,
+  Dimensions,
 } from 'react-native';
 // Constants
 import i18n from '../Localize/i18n';
@@ -38,6 +39,9 @@ import CustomSlider from '../commonComponents/CustomSlider';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedSchool } from '../Redux/reducers/userReducer';
 import { storeData } from '../commonComponents/AsyncManager';
+import Carousel from 'react-native-banner-carousel';
+
+const { width, height } = Dimensions.get("window");
 
 // create a component
 const Home = props => {
@@ -53,6 +57,7 @@ const Home = props => {
   const [BottomBannerData, setBottomBannerData] = useState([]);
 
   const [HomeData, setHomeData] = useState(null);
+  const BannerWidth = Dimensions.get('window').width ;
 
   const selectedSchoolData = useSelector(state => state.userRedux.school_data)
 
@@ -303,6 +308,50 @@ const Home = props => {
     navigate('Details', {data: dict});
   };
 
+
+  const renderTopBanner = (item, index) => {
+
+    return(
+<>
+      {item?.image &&
+        <TouchableOpacity key={index} onPress={() => {
+          if(item?.video_url != null){
+            // props.navigation.navigate("VideoPlay")
+            navigate("VideoPlay",{url :item?.video_url })
+          }
+          else if(item?.url != null){
+            Linking.openURL(item?.url)
+
+          }
+        }} style={{ width: width -20,
+          height: height / 3.8,
+          backgroundColor: "white",
+          marginHorizontal: 10,
+          borderRadius: 6,}}>
+
+          {item?.video ? 
+            <View>
+                <FastImage style={[{width: width -20,
+    height: height / 3.8,}]} source={{ uri: item.image_url }} />
+
+                <View style={{position : 'absolute', top : 0, bottom : 0, right : 0, left : 0, backgroundColor : Colors.black03,
+                alignItems : 'center', justifyContent : 'center'}}>
+                    <Icon name="play-circle" size={50} color={Colors.white}/>
+                </View>
+            </View>
+          :
+          <FastImage style={{width: width -20,
+            height: height / 3.8,}} source={{ uri: item.image_url }} />
+
+          }
+
+        </TouchableOpacity>}
+    </>
+    )
+  }
+
+
+
   return (
     <SafeAreaView style={styles.container}>
             <StatusBar backgroundColor={Colors.white} barStyle={'dark-content'}/>
@@ -427,7 +476,46 @@ const Home = props => {
           </View>
         </View>
         <View style={{marginTop: 20}}>
-          <Banner data={AdsData} />
+
+        <View style={{flex : 1,marginHorizontal : 20}}></View>
+        <TouchableOpacity
+              onPress={() => {
+                navigate('AdsList',{ads_type: "top"});
+              }}
+              style={{
+                paddingHorizontal: 10,
+                paddingVertical: 5,
+                borderRadius: 50,
+                alignSelf : 'flex-end',
+                marginRight : 10,
+                marginBottom : 10,
+                backgroundColor: Colors.primaryLight,
+              }}>
+              <Text
+                style={{
+                  fontSize: FontSize.FS_10,
+                  color: Colors.primary,
+                  fontFamily: ConstantKey.MONTS_MEDIUM,
+                }}>
+                {'View All'}
+              </Text>
+            </TouchableOpacity>
+
+        <Carousel
+                pageIndicatorStyle={{ marginTop: 50, backgroundColor : Colors.primaryLight }}
+                // pageIndicatorStyle={{position:"absolute",top:20,left:0,right: 0,bottom:0}}
+                autoplay
+                autoplayTimeout={3000}
+                loop
+                index={0}
+                pageSize={BannerWidth}
+                activePageIndicatorStyle={{ backgroundColor: Colors.primary }}
+                
+
+            >
+                {AdsData.map((item, index) => renderTopBanner(item, index))}
+            </Carousel>
+          {/* <Banner data={AdsData} /> */}
         </View>
 
         <View
@@ -664,7 +752,45 @@ const Home = props => {
         </View>
         <CustomSlider data={NoticeData} />
         <View style={{marginTop: 20}}>
-          <Banner data={BottomBannerData} />
+              <View style={{flex : 1,marginHorizontal : 20}}></View>
+        <TouchableOpacity
+              onPress={() => {
+                navigate('AdsList',{ads_type: "bottom"});
+              }}
+              style={{
+                paddingHorizontal: 10,
+                paddingVertical: 5,
+                borderRadius: 50,
+                alignSelf : 'flex-end',
+                marginRight : 10,
+                marginBottom : 10,
+                backgroundColor: Colors.primaryLight,
+              }}>
+              <Text
+                style={{
+                  fontSize: FontSize.FS_10,
+                  color: Colors.primary,
+                  fontFamily: ConstantKey.MONTS_MEDIUM,
+                }}>
+                {'View All'}
+              </Text>
+            </TouchableOpacity>
+
+        <Carousel
+                pageIndicatorStyle={{ marginTop: 50, backgroundColor : Colors.primaryLight }}
+                // pageIndicatorStyle={{position:"absolute",top:20,left:0,right: 0,bottom:0}}
+                autoplay
+                autoplayTimeout={3000}
+                loop
+                index={0}
+                pageSize={BannerWidth}
+                activePageIndicatorStyle={{ backgroundColor: Colors.primary }}
+                
+
+            >
+                {BottomBannerData.map((item, index) => renderTopBanner(item, index))}
+            </Carousel>
+          {/* <Banner data={BottomBannerData} /> */}
         </View>
       </ScrollView>
 

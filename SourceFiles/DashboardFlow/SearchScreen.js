@@ -53,7 +53,7 @@ const SearchScreen = ({ navigation, route }) => {
 
         if (route.params.isSearch == false) {
             setSelectedBusinessData(route.params.category)
-            setSearchText(route.params.category?.name)
+            // setSearchText(route.params.category?.name)
             Api_Get_Business(true, route.params.category)
             Api_Get_Category(true)
 
@@ -80,7 +80,6 @@ const SearchScreen = ({ navigation, route }) => {
     }, [])
 
     useEffect(() => {
-        console.log("B")
         if (SearchText == "" && clear == true) {
             console.log("A")
 
@@ -92,6 +91,9 @@ const SearchScreen = ({ navigation, route }) => {
 
                 }
             })
+        }else{
+            Api_Get_Business(true)
+            Api_Get_Category(true)
         }
 
     }, [SearchText])
@@ -263,11 +265,13 @@ const SearchScreen = ({ navigation, route }) => {
                                 // onBlur={()=>handleBlur()}
                                 onChangeText={(txtname) => {
                                     {
+                                        SearchEnable = true
                                         setSearchText(txtname)
                                         setCurrentPage(1)
                                         console.log("txtname", txtname.length)
                                         if (txtname.length == 0) {
                                             console.log("if")
+                                            SearchEnable = false
                                             setSearchText("")
                                             setClear(true)
                                             // handleBlur(true)
@@ -441,9 +445,16 @@ const SearchScreen = ({ navigation, route }) => {
                                 // <View style={{ alignItems: "center" }}>
                                 <TouchableOpacity onPress={() => {
                                     refRBSheet.current.close()
-                                    setSelectedBusinessData(item)
-                                    setSearchText(item?.name)
-                                    Api_Get_Business(true, item)
+                                    if(SelectedBusinessData.id == item.id){
+                                        setSelectedBusinessData(null)
+                                        Api_Get_Business(true, null)
+                                    }else{
+                                        
+                                        setSelectedBusinessData(item)
+                                        // setSearchText(item?.name)
+                                        Api_Get_Business(true, item)
+                                    }
+                                   
                                 }}
                                     style={{
                                         padding: 15,
@@ -466,7 +477,7 @@ const SearchScreen = ({ navigation, route }) => {
                                         </Text>
                                     </View>
                                     <View style={{}}>
-                                        {SelectedBusinessData.id == item.id ?
+                                        {SelectedBusinessData?.id == item?.id ?
                                             <MaterialCommunityIcons name={"check"} size={18} color={Colors.primary} /> : null}
                                     </View>
                                 </TouchableOpacity>
