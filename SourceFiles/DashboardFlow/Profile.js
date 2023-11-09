@@ -462,10 +462,10 @@ const Profile = ({ navigation }) => {
                                                     <MaterialCommunityIcons name={"email"} size={18} color={Colors.darkGrey} style={{ marginRight: 10 }} />
                                                     <Text style={[styles.calloutDescription,{ marginTop: 0 }]}>{item?.email}</Text>
                                                 </View>}
-                                            {item?.address_line_one &&
+                                            {item?.address &&
                                                 <View style={{ flexDirection: "row", alignItems: "center",  marginTop: 5 }}>
                                                     <MaterialCommunityIcons name={"map-marker-outline"} size={18} color={Colors.darkGrey} style={{ marginRight: 10 }} />
-                                                    <Text style={[styles.calloutDescription,{ marginTop: 0 }]}>{item?.address_line_one}</Text>
+                                                    <Text style={[styles.calloutDescription,{ marginTop: 0 }]}>{item?.address}</Text>
                                                 </View>}
                                         </View>
                                         {/* </View> */}
@@ -473,10 +473,6 @@ const Profile = ({ navigation }) => {
                                 )
                             }}
                         />
-
-                        
-
-                            
                             </> }
                 </ScrollView>
             </View>
