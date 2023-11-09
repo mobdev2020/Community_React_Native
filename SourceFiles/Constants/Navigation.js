@@ -48,6 +48,7 @@ import FlashMessage from 'react-native-flash-message';
 import SelectSchool from '../InitialFlow/SelectSchool';
 import VideoPlay from '../DashboardFlow/VideoPlay';
 import AdsList from '../DashboardFlow/AdsList';
+import AddBusinessProfile from '../DashboardFlow/AddBusinessProfile';
 
 
 // Initial Flow 
@@ -178,6 +179,8 @@ function DashboardFlow() {
 			<Stack.Screen name="Details" component={Details} options={{ headerShown: false }} />
 			<Stack.Screen name="VideoPlay" component={VideoPlay} options={{ headerShown: false }} />
 			<Stack.Screen name="AdsList" component={AdsList} options={{ headerShown: false }} />
+
+			<Stack.Screen name="AddBusinessProfile" component={AddBusinessProfile} options={{ headerShown: false }} />
 
 		</Stack.Navigator>
 	)

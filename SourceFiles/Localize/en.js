@@ -38,6 +38,8 @@ export default {
 	aboutSchoolInfo: "About School Info",
 	CreateBusinesProfile: "Create Business Profile",
 	BusinesProfile: "Business Profile",
+	UpdateBusinesProfile: "Update Business Profile",
+
 	SaveProfile: "Save Profile",
 	BusinessName: "Business Name",
 	BusinessProfile: "Business Profile",
@@ -57,7 +59,7 @@ export default {
 	PersonalProfile: "Personal Profile",
 	Search: "Search",
 	SelectSchool : "Select School",
-
+	editProfile : "Edit Profile",
 
 
 

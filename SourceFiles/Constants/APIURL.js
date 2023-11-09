@@ -90,6 +90,9 @@ export const APIURL = {
 	getMeeting : "getMeeting",
 	addMeeting : "addMeeting",
 	editMeeting : "editMeeting",
-	deleteMeeting : "deleteMeeting"
-	
+	deleteMeeting : "deleteMeeting",
+
+	listBusinessProfile : "list-business-profile",
+	addBusinessProfile : "add-business-profile",
+	deleteBusinessProfile : "delete-business-profile"
 }

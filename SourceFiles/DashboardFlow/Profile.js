@@ -24,6 +24,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedSchool } from '../Redux/reducers/userReducer';
 import { storeData } from '../commonComponents/AsyncManager';
+import { FlatList } from 'react-native';
 const Profile = ({ navigation }) => {
 
     const [isLoading, setIsLoading] = useState(false)
@@ -36,6 +37,8 @@ const Profile = ({ navigation }) => {
     const [Address, setAddress] = useState('')
     const [UserData, setUserData] = useState(null);
 
+    const [BusinessList, setBusinessList] = useState([])
+
 	const selectedSchoolData = useSelector(state => state.userRedux.school_data)
 
     const dispatch = useDispatch()
@@ -43,6 +46,7 @@ const Profile = ({ navigation }) => {
     useFocusEffect(
         useCallback(() => {
             Api_Get_Profile(true)
+            Api_Get_BusinessProfile(true)
             return () => {
             }
         }, [])
@@ -78,6 +82,51 @@ const Profile = ({ navigation }) => {
                 console.log(error)
             })
     }
+
+
+    const Api_Get_BusinessProfile = (isLoad) => {
+        setIsLoading(isLoad)
+        Webservice.get(APIURL.listBusinessProfile)
+            .then(response => {
+                setIsLoading(false)
+                if (response.data.status == true) {
+
+                    var data = response.data?.data
+                    console.log("Api_Get_BusinessProfile Response : " + JSON.stringify(data));
+
+                    setBusinessList(data)
+
+                } else {
+                    alert(response.data.message)
+                }
+            })
+            .catch((error) => {
+                setIsLoading(false)
+                console.log(error)
+            })
+    }
+    		
+		const Api_Delete_BusinessProfile = (isLoad, data) => {
+			setIsLoading(isLoad)
+			Webservice.post(APIURL.deleteBusinessProfile,{
+				business_id : data?.id
+			})
+				.then(response => {
+					console.log("Api_Delete_BusinessProfile",JSON.stringify(response));
+					setIsLoading(false)
+					if (response.data.status == true) {
+						Toast.showWithGravity("Profile removed successfully", Toast.LONG, Toast.CENTER);
+						Api_Get_BusinessProfile(true)
+					} else {
+						Toast.showWithGravity(response.data.message, Toast.LONG, Toast.CENTER);
+					}
+				})
+				.catch((error) => {
+					setIsLoading(false)
+					console.log(error)
+				})
+		}
+
 
     const storeUserData = async (value) => {
         try {
@@ -220,129 +269,214 @@ const Profile = ({ navigation }) => {
                             </View>
                         </View>
                      
-                        <View style={{ marginHorizontal: 20, marginTop: 20, marginBottom: 5 }}>
+                        <View style={{ marginHorizontal: 20, marginTop: 20, marginBottom: 5, flexDirection : 'row', alignItems : 'center' }}>
                             <Text style={{
                                 fontSize: FontSize.FS_16,
                                 color: Colors.black,
+                                flex : 1,
                                 fontFamily: ConstantKey.MONTS_SEMIBOLD,
                             }}>
                                 {i18n.t('BusinessProfile')}
                             </Text>
-                        </View>
-                        {UserData?.user?.is_business_profile == 1 ?
-                            <View style={{
-                                borderRadius: 10,
-                                marginHorizontal: 20,
-                                padding: 15,
-                                marginVertical : 10,
-                                backgroundColor : Colors.white,
-                                shadowColor: "#000",
-								shadowOffset: {
-									width: 0,
-									height: 2,
-								},
-								shadowOpacity: 0.20,
-								shadowRadius: 4,
-								elevation: 5,
-                            }}>
-                                {UserData?.user?.business ? <TouchableOpacity onPress={() => {
-                                    navigate("BusinessProfile",{isFrom:"PROFILE"})
-                                }}
-                                    style={{
-                                        backgroundColor: Colors.primary,
-                                        alignSelf: "flex-end",
-                                        paddingVertical: 2,
-                                        paddingHorizontal: 20,
-                                        borderRadius: 15,
-                                    }}>
-                                    <Text style={{
-                                        fontSize: FontSize.FS_12,
-                                        fontFamily: ConstantKey.MONTS_REGULAR,
-                                        color: Colors.white
-                                    }}>{"Edit"}</Text>
-                                </TouchableOpacity> : null}
 
-                                <View style={{ flex: 1, backgroundColor: Colors.white }}>
-                                    {UserData?.user?.business?.business_name && <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                        <MaterialCommunityIcons name={"domain"} size={18} color={Colors.black} style={{ marginRight: 10 }} />
-                                        <Text style={[styles.calloutTitle, { marginTop: 0 }]}>{UserData?.user?.business?.business_name}</Text>
-                                    </View>}
-
-                                    {UserData?.user?.business?.category &&
-                                        <View style={{ flexDirection: "row", alignItems: "center",  marginTop: 5  }}>
-                                            <MaterialCommunityIcons name={"tag"} size={18} color={Colors.darkGrey} style={{ marginRight: 10 }} />
-                                            <Text style={[styles.calloutDescription, { marginTop: 0 }]}>{UserData?.user?.business?.category?.name}</Text>
-                                        </View>}
-                                    {UserData?.user?.business?.subcategory_name &&
-                                        <View style={{ flexDirection: "row", alignItems: "center",  marginTop: 5  }}>
-                                            <MaterialCommunityIcons name={"format-list-checkbox"} size={18} color={Colors.darkGrey} style={{ marginRight: 10 }} />
-                                            <Text style={[styles.calloutDescription, { marginTop: 0 }]}>{UserData?.user?.business?.subcategory_name}</Text>
-                                        </View>}
-                                    {UserData?.user?.business?.phone &&
-                                        <View style={{ flexDirection: "row", alignItems: "center",  marginTop: 5 }}>
-                                            <MaterialCommunityIcons name={"phone"} size={18} color={Colors.darkGrey} style={{ marginRight: 10 }} />
-                                            <Text style={[styles.calloutDescription,{ marginTop: 0 }]}>+91 {UserData?.user?.business?.phone}</Text>
-                                        </View>}
-                                    {UserData?.user?.business?.email &&
-                                        <View style={{ flexDirection: "row", alignItems: "center",  marginTop: 5 }}>
-                                            <MaterialCommunityIcons name={"email"} size={18} color={Colors.darkGrey} style={{ marginRight: 10 }} />
-                                            <Text style={[styles.calloutDescription,{ marginTop: 0 }]}>{UserData?.user?.business?.email}</Text>
-                                        </View>}
-                                    {UserData?.user?.business?.address_line_one &&
-                                        <View style={{ flexDirection: "row", alignItems: "center",  marginTop: 5 }}>
-                                            <MaterialCommunityIcons name={"map-marker-outline"} size={18} color={Colors.darkGrey} style={{ marginRight: 10 }} />
-                                            <Text style={[styles.calloutDescription,{ marginTop: 0 }]}>{UserData?.user?.business?.address_line_one}</Text>
-                                        </View>}
-                                </View>
-                                {/* </View> */}
-                            </View>
-                            :
-                            <View style={{
-                                borderRadius: 10,
-                                marginVertical : 10,
-                                marginHorizontal: 20,
-                                padding: 15,
-                                backgroundColor : Colors.white,
-                                shadowColor: "#000",
-								shadowOffset: {
-									width: 0,
-									height: 2,
-								},
-								shadowOpacity: 0.20,
-								shadowRadius: 4,
-								elevation: 5,
-                                alignItems: "center"
-
-                            }}>
-                                <Text style={{
-                                    fontSize: FontSize.FS_14,
-                                    color: Colors.black,
-                                    fontFamily: ConstantKey.MONTS_MEDIUM,
-                                    textAlign: "center"
+                            <TouchableOpacity onPress={() => {
+                                navigate("AddBusinessProfile",{business_data : null})
+                            }}
+                                style={{
+                                    borderColor: Colors.primary,
+                                    borderWidth : 1,
+                                    alignSelf: "flex-end",
+                                    paddingVertical: 2,
+                                    paddingHorizontal: 20,
+                                    borderRadius: 15,
                                 }}>
-                                    {"Want To Join \n Business Community ?"}
-                                </Text>
-                                <TouchableOpacity onPress={() => {
-                                    navigate("BusinessProfile", { isFrom:"PROFILE" })
-                                }}
-                                    style={{
-                                        borderRadius: 50,
-                                        marginTop: 20,
-                                        paddingVertical: 6,
-                                        paddingHorizontal: 30,
-                                        alignItems: "center",
-                                        backgroundColor: Colors.black
-                                    }}>
+                                <Text style={{
+                                    fontSize: FontSize.FS_12,
+                                    fontFamily: ConstantKey.MONTS_REGULAR,
+                                    color: Colors.primary
+                                }}>{"Add Business"}</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <FlatList 
+                            data={BusinessList}
+                            scrollEnabled={false}
+                            ListEmptyComponent={() => {return(
+                                <View style={{
+                                    borderRadius: 10,
+                                    marginVertical : 10,
+                                    marginHorizontal: 20,
+                                    padding: 15,
+                                    backgroundColor : Colors.white,
+                                    shadowColor: "#000",
+                                    shadowOffset: {
+                                        width: 0,
+                                        height: 2,
+                                    },
+                                    shadowOpacity: 0.20,
+                                    shadowRadius: 4,
+                                    elevation: 5,
+                                    alignItems: "center"
+    
+                                }}>
                                     <Text style={{
                                         fontSize: FontSize.FS_14,
-                                        color: Colors.white,
+                                        color: Colors.black,
                                         fontFamily: ConstantKey.MONTS_MEDIUM,
                                         textAlign: "center"
                                     }}>
-                                        {"Click Here"}
+                                        {"Want To Join \n Business Community ?"}
                                     </Text>
-                                </TouchableOpacity>
-                            </View>}
+                                    <TouchableOpacity onPress={() => {
+                                        // navigate("BusinessProfile", { isFrom:"PROFILE" })
+                                        navigate("AddBusinessProfile",{business_data : null})
+                                    }}
+                                        style={{
+                                            borderRadius: 50,
+                                            marginTop: 20,
+                                            paddingVertical: 6,
+                                            paddingHorizontal: 30,
+                                            alignItems: "center",
+                                            backgroundColor: Colors.black
+                                        }}>
+                                        <Text style={{
+                                            fontSize: FontSize.FS_14,
+                                            color: Colors.white,
+                                            fontFamily: ConstantKey.MONTS_MEDIUM,
+                                            textAlign: "center"
+                                        }}>
+                                            {"Click Here"}
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )}}
+                            renderItem={({item, index}) => {
+                                return(
+                                    <View style={{
+                                        borderRadius: 10,
+                                        marginHorizontal: 20,
+                                        padding: 15,
+                                        marginVertical : 10,
+                                        backgroundColor : Colors.white,
+                                        shadowColor: "#000",
+                                        shadowOffset: {
+                                            width: 0,
+                                            height: 2,
+                                        },
+                                        shadowOpacity: 0.20,
+                                        shadowRadius: 4,
+                                        elevation: 5,
+                                    }}>
+
+                                        <View style={{flexDirection : 'row', alignSelf : 'flex-end'}}>
+                                        <TouchableOpacity onPress={() => {
+                                            // navigate("BusinessProfile",{isFrom:"PROFILE"})
+                                            navigate("AddBusinessProfile",{business_data : JSON.stringify(item)})
+                                        }}
+                                            style={{
+                                                // backgroundColor: Colors.primary,
+                                                alignSelf: "flex-end",
+                                                paddingVertical: 2,
+                                                paddingHorizontal: 10,
+                                                borderRadius: 15,
+                                            }}>
+                                                <Icon name='edit' size={20} color={Colors.primary}/>
+                                            {/* <Text style={{
+                                                fontSize: FontSize.FS_12,
+                                                fontFamily: ConstantKey.MONTS_REGULAR,
+                                                color: Colors.white
+                                            }}>{"Edit"}</Text> */}
+                                        </TouchableOpacity>
+
+                                        <TouchableOpacity onPress={() => {
+                                            Alert.alert("Alert", "Are you sure you want to delete this profile?", [
+                                                {
+                                                    text: 'Cancel',
+                                                    style: "cancel",
+                                                    onPress: () => {
+                                                    }
+                                                },
+                                                {
+                                                    text: 'Yes',
+                                                    onPress: () => {
+                                                        Api_Delete_BusinessProfile(true, item)
+                                                    }
+                                                }
+                                            ], { cancelable: true })
+                                        }}
+                                            style={{
+                                                // backgroundColor: Colors.primary,
+                                                alignSelf: "flex-end",
+                                                paddingVertical: 2,
+                                                paddingHorizontal: 10,
+                                                borderRadius: 15,
+                                            }}>
+                                                <Icon name='trash-alt' size={20} color={Colors.primaryRed}/>
+                                            {/* <Text style={{
+                                                fontSize: FontSize.FS_12,
+                                                fontFamily: ConstantKey.MONTS_REGULAR,
+                                                color: Colors.white
+                                            }}>{"Edit"}</Text> */}
+                                        </TouchableOpacity>
+                                        </View>
+                                        {/* {UserData?.user?.business ? <TouchableOpacity onPress={() => {
+                                            navigate("BusinessProfile",{isFrom:"PROFILE"})
+                                        }}
+                                            style={{
+                                                backgroundColor: Colors.primary,
+                                                alignSelf: "flex-end",
+                                                paddingVertical: 2,
+                                                paddingHorizontal: 20,
+                                                borderRadius: 15,
+                                            }}>
+                                            <Text style={{
+                                                fontSize: FontSize.FS_12,
+                                                fontFamily: ConstantKey.MONTS_REGULAR,
+                                                color: Colors.white
+                                            }}>{"Edit"}</Text>
+                                        </TouchableOpacity> : null} */}
+        
+                                        <View style={{ flex: 1, backgroundColor: Colors.white }}>
+                                            {item?.business_name && <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                                <MaterialCommunityIcons name={"domain"} size={18} color={Colors.black} style={{ marginRight: 10 }} />
+                                                <Text style={[styles.calloutTitle, { marginTop: 0 }]}>{item?.business_name}</Text>
+                                            </View>}
+        
+                                            {item?.category &&
+                                                <View style={{ flexDirection: "row", alignItems: "center",  marginTop: 5  }}>
+                                                    <MaterialCommunityIcons name={"tag"} size={18} color={Colors.darkGrey} style={{ marginRight: 10 }} />
+                                                    <Text style={[styles.calloutDescription, { marginTop: 0 }]}>{item?.category?.name}</Text>
+                                                </View>}
+                                            {item?.subcategory_name &&
+                                                <View style={{ flexDirection: "row", alignItems: "center",  marginTop: 5  }}>
+                                                    <MaterialCommunityIcons name={"format-list-checkbox"} size={18} color={Colors.darkGrey} style={{ marginRight: 10 }} />
+                                                    <Text style={[styles.calloutDescription, { marginTop: 0 }]}>{item?.subcategory_name}</Text>
+                                                </View>}
+                                            {item?.phone &&
+                                                <View style={{ flexDirection: "row", alignItems: "center",  marginTop: 5 }}>
+                                                    <MaterialCommunityIcons name={"phone"} size={18} color={Colors.darkGrey} style={{ marginRight: 10 }} />
+                                                    <Text style={[styles.calloutDescription,{ marginTop: 0 }]}>+91 {item?.phone}</Text>
+                                                </View>}
+                                            {item?.email &&
+                                                <View style={{ flexDirection: "row", alignItems: "center",  marginTop: 5 }}>
+                                                    <MaterialCommunityIcons name={"email"} size={18} color={Colors.darkGrey} style={{ marginRight: 10 }} />
+                                                    <Text style={[styles.calloutDescription,{ marginTop: 0 }]}>{item?.email}</Text>
+                                                </View>}
+                                            {item?.address_line_one &&
+                                                <View style={{ flexDirection: "row", alignItems: "center",  marginTop: 5 }}>
+                                                    <MaterialCommunityIcons name={"map-marker-outline"} size={18} color={Colors.darkGrey} style={{ marginRight: 10 }} />
+                                                    <Text style={[styles.calloutDescription,{ marginTop: 0 }]}>{item?.address_line_one}</Text>
+                                                </View>}
+                                        </View>
+                                        {/* </View> */}
+                                    </View> 
+                                )
+                            }}
+                        />
+
+                        
+
+                            
                             </> }
                 </ScrollView>
             </View>
@@ -375,3 +509,120 @@ const styles = StyleSheet.create({
     },
 });
 export default Profile
+
+
+
+// {UserData?.user?.is_business_profile == 1 ?
+//     <View style={{
+//         borderRadius: 10,
+//         marginHorizontal: 20,
+//         padding: 15,
+//         marginVertical : 10,
+//         backgroundColor : Colors.white,
+//         shadowColor: "#000",
+//         shadowOffset: {
+//             width: 0,
+//             height: 2,
+//         },
+//         shadowOpacity: 0.20,
+//         shadowRadius: 4,
+//         elevation: 5,
+//     }}>
+//         {UserData?.user?.business ? <TouchableOpacity onPress={() => {
+//             navigate("BusinessProfile",{isFrom:"PROFILE"})
+//         }}
+//             style={{
+//                 backgroundColor: Colors.primary,
+//                 alignSelf: "flex-end",
+//                 paddingVertical: 2,
+//                 paddingHorizontal: 20,
+//                 borderRadius: 15,
+//             }}>
+//             <Text style={{
+//                 fontSize: FontSize.FS_12,
+//                 fontFamily: ConstantKey.MONTS_REGULAR,
+//                 color: Colors.white
+//             }}>{"Edit"}</Text>
+//         </TouchableOpacity> : null}
+
+//         <View style={{ flex: 1, backgroundColor: Colors.white }}>
+//             {UserData?.user?.business?.business_name && <View style={{ flexDirection: "row", alignItems: "center" }}>
+//                 <MaterialCommunityIcons name={"domain"} size={18} color={Colors.black} style={{ marginRight: 10 }} />
+//                 <Text style={[styles.calloutTitle, { marginTop: 0 }]}>{UserData?.user?.business?.business_name}</Text>
+//             </View>}
+
+//             {UserData?.user?.business?.category &&
+//                 <View style={{ flexDirection: "row", alignItems: "center",  marginTop: 5  }}>
+//                     <MaterialCommunityIcons name={"tag"} size={18} color={Colors.darkGrey} style={{ marginRight: 10 }} />
+//                     <Text style={[styles.calloutDescription, { marginTop: 0 }]}>{UserData?.user?.business?.category?.name}</Text>
+//                 </View>}
+//             {UserData?.user?.business?.subcategory_name &&
+//                 <View style={{ flexDirection: "row", alignItems: "center",  marginTop: 5  }}>
+//                     <MaterialCommunityIcons name={"format-list-checkbox"} size={18} color={Colors.darkGrey} style={{ marginRight: 10 }} />
+//                     <Text style={[styles.calloutDescription, { marginTop: 0 }]}>{UserData?.user?.business?.subcategory_name}</Text>
+//                 </View>}
+//             {UserData?.user?.business?.phone &&
+//                 <View style={{ flexDirection: "row", alignItems: "center",  marginTop: 5 }}>
+//                     <MaterialCommunityIcons name={"phone"} size={18} color={Colors.darkGrey} style={{ marginRight: 10 }} />
+//                     <Text style={[styles.calloutDescription,{ marginTop: 0 }]}>+91 {UserData?.user?.business?.phone}</Text>
+//                 </View>}
+//             {UserData?.user?.business?.email &&
+//                 <View style={{ flexDirection: "row", alignItems: "center",  marginTop: 5 }}>
+//                     <MaterialCommunityIcons name={"email"} size={18} color={Colors.darkGrey} style={{ marginRight: 10 }} />
+//                     <Text style={[styles.calloutDescription,{ marginTop: 0 }]}>{UserData?.user?.business?.email}</Text>
+//                 </View>}
+//             {UserData?.user?.business?.address_line_one &&
+//                 <View style={{ flexDirection: "row", alignItems: "center",  marginTop: 5 }}>
+//                     <MaterialCommunityIcons name={"map-marker-outline"} size={18} color={Colors.darkGrey} style={{ marginRight: 10 }} />
+//                     <Text style={[styles.calloutDescription,{ marginTop: 0 }]}>{UserData?.user?.business?.address_line_one}</Text>
+//                 </View>}
+//         </View>
+//         {/* </View> */}
+//     </View>
+//     :
+//     <View style={{
+//         borderRadius: 10,
+//         marginVertical : 10,
+//         marginHorizontal: 20,
+//         padding: 15,
+//         backgroundColor : Colors.white,
+//         shadowColor: "#000",
+//         shadowOffset: {
+//             width: 0,
+//             height: 2,
+//         },
+//         shadowOpacity: 0.20,
+//         shadowRadius: 4,
+//         elevation: 5,
+//         alignItems: "center"
+
+//     }}>
+//         <Text style={{
+//             fontSize: FontSize.FS_14,
+//             color: Colors.black,
+//             fontFamily: ConstantKey.MONTS_MEDIUM,
+//             textAlign: "center"
+//         }}>
+//             {"Want To Join \n Business Community ?"}
+//         </Text>
+//         <TouchableOpacity onPress={() => {
+//             navigate("BusinessProfile", { isFrom:"PROFILE" })
+//         }}
+//             style={{
+//                 borderRadius: 50,
+//                 marginTop: 20,
+//                 paddingVertical: 6,
+//                 paddingHorizontal: 30,
+//                 alignItems: "center",
+//                 backgroundColor: Colors.black
+//             }}>
+//             <Text style={{
+//                 fontSize: FontSize.FS_14,
+//                 color: Colors.white,
+//                 fontFamily: ConstantKey.MONTS_MEDIUM,
+//                 textAlign: "center"
+//             }}>
+//                 {"Click Here"}
+//             </Text>
+//         </TouchableOpacity>
+//     </View>}
