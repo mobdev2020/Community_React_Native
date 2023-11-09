@@ -45,7 +45,7 @@ const Otp = (props) => {
     useEffect(() => {
         getFCMToken()
         Api_Send_Otp(true)
-
+        setOtpCode('')
         return () => setOtpCode('')
     }, [])
 
@@ -173,8 +173,8 @@ const Otp = (props) => {
             }else{
                 var selected_school = value?.user?.school_data
 
-				storeData(ConstantKey.SELECTED_SCHOOL_DATA,selected_school,() => {
-					dispatch(setSelectedSchool(selected_school))
+				storeData(ConstantKey.SELECTED_SCHOOL_DATA,selected_school[0],() => {
+					dispatch(setSelectedSchool(selected_school[0]))
                     props.navigation.replace('Home')
 				})
             }
@@ -254,8 +254,9 @@ const Otp = (props) => {
 
                             style={{ height: 50 }}
                             pinCount={6}
+                            code={otpCode}
                             // code={otpCode} //You can supply this prop or not. The component will be used as a controlled / uncontrolled component respectively.
-                            // onCodeChanged={code => { setOtpCode(code) }}
+                            onCodeChanged={code => { setOtpCode(code) }}
                             autoFocusOnLoad={false}
                             codeInputFieldStyle={styles.borderStyleBase}
                             codeInputHighlightStyle={styles.borderStyleHighLighted}

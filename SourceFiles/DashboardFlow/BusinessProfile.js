@@ -38,7 +38,13 @@ const BusinessProfile = (props) => {
 	const [Address, setAddress] = useState('')
 	const [FcmToken, setFcmToken] = useState("")
 	const [UserData, setUserData] = useState(null);
+
+	const [txtSearchCity, setTxtSearchCity] = useState('')
+	const [CityId, setCityId] = useState("");
+	const [CityData, setCityData] = useState([])
 	const [City, setCity] = useState("");
+	const [filterCity, setFilterCity] = useState([])
+
 	const [Pincode, setPincode] = useState("");
 	const [CoutryId, setCountryId] = useState("");
 	const [Country, setCountry] = useState("");
@@ -55,20 +61,25 @@ const BusinessProfile = (props) => {
 
 	const selectedSchoolData = useSelector(state => state.userRedux.school_data)
 
+	const[for_business_page, setForBusinessPage] = useState(0)
+
 	const dispatch = useDispatch()
 
 	const refRBSheet = useRef();
 	const CountrySheet = useRef();
 	const StateSheet = useRef();
+	const CitySheet = useRef();
 
 	useEffect(() => {
+		if (props?.route?.params?.isFrom == "PROFILE") {
+			Api_Get_Profile(true)
+			setForBusinessPage(1)
+		}
 		getFCMToken()
 		Api_Get_Category(true)
 		Api_Get_Country(true)
-		console.log("props?.route?.params", props?.route?.params?.body)
-		if (props?.route?.params?.isFrom == "PROFILE") {
-			Api_Get_Profile(true)
-		}
+		console.log("props?.route?.params", props?.route?.params)
+		
 	}, [])
 
 
@@ -101,6 +112,7 @@ const BusinessProfile = (props) => {
 					var stateData = response?.data?.data
 					setStateData(stateData)
 					setFilterState(stateData)
+
 				} else {
 					alert(response.data.message)
 				}
@@ -110,6 +122,28 @@ const BusinessProfile = (props) => {
 				console.log(error)
 			})
 	}
+
+
+	const Api_Get_City = (isLoad, item) => {
+		setIsLoading(isLoad)
+		Webservice.get(APIURL.GetCity + "?state_id=" + item.id)
+			.then(response => {
+				setIsLoading(false)
+				console.log(JSON.stringify("Api_Get_City Response : " + JSON.stringify(response)));
+				if (response.data.status == true) {
+					var cityData = response?.data?.data
+					setCityData(cityData)
+					setFilterCity(cityData)
+				} else {
+					alert(response.data.message)
+				}
+			})
+			.catch((error) => {
+				setIsLoading(false)
+				console.log(error)
+			})
+	}
+
 	const Api_Get_Profile = (isLoad) => {
 		setIsLoading(isLoad)
 		Webservice.get(APIURL.GetProfile+"?school_user_id="+selectedSchoolData?.school_user_id)
@@ -136,7 +170,7 @@ const BusinessProfile = (props) => {
 						setBusinessPhone(business?.phone)
 						setBusinessEmail(business?.email)
 						setAddress(business?.address)
-						setCity(business?.city)
+						setCity(business?.city ? business?.city : '')
 						setPincode(business?.pincode)
 
 						if(business?.country != null){
@@ -145,10 +179,17 @@ const BusinessProfile = (props) => {
 							var item = {id : business?.country.id, name : business?.country?.name}
 							Api_Get_State(true, item)
 						}
+
+
+						if(business?.state != null){
+							setState(business?.state.name)
+							setStateId(business?.state?.id)
+							var item = {id : business?.state.id, name : business?.state?.name}
+							Api_Get_City(true, item)
+						}
 						
 
-						setState(business?.state.name)
-						setStateId(business?.state?.id)
+						
 					}
 
 				} else {
@@ -230,15 +271,14 @@ const BusinessProfile = (props) => {
 			})
 	}
 
-
-
 	const Api_Get_Category = (isLoad) => {
 		setIsLoading(isLoad)
-		Webservice.get(APIURL.GetCategory+"?school_user_id="+selectedSchoolData?.school_user_id, {
-			mobile_number: 9016089923
+		var businessPage =  props?.route?.params?.isFrom == "PROFILE" ? "1" : "0"
+		Webservice.get(APIURL.GetCategory+"?school_user_id="+selectedSchoolData?.school_user_id+"&for_business_page="+businessPage, {
+			mobile_number: 9016089923,
 		})
 			.then(response => {
-				console.log("Get Category Response : ", response.data)
+				console.log("Get Category Response : ", response)
 
 				if (response.data.status == true) {
 					setCategoryData(response.data.data)
@@ -427,6 +467,41 @@ const BusinessProfile = (props) => {
 		setTxtSearchState(search)
 	}
 
+
+	const onSearchCity = (search) => {
+
+		let text = search.toLowerCase()
+		let ServiceData = CityData
+
+		let filteredName = ServiceData.filter((item) => {
+
+			let name = item.name != null ? String(item.name).toLowerCase().match(text) : ''
+			
+			return name
+		})
+
+		console.log(filteredName.length)
+		if (!text || text === '') {
+
+			console.log("Text empty")
+			setFilterCity(StateData)
+		} 
+		else if(filteredName.length == 0){
+			setFilterCity([])
+		}
+		else if (!Array.isArray(filteredName) && filteredName.length) {
+			// set no data flag to true so as to render flatlist conditionally
+			setFilterCity([])
+
+		} 
+		else if (Array.isArray(filteredName)) {
+
+			setFilterCity(filteredName)
+		}
+
+		setTxtSearchCity(search)
+	}
+
 	return (
 		<SafeAreaView style={styles.container}>
             <StatusBar backgroundColor={Colors.white} barStyle={'dark-content'}/>
@@ -553,38 +628,9 @@ const BusinessProfile = (props) => {
 									onChangeText={(txt) => setBusinessEmail(txt)}
 								/>
 							</View>
-							<Text style={{
-								fontSize: FontSize.FS_18,
-								color: Colors.black,
-								fontFamily: ConstantKey.MONTS_SEMIBOLD,
-								marginTop: 30,
-							}}>
-								{i18n.t('AddressInfo')}
-							</Text>
-							<Text style={{
-								fontSize: FontSize.FS_14,
-								color: Colors.black,
-								fontFamily: ConstantKey.MONTS_MEDIUM,
-								marginTop: 30,
-								lineHeight: FontSize.FS_20,
-							}}>
-								{i18n.t('Address')}
-							</Text>
-							{/* <View style={styles.mobileView}> */}
-							<TextInput style={{
-								height: 70, fontSize: FontSize.FS_14, fontFamily: ConstantKey.MONTS_REGULAR,
-								color: Colors.dimGray, flex: 1, marginTop: 10, backgroundColor: Colors.lightGrey01, borderRadius: 6, paddingHorizontal: 10
-
-							}}
-								multiline={true}
-								value={Address}
-								autoCapitalize={'none'}
-								placeholder={i18n.t('EnterAddress')}
-								returnKeyType={'done'}
-								onChangeText={(txt) => setAddress(txt)}
-							/>
+							
 							{/* </View> */}
-							<Text style={{
+							{/* <Text style={{
 								fontSize: FontSize.FS_14,
 								color: Colors.black,
 								fontFamily: ConstantKey.MONTS_MEDIUM,
@@ -601,25 +647,7 @@ const BusinessProfile = (props) => {
 									returnKeyType={'next'}
 									onChangeText={(txt) => setCity(txt.replace(/[^A-Za-z\s]/ig, ''))}
 								/>
-							</View>
-							<Text style={{
-								fontSize: FontSize.FS_14,
-								color: Colors.black,
-								fontFamily: ConstantKey.MONTS_MEDIUM,
-								marginTop: 10,
-								lineHeight: FontSize.FS_20,
-							}}>
-								{"Pincode"}
-							</Text>
-							<View style={styles.mobileView}>
-								<TextInput style={styles.textInputMobile}
-									value={Pincode}
-									placeholder={"Enter Pincode"}
-									keyboardType={'number-pad'}
-									returnKeyType={'next'}
-									onChangeText={(txt) => setPincode(txt)}
-								/>
-							</View>
+							</View> */}
 							<Text style={{
 								fontSize: FontSize.FS_14,
 								color: Colors.black,
@@ -678,6 +706,91 @@ const BusinessProfile = (props) => {
 									<Icon name={"chevron-down"} size={14} color={Colors.lightGrey} />
 								</View>
 							</TouchableOpacity>
+
+							<Text style={{
+								fontSize: FontSize.FS_14,
+								color: Colors.black,
+								fontFamily: ConstantKey.MONTS_MEDIUM,
+								marginTop: 10,
+								lineHeight: FontSize.FS_20,
+							}}>
+								{"Select City"}
+							</Text>
+							<TouchableOpacity onPress={() => {
+								if (StateId == "") {
+									alert("Please select State")
+								}
+								else {
+									CitySheet.current.open()
+								}
+							}
+							}
+								style={styles.mobileView}>
+								<View style={[styles.textInputMobile, { flexDirection: "row", alignItems: "center", justifyContent: "space-between" }]}
+
+								>
+									<Text style={{
+										fontSize: FontSize.FS_14,
+										color: City == "" ? Colors.lightGrey : Colors.dimGray,
+										fontFamily: ConstantKey.MONTS_REGULAR,
+										// marginTop:15
+									}}>
+										{City == "" ? "Select city" : City}
+									</Text>
+									<Icon name={"chevron-down"} size={14} color={Colors.lightGrey} />
+								</View>
+							</TouchableOpacity>
+
+							<Text style={{
+								fontSize: FontSize.FS_18,
+								color: Colors.black,
+								fontFamily: ConstantKey.MONTS_SEMIBOLD,
+								marginTop: 30,
+							}}>
+								{i18n.t('AddressInfo')}
+							</Text>
+							<Text style={{
+								fontSize: FontSize.FS_14,
+								color: Colors.black,
+								fontFamily: ConstantKey.MONTS_MEDIUM,
+								marginTop: 30,
+								lineHeight: FontSize.FS_20,
+							}}>
+								{i18n.t('Address')}
+							</Text>
+							{/* <View style={styles.mobileView}> */}
+							<TextInput style={{
+								height: 70, fontSize: FontSize.FS_14, fontFamily: ConstantKey.MONTS_REGULAR,
+								color: Colors.dimGray, flex: 1, marginTop: 10, backgroundColor: Colors.lightGrey01, borderRadius: 6, paddingHorizontal: 10
+
+							}}
+								multiline={true}
+								value={Address}
+								autoCapitalize={'none'}
+								placeholder={i18n.t('EnterAddress')}
+								returnKeyType={'done'}
+								onChangeText={(txt) => setAddress(txt)}
+							/>
+
+							<Text style={{
+								fontSize: FontSize.FS_14,
+								color: Colors.black,
+								fontFamily: ConstantKey.MONTS_MEDIUM,
+								marginTop: 10,
+								lineHeight: FontSize.FS_20,
+							}}>
+								{"Pincode"}
+							</Text>
+							<View style={styles.mobileView}>
+								<TextInput style={styles.textInputMobile}
+									value={Pincode}
+									placeholder={"Enter Pincode"}
+									keyboardType={'number-pad'}
+									returnKeyType={'next'}
+									onChangeText={(txt) => setPincode(txt)}
+								/>
+							</View>
+
 							<TouchableOpacity style={styles.btnLogin}
 								onPress={() => btnBusinessProfile()}>
 								<Text style={styles.loginText}>
@@ -693,6 +806,7 @@ const BusinessProfile = (props) => {
 				: null}
 
 			<RBSheet
+			 height={ConstantKey.SCREEN_WIDTH}
 				ref={refRBSheet}
 				closeOnDragDown={true}
 				closeOnPressMask={true}
@@ -856,6 +970,10 @@ const BusinessProfile = (props) => {
 								StateSheet.current.close()
 								setState(item?.name)
 								setStateId(item?.id)
+
+								setCity("")
+								setCityId("")
+								Api_Get_City(true, item)
 							}}
 								style={{
 									padding: 15,
@@ -877,6 +995,76 @@ const BusinessProfile = (props) => {
 				</ScrollView>
 				</>
 			</RBSheet>
+
+
+			<RBSheet 
+			height={ConstantKey.SCREEN_WIDTH * 1.3}
+				ref={CitySheet}
+				closeOnDragDown={true}
+				closeOnPressMask={true}
+				customStyles={{
+					wrapper: {
+						backgroundColor: Colors.black03
+					},
+					draggableIcon: {
+						backgroundColor: Colors.primary
+					},
+				}}
+			>
+				<>
+				
+				<SearchBar
+							lightTheme={true}
+							showCancel
+							// containerStyle={{
+							// 	backgroundColor: Colors.white, marginHorizontal : 10,
+							// 	borderRadius: 5, height: 50, marginTop: 20,
+							// }}
+							inputContainerStyle={{ backgroundColor: Colors.white,  padding: 0,}}
+							onClear={() => {
+
+								setFilterCity(CityData)
+							}}
+							value={txtSearchCity}
+							inputStyle={{ 
+								fontFamily: ConstantKey.MONTS_REGULAR, fontSize: FontSize.FS_14, color: Colors.black, height: 50 }}
+							placeholder={'Search here...'}
+							onChangeText={onSearchCity}
+						/>
+				
+				<ScrollView>
+					<FlatList
+						showsHorizontalScrollIndicator={false}
+						style={{ marginTop: 10 }}
+						data={filterCity}
+						ItemSeparatorComponent={<View style={{ width: 20, }}></View>}
+						renderItem={({ item, index }) => (
+							<TouchableOpacity onPress={() => {
+								CitySheet.current.close()
+								setCity(item?.name)
+								setCityId(item?.id)
+							}}
+								style={{
+									padding: 15,
+									alignItems: "center",
+									flexDirection: "row"
+								}}>
+
+								<Text style={{
+									fontSize: FontSize.FS_14,
+									color: Colors.black,
+									fontFamily: ConstantKey.MONTS_MEDIUM,
+									marginLeft: 10
+								}}>
+									{item.name}
+								</Text>
+							</TouchableOpacity>
+						)}
+					/>
+				</ScrollView>
+				</>
+			</RBSheet>
+
 		</View>
 		</SafeAreaView>
 	)

@@ -22,7 +22,6 @@ import { StackActions } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
-import moment from 'moment';
 import ImageView from "react-native-image-viewing";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import ImagePicker from 'react-native-image-crop-picker';

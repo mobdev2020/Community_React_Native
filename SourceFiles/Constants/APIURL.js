@@ -43,6 +43,8 @@ export const APIURL = {
 
 	GetCountry :"get-country",
 	GetState:"get-state",
+
+	GetCity : "get-cities",
 	
 	logout : "logout",
 	deactivate : "deactivate",
@@ -51,6 +53,8 @@ export const APIURL = {
 
 	GetProfile : "get-profile",
 	UpdateProfile : "update-profile",
+
+	GetBannerAds : "get-banner-advertises",
 	
 	deviceIdUpdate : 'deviceIdUpdate',
 	getContacts : 'getContactsV1', //'getContacts',

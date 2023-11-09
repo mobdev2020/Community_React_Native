@@ -1,5 +1,5 @@
 import React, { Component, useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, ScrollView, Alert, FlatList, Modal, StatusBar, Linking } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Image, Keyboard, ImageBackground, ScrollView, Alert, FlatList, Modal, StatusBar, Linking, Dimensions } from 'react-native';
 
 
 // Constants
@@ -49,16 +49,16 @@ const SearchScreen = ({ navigation, route }) => {
     }
 
     useEffect(() => {
-        console.log("route.params.isSearch ::", route.params.isSearch)
+        console.log("route.params.isSearch ::", route.params)
 
-        if (route.params.isSearch == false) {
+        if (route.params?.category) {
             setSelectedBusinessData(route.params.category)
-            setSearchText(route.params.category?.name)
+            // setSearchText(route.params.category?.name)
             Api_Get_Business(true, route.params.category)
             Api_Get_Category(true)
 
         }
-        if (route.params.isSearch == true) {
+        if (route.params?.isSearch == true) {
             SearchButton((callback) => {
                 if (callback == true && SearchEnable == true) {
                     setSelectedBusinessData([]);
@@ -80,9 +80,8 @@ const SearchScreen = ({ navigation, route }) => {
     }, [])
 
     useEffect(() => {
-        console.log("B")
         if (SearchText == "" && clear == true) {
-            console.log("A")
+            console.log("aaaaaaaaa")
 
             SearchButton((callback) => {
                 if (callback == true && SearchEnable == true) {
@@ -92,17 +91,28 @@ const SearchScreen = ({ navigation, route }) => {
 
                 }
             })
+        }else{
+
+                if (SearchText != ''){
+                    Api_Get_Business(true)
+                } 
+            // console.log("Search useEffect call")
+            // Api_Get_Business(true)
+            // Api_Get_Category(true)
         }
 
     }, [SearchText])
 
     const Api_Get_Business = (isLoad, item) => {
+
+        console.log("item : ",item)
+
         setIsLoading(isLoad)
         let body = new FormData();
-        if (!SearchEnable && item?.id) {
+        if (item?.id) {
             body.append('category_id', item?.id ? item?.id : null)
         }
-        else if (SearchEnable && SearchText !== "") {
+        else if (SearchEnable && SearchText != "") {
             body.append('keyword', SearchText.toLowerCase())
         }
         else {
@@ -116,7 +126,7 @@ const SearchScreen = ({ navigation, route }) => {
         Webservice.post(APIURL.GetBusiness, body)
             .then(response => {
                 setIsLoading(false)
-                console.log("Api_Get_Business Response : " + JSON.stringify(response.data.data));
+                console.log("Api_Get_Business Response : " + JSON.stringify(response));
                 if (response.data.status == true) {
 
                     var data = response.data.data?.data
@@ -263,13 +273,17 @@ const SearchScreen = ({ navigation, route }) => {
                                 // onBlur={()=>handleBlur()}
                                 onChangeText={(txtname) => {
                                     {
+                                        SearchEnable = true
                                         setSearchText(txtname)
                                         setCurrentPage(1)
                                         console.log("txtname", txtname.length)
                                         if (txtname.length == 0) {
                                             console.log("if")
+                                            SearchEnable = false
                                             setSearchText("")
                                             setClear(true)
+
+                                            Api_Get_Business(true)
                                             // handleBlur(true)
                                         }
                                         // if (txtname.length == 0) {
@@ -412,6 +426,7 @@ const SearchScreen = ({ navigation, route }) => {
 
                 <RBSheet
                     ref={refRBSheet}
+                    height={Dimensions.get('window').width}
                     closeOnDragDown={true}
                     closeOnPressMask={true}
                     customStyles={{
@@ -441,9 +456,16 @@ const SearchScreen = ({ navigation, route }) => {
                                 // <View style={{ alignItems: "center" }}>
                                 <TouchableOpacity onPress={() => {
                                     refRBSheet.current.close()
-                                    setSelectedBusinessData(item)
-                                    setSearchText(item?.name)
-                                    Api_Get_Business(true, item)
+                                    if(SelectedBusinessData.id == item.id){
+                                        setSelectedBusinessData(null)
+                                        Api_Get_Business(true, null)
+                                    }else{
+                                        
+                                        setSelectedBusinessData(item)
+                                        // setSearchText(item?.name)
+                                        Api_Get_Business(true, item)
+                                    }
+                                   
                                 }}
                                     style={{
                                         padding: 15,
@@ -466,7 +488,7 @@ const SearchScreen = ({ navigation, route }) => {
                                         </Text>
                                     </View>
                                     <View style={{}}>
-                                        {SelectedBusinessData.id == item.id ?
+                                        {SelectedBusinessData?.id == item?.id ?
                                             <MaterialCommunityIcons name={"check"} size={18} color={Colors.primary} /> : null}
                                     </View>
                                 </TouchableOpacity>

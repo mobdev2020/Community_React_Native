@@ -38,7 +38,7 @@ const CustomSlider = ({ data }) => {
                     color: Colors.grey,
                     fontFamily: ConstantKey.MONTS_REGULAR,
                     textAlign: "right",
-                }}> {moment(item.created_at).format('DD/MM/YYYY')}
+                }}> {moment(item.created_at).format('DD-MM-YYYY')}
                 </Text>
                 <Text style={{
                     fontSize: FontSize.FS_14,

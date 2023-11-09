@@ -625,7 +625,7 @@ const EventsTab = props => {
                           color: Colors.black,
                           fontFamily: ConstantKey.MONTS_SEMIBOLD,
                         }}>
-                        {moment(item?.event_start_date).format('DD MMM YY')}
+                        {moment(item?.event_start_date).format('DD-MM-YYYY')}
                       </Text>
                     </View>
                   </View>
@@ -878,7 +878,7 @@ const EventsTab = props => {
                           color: Colors.black,
                           fontFamily: ConstantKey.MONTS_SEMIBOLD,
                         }}>
-                        {moment(item?.training_start_date).format('DD MMM YY')}
+                        {moment(item?.training_start_date).format('DD-MM-YYYY')}
                       </Text>
                     </View>
                   </View>
@@ -1057,7 +1057,7 @@ const EventsTab = props => {
                           color: Colors.black,
                           fontFamily: ConstantKey.MONTS_SEMIBOLD,
                         }}>
-                        {moment(item?.meeting_start_date).format('DD MMM YY')}
+                        {moment(item?.meeting_start_date).format('DD-MM-YYYY')}
                       </Text>
                     </View>
                   </View>

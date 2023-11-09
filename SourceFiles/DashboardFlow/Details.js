@@ -158,7 +158,7 @@ const Details = props => {
                   justifyContent: 'center',
                 }}>
                 <Text style={styles.dateText}>
-                  {moment(data?.start_date).format('DD MMM YY')}
+                  {moment(data?.start_date).format('DD-MM-YYYY')}
                 </Text>
               </View>
             )}
@@ -174,7 +174,7 @@ const Details = props => {
                   justifyContent: 'center',
                 }}>
                 <Text style={styles.dateText}>
-                  {moment(data?.end_date).format('DD MMM YY')}
+                  {moment(data?.end_date).format('DD-MM-YYYY')}
                 </Text>
               </View>
             )}
