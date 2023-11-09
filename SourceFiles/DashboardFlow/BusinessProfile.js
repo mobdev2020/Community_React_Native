@@ -741,6 +741,9 @@ const BusinessProfile = (props) => {
 								</View>
 							</TouchableOpacity>
 
+
+							
+
 							<Text style={{
 								fontSize: FontSize.FS_18,
 								color: Colors.black,
