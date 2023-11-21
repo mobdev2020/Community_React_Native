@@ -20,6 +20,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import ImagePicker from 'react-native-image-crop-picker';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import { useSelector } from 'react-redux';
+import { SearchBar } from 'react-native-elements';
 
 
 let SearchEnable = false;
@@ -42,6 +43,8 @@ const SearchScreen = ({ navigation, route }) => {
 
     const refRBSheet = useRef();
 
+    const [txtSearchCategory, setTxtSearchCategory] = useState('')
+	const [filterCategory, setFilterCategory] = useState([])
         
     const eventype = {
         phone : 'phone',
@@ -182,6 +185,8 @@ const SearchScreen = ({ navigation, route }) => {
 
                 if (response.data.status == true) {
                     setCategoryData(response.data.data)
+                    setFilterCategory(response.data.data)
+                    setTxtSearchCategory("")
                     setIsLoading(false)
                 } else {
                     Toast.showWithGravity(response.data.message, Toast.LONG, Toast.CENTER);
@@ -217,6 +222,40 @@ const SearchScreen = ({ navigation, route }) => {
         }
     };
 
+
+    const onSearchCategory = (search) => {
+
+		let text = search.toLowerCase()
+		let ServiceData = CategoryData
+
+		let filteredName = ServiceData.filter((item) => {
+
+			let name = item.name != null ? String(item.name).toLowerCase().match(text) : ''
+			
+			return name
+		})
+
+		console.log(filteredName.length)
+		if (!text || text === '') {
+
+			console.log("Text empty")
+			setFilterCategory(CategoryData)
+		} 
+		else if(filteredName.length == 0){
+			setFilterCategory([])
+		}
+		else if (!Array.isArray(filteredName) && filteredName.length) {
+			// set no data flag to true so as to render flatlist conditionally
+			setFilterCategory([])
+
+		} 
+		else if (Array.isArray(filteredName)) {
+
+			setFilterCategory(filteredName)
+		}
+
+		setTxtSearchCategory(search)
+	}
 
     const btnPrimaryEventTap = (item, type) => {
         if(type == eventype.phone){
@@ -438,8 +477,8 @@ const SearchScreen = ({ navigation, route }) => {
                         }
                     }}
                 >
-                    <ScrollView >
-                        <Text style={{
+
+<Text style={{
                             fontSize: FontSize.FS_20,
                             color: Colors.black,
                             fontFamily: ConstantKey.MONTS_MEDIUM,
@@ -447,10 +486,33 @@ const SearchScreen = ({ navigation, route }) => {
                         }}>
                             {"Filter Business Category"}
                         </Text>
+<SearchBar containerStyle={{marginTop : 10}}
+							lightTheme={true}
+							showCancel
+							// containerStyle={{
+							// 	backgroundColor: Colors.white, marginHorizontal : 10,
+							// 	borderRadius: 5, height: 50, marginTop: 20,
+							// }}
+							inputContainerStyle={{ backgroundColor: Colors.white,  padding: 0,}}
+							onClear={() => {
+
+								setFilterCategory(CategoryData)
+							}}
+							value={txtSearchCategory}
+							inputStyle={{ 
+								fontFamily: ConstantKey.MONTS_REGULAR, fontSize: FontSize.FS_14, color: Colors.black, height: 50 }}
+							placeholder={'Search here...'}
+							onChangeText={onSearchCategory}
+						/>
+
+                    <ScrollView >
+                       
+
+
                         <FlatList
                             showsHorizontalScrollIndicator={false}
                             style={{ marginTop: 10 }}
-                            data={CategoryData}
+                            data={filterCategory}
                             ItemSeparatorComponent={<View style={{ width: 20, }}></View>}
                             renderItem={({ item, index }) => (
                                 // <View style={{ alignItems: "center" }}>
