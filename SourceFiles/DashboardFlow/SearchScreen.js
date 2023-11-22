@@ -64,8 +64,8 @@ const SearchScreen = ({ navigation, route }) => {
         if (route.params?.isSearch == true) {
             SearchButton((callback) => {
                 if (callback == true && SearchEnable == true) {
-                    setSelectedBusinessData([]);
-                    Api_Get_Business(true);
+                    // setSelectedBusinessData([]);
+                    Api_Get_Business(true, SelectedBusinessData);
                     Api_Get_Category(true)
 
                 }
@@ -88,8 +88,8 @@ const SearchScreen = ({ navigation, route }) => {
 
             SearchButton((callback) => {
                 if (callback == true && SearchEnable == true) {
-                    setSelectedBusinessData([]);
-                    Api_Get_Business(true);
+                    // setSelectedBusinessData([]);
+                    Api_Get_Business(true, SelectedBusinessData);
                     Api_Get_Category(true)
 
                 }
@@ -97,7 +97,7 @@ const SearchScreen = ({ navigation, route }) => {
         }else{
 
                 if (SearchText != ''){
-                    Api_Get_Business(true)
+                    Api_Get_Business(true, SelectedBusinessData)
                 } 
             // console.log("Search useEffect call")
             // Api_Get_Business(true)
@@ -115,12 +115,11 @@ const SearchScreen = ({ navigation, route }) => {
         if (item?.id) {
             body.append('category_id', item?.id ? item?.id : null)
         }
-        else if (SearchEnable && SearchText != "") {
+        
+        if (SearchEnable && SearchText != "") {
             body.append('keyword', SearchText.toLowerCase())
         }
-        else {
-
-        }
+        
         body.append('page', CurrentPage)
         body.append('school_user_id',selectedSchoolData?.school_user_id)
 
@@ -322,7 +321,7 @@ const SearchScreen = ({ navigation, route }) => {
                                             setSearchText("")
                                             setClear(true)
 
-                                            Api_Get_Business(true)
+                                            Api_Get_Business(true, SelectedBusinessData)
                                             // handleBlur(true)
                                         }
                                         // if (txtname.length == 0) {
@@ -349,7 +348,7 @@ const SearchScreen = ({ navigation, route }) => {
                                 <MaterialCommunityIcons name={"filter-outline"} size={20} color={Colors.primary} style={{ marginRight: 10 }} />
                             </TouchableOpacity> */}
                             {SearchText.length > 0 && <TouchableOpacity onPress={() => {
-                                setSelectedBusinessData([]);
+                                // setSelectedBusinessData([]);
                                 setClear(true)
                                 setSearchText("")
                                 // Api_Get_Business(true);
@@ -363,7 +362,7 @@ const SearchScreen = ({ navigation, route }) => {
                                     SearchButton((callback) => {
                                         if (callback == true && SearchEnable == true) {
                                             // setSelectedBusinessData([])
-                                            Api_Get_Business(true)
+                                            Api_Get_Business(true, SelectedBusinessData)
                                         }
                                     })
                                 }
@@ -397,7 +396,7 @@ const SearchScreen = ({ navigation, route }) => {
 
                             HidePagination == false && !isLoading && BusinessData.length >= 0 ?
                                 <TouchableOpacity onPress={() => {
-                                    Api_Get_Business(true)
+                                    Api_Get_Business(true, SelectedBusinessData)
                                 }}
                                     style={{ marginVertical: 25, alignSelf: "center" }}>
                                     <Text style={{ fontSize: FontSize.FS_14, color: Colors.primary, fontFamily: ConstantKey.MONTS_MEDIUM }}>{"See More"}</Text>
