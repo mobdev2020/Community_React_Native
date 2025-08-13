@@ -1,98 +1,94 @@
 export const APIURL = {
+  // BASE_URL: "https://ppe.thewebtual.com/magnus/api/",
+  // IMAGE_URL: 'https://ppe.thewebtual.com/magnus/public/storage/logos/',
 
-    // BASE_URL: "https://ppe.thewebtual.com/magnus/api/",
-    // IMAGE_URL: 'https://ppe.thewebtual.com/magnus/public/storage/logos/',
+  // BASE_URL : "https://magnus.thewebtual.com/adminpanel/api/",
+  BASE_URL: 'https://ppe81.thewebtual.com/school-community/api/v1',
+  // BASE_URL : "https://project.thewebtual.com/school-community/api/v1",
+  IMAGE_URL:
+    'https://project.thewebtual.com/school-community/public/storage/logos/',
 
-	// BASE_URL : "https://magnus.thewebtual.com/adminpanel/api/",
-	BASE_URL : "https://ppe81.thewebtual.com/school-community/api/v1",
-	// BASE_URL : "https://project.thewebtual.com/school-community/api/v1",
-	IMAGE_URL : 'https://project.thewebtual.com/school-community/public/storage/logos/',
+  register: 'auth/register',
+  login: 'auth/login',
+  otpSend: 'auth/send-otp',
+  SchoolInfo: 'get-about-school-info',
 
-	
+  GetCategory: 'get-categories',
+  GetBusiness: 'get-business',
 
-	register : 'auth/register',
-	login : 'auth/login',
-	otpSend : "auth/send-otp",
-	SchoolInfo : "get-about-school-info",
+  UpdateBusiness: 'update-business-profile',
 
-	GetCategory:"get-categories",
-	GetBusiness:"get-business",
+  GetNotice: 'get-notices',
 
-	UpdateBusiness:"update-business-profile",
-	
-	GetNotice:"get-notices",
+  GetEvents: 'get-events',
+  AddEvents: 'add-event',
+  EditEvents: 'edit-event',
+  DeleteEvent: 'delete-event',
 
-	GetEvents:"get-events",
-	AddEvents:"add-event",
-	EditEvents:"edit-event",
-	DeleteEvent:"delete-event",
+  GetTrainings: 'get-training',
+  AddSuggestion: 'add-suggestion',
 
-	GetTrainings:"get-training",
-	AddSuggestion:"add-suggestion",
+  GetMeetings: 'get-meeting',
+  DeleteMeeting: 'delete-meeting',
+  EditMeeting: 'edit-meeting',
+  AddMeeting: 'add-meeting',
 
-	GetMeetings:"get-meeting",
-	DeleteMeeting:"delete-meeting",
-	EditMeeting:"edit-meeting",
-	AddMeeting:"add-meeting",
+  GetAds: 'get-advertises',
+  AddAds: 'add-advertises',
+  EditAds: 'edit-advertises',
+  DeleteAds: 'delete-advertises',
 
-	GetAds:"get-advertises",
-	AddAds:"add-advertises",
-	EditAds:"edit-advertises",
-	DeleteAds:"delete-advertises",
+  GetCountry: 'get-country',
+  GetState: 'get-state',
 
+  GetCity: 'get-cities',
 
-	GetCountry :"get-country",
-	GetState:"get-state",
+  logout: 'logout',
+  deactivate: 'deactivate',
 
-	GetCity : "get-cities",
-	
-	logout : "logout",
-	deactivate : "deactivate",
-	
-	getHomeData : "get-home-data",
+  getHomeData: 'get-home-data',
 
-	GetProfile : "get-profile",
-	UpdateProfile : "update-profile",
+  GetProfile: 'get-profile',
+  UpdateProfile: 'update-profile',
 
-	GetBannerAds : "get-banner-advertises",
-	
-	deviceIdUpdate : 'deviceIdUpdate',
-	getContacts : 'getContactsV1', //'getContacts',
-	updateVisiblity : 'updateVisiblity',
-	updateaddress : 'updateaddress',
-	verifycontact : 'verifycontact',
-	versionCheck : 'versioncheck',
-	changePassword : 'changePassword',
-	getEventList : 'getEventList',
-	getProfile : 'getProfile',
-	updateProfile : 'updateProfile',
+  GetBannerAds: 'get-banner-advertises',
 
-	getEvents : "getEvents",
-	addEvent : "addEvent",
-	editEvent : "editEvent",
-	deleteEvent : "deleteEvent",
-	updateStatusEvent : "updateStatusEvent",
+  deviceIdUpdate: 'deviceIdUpdate',
+  getContacts: 'getContactsV1', //'getContacts',
+  updateVisiblity: 'updateVisiblity',
+  updateaddress: 'updateaddress',
+  verifycontact: 'verifycontact',
+  versionCheck: 'versioncheck',
+  changePassword: 'changePassword',
+  getEventList: 'getEventList',
+  getProfile: 'getProfile',
+  updateProfile: 'updateProfile',
 
-	getCurrentMonthBirthday : "getCurrentMonthBirthday",
+  getEvents: 'getEvents',
+  addEvent: 'addEvent',
+  editEvent: 'editEvent',
+  deleteEvent: 'deleteEvent',
+  updateStatusEvent: 'updateStatusEvent',
 
-	getTraining : "getTraining",
-	AddEditTraining : "AddEditTraining",
+  getCurrentMonthBirthday: 'getCurrentMonthBirthday',
 
-	getAllSpecialAsk : 'getAllSpecialAsk',
-	AddEditSpecialAsk : 'AddEditSpecialAsk',
-	DeleteSpecialAsk : 'DeleteSpecialAsk',
+  getTraining: 'getTraining',
+  AddEditTraining: 'AddEditTraining',
 
-	getHelp : 'getHelp',
-	addSuggestion : 'addSuggestion',
+  getAllSpecialAsk: 'getAllSpecialAsk',
+  AddEditSpecialAsk: 'AddEditSpecialAsk',
+  DeleteSpecialAsk: 'DeleteSpecialAsk',
 
+  getHelp: 'getHelp',
+  addSuggestion: 'addSuggestion',
 
-	getAllBirthday : 'getAllBirthday',
-	getMeeting : "getMeeting",
-	addMeeting : "addMeeting",
-	editMeeting : "editMeeting",
-	deleteMeeting : "deleteMeeting",
+  getAllBirthday: 'getAllBirthday',
+  getMeeting: 'getMeeting',
+  addMeeting: 'addMeeting',
+  editMeeting: 'editMeeting',
+  deleteMeeting: 'deleteMeeting',
 
-	listBusinessProfile : "list-business-profile",
-	addBusinessProfile : "add-business-profile",
-	deleteBusinessProfile : "delete-business-profile"
-}
+  listBusinessProfile: 'list-business-profile',
+  addBusinessProfile: 'add-business-profile',
+  deleteBusinessProfile: 'delete-business-profile',
+};
